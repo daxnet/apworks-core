@@ -1,6 +1,7 @@
 ﻿{
   "version": "0.9999.0.9999-*",
-
+  "authors": [ "Sunny Chen (daxnet)" ],
+  "description": "Apworks Application Development Framework",
   "dependencies": {
     "NETStandard.Library": "1.6.0"
   },
@@ -12,5 +13,13 @@
     "netstandard1.6": {
       "imports": "dnxcore50"
     }
+  },
+
+  "packOptions": {
+    "summary": "Apworks Application Development Framework",
+    "licenseUrl": "https://github.com/daxnet/apworks-core/blob/master/LICENSE",
+    "owners": [ "Sunny Chen (daxnet)" ],
+    "requireLicenseAcceptance": true,
+    "tags": [ "apworks" ]
   }
 }
