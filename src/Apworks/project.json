@@ -6,7 +6,7 @@
   },
 
   "frameworks": {
-    "net46": {
+    "net461": {
 
     },
     "netstandard1.6": {
