@@ -6,6 +6,9 @@
   },
 
   "frameworks": {
+    "net46": {
+
+    },
     "netstandard1.6": {
       "imports": "dnxcore50"
     }
