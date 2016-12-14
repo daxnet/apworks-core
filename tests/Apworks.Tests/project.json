@@ -1,0 +1,27 @@
+{
+  "version": "0.9999.0.9999-*",
+  //"testRunner": "xunit",
+
+  "dependencies": {
+    "Apworks": "0.9999.0.9999-*",
+    "NETStandard.Library": "1.6.0"
+  },
+
+  "frameworks": {
+    "net461": {
+      "buildOptions": {
+        "define": [ "_NET461_" ]
+      }
+    },
+    "netstandard1.6": {
+      "imports": "dnxcore50",
+      "buildOptions": {
+        "define": [ "_NETCORE_" ]
+      }
+    }
+  },
+
+  "buildOptions": {
+    "keyFile": "../../tools/Apworks.snk"
+  }
+}

@@ -9,10 +9,15 @@
 
   "frameworks": {
     "net461": {
-
+      "buildOptions": {
+        "define": ["_NET461_"]
+      }
     },
     "netstandard1.6": {
-      "imports": "dnxcore50"
+      "imports": "dnxcore50",
+      "buildOptions": {
+        "define": ["_NETCORE_"]
+      }
     }
   },
 
