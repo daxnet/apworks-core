@@ -62,7 +62,7 @@ namespace Apworks.Repositories
         /// </summary>
         /// <param name="key">The aggregate root key.</param>
         /// <returns>An instance of <see cref="IAggregateRoot{TKey}"/> that has the specified key.</returns>
-        TAggregateRoot GetByKey(TKey key);
+        TAggregateRoot FindByKey(TKey key);
 
         /// <summary>
         /// Gets the <see cref="IAggregateRoot{TKey}"/> instance from current repository by using a specified key asynchronously.
@@ -70,6 +70,6 @@ namespace Apworks.Repositories
         /// <param name="key">The aggregate root key.</param>
         /// <param name="cancellationToken">The object that propagates notification that operations should be canceled.</param>
         /// <returns>An instance of <see cref="IAggregateRoot{TKey}"/> that has the specified key.</returns>
-        Task<TAggregateRoot> GetByKeyAsync(TKey key, CancellationToken cancellationToken = default(CancellationToken));
+        Task<TAggregateRoot> FindByKeyAsync(TKey key, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

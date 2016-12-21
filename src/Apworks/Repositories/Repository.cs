@@ -21,8 +21,8 @@ namespace Apworks.Repositories
 
         public abstract Task AddAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken));
 
-        public abstract TAggregateRoot GetByKey(TKey key);
+        public abstract TAggregateRoot FindByKey(TKey key);
 
-        public abstract Task<TAggregateRoot> GetByKeyAsync(TKey key, CancellationToken cancellationToken = default(CancellationToken));
+        public abstract Task<TAggregateRoot> FindByKeyAsync(TKey key, CancellationToken cancellationToken = default(CancellationToken));
     }
 }
