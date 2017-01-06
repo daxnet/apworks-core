@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DA072E38-8593-4669-8DF2-D2C651BFCB6D}"
 	ProjectSection(SolutionItems) = preProject
 		..\tests\global.json = ..\tests\global.json
+		..\build\local_publish.ps1 = ..\build\local_publish.ps1
 		..\build\subst_version.ps1 = ..\build\subst_version.ps1
 	EndProjectSection
 EndProject
