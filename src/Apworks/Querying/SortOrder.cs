@@ -24,39 +24,24 @@
 // limitations under the License.
 // ==================================================================================================================
 
-using System;
-
-namespace Apworks
+namespace Apworks.Querying
 {
     /// <summary>
-    /// Represents the base class of the objects that can be disposed.
+    /// Represents the sort order in a sorted query.
     /// </summary>
-    /// <remarks>
-    /// This class provides the basic implementation of the disposable pattern in .NET.
-    /// </remarks>
-    public abstract class DisposableObject : IDisposable
+    public enum SortOrder
     {
         /// <summary>
-        /// Finalizes an instance of the <see cref="DisposableObject"/> class.
+        /// Indicates that the sort is unspecified.
         /// </summary>
-        ~DisposableObject()
-        {
-            this.Dispose(false);
-        }
-
+        Unspecified = -1,
         /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// Indicates an ascending sort.
         /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
+        Ascending = 0,
         /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
+        /// Indicates a descending sort.
         /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected abstract void Dispose(bool disposing);
+        Descending = 1
     }
 }

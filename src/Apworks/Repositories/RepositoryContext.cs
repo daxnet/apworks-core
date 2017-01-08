@@ -26,12 +26,12 @@ namespace Apworks.Repositories
 
         public IRepository<TKey, TAggregateRoot> GetRepository<TKey, TAggregateRoot>()
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : IAggregateRoot<TKey> =>
+            where TAggregateRoot : class, IAggregateRoot<TKey> =>
             (IRepository<TKey, TAggregateRoot>)cachedRepositories.GetOrAdd(typeof(TAggregateRoot), CreateRepository<TKey, TAggregateRoot>());
 
         protected abstract IRepository<TKey, TAggregateRoot> CreateRepository<TKey, TAggregateRoot>()
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : IAggregateRoot<TKey>;
+            where TAggregateRoot : class, IAggregateRoot<TKey>;
 
         protected override void Dispose(bool disposing) { }
     }

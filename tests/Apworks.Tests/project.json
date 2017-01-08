@@ -6,7 +6,9 @@
     "Apworks": "0.9999.0.9999-*",
     "NETStandard.Library": "1.6.0",
     "xunit": "2.2.0-beta4-build3444",
-    "dotnet-test-xunit": "2.2.0-preview2-build1029"
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "Moq": "4.6.38-alpha",
+    "Apworks.Repositories.MongoDB": "0.9999.0.9999-*"
   },
 
   "frameworks": {
@@ -18,9 +20,9 @@
         }
       }
     }
-  },
-
-  "buildOptions": {
-    "keyFile": "../../tools/Apworks.snk"
   }
+
+  //"buildOptions": {
+  //  "keyFile": "../../tools/Apworks.snk"
+  //}
 }
