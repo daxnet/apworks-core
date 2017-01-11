@@ -1,10 +1,10 @@
-﻿{
+{
   "version": "0.9999.0.9999-*",
   "authors": [ "daxnet" ],
   "description": "Apworks Application Development Framework",
   "copyright": "Copyright (C) 2009-2017 by daxnet.",
   "dependencies": {
-    "NETStandard.Library": "1.6.0"
+    "NETStandard.Library": "1.6.1"
   },
 
   "frameworks": {
