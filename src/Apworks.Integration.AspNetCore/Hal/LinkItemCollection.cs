@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Apworks.Integration.AspNetCore.Hal
 {
-    [JsonArray(ItemConverterType = typeof(FlattenConverter))]
+    [JsonArray(ItemConverterType = typeof(ObjectFlattenConverter))]
     public sealed class LinkItemCollection : ICollection<ILinkItem>, IHalElement
     {
         private readonly List<ILinkItem> items = new List<ILinkItem>();
@@ -29,12 +29,14 @@ namespace Apworks.Integration.AspNetCore.Hal
 
         public bool Remove(ILinkItem item) => items.Remove(item);
 
-        public string ToJson()
+        public string ToJson(HalGenerationOption option)
         {
-            return JsonConvert.SerializeObject(this, Formatting.Indented, new ArrayReducingConverter());
+            var settings = option.ToSerializerSettings();
+            settings.Converters.Add(new ArrayReductionConverter());
+            return JsonConvert.SerializeObject(this, settings);
         }
 
-        public string ToXml()
+        public string ToXml(HalGenerationOption option)
         {
             throw new NotImplementedException();
         }

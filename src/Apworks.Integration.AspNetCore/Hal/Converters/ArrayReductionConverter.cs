@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Apworks.Integration.AspNetCore.Hal.Converters
 {
-    internal sealed class ArrayReducingConverter : JsonConverter
+    internal sealed class ArrayReductionConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {

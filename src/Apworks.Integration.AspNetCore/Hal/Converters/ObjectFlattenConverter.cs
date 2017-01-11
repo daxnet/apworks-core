@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Apworks.Integration.AspNetCore.Hal.Converters
 {
-    internal sealed class FlattenConverter : JsonConverter
+    internal sealed class ObjectFlattenConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
@@ -31,22 +31,30 @@ namespace Apworks.Integration.AspNetCore.Hal.Converters
             {
                 var obj = (JObject)token;
                 writer.WriteStartObject();
-                WriteJson(writer, obj);
+                WriteJson(writer, obj, serializer);
                 writer.WriteEndObject();
             }
         }
 
         public override bool CanRead => false;
 
-        private void WriteJson(JsonWriter writer, JObject value)
+        private void WriteJson(JsonWriter writer, JObject value, JsonSerializer serializer)
         {
             foreach (var property in value.Properties())
             {
                 var jObject = property.Value as JObject;
                 if (jObject != null)
-                    WriteJson(writer, jObject);
+                    WriteJson(writer, jObject, serializer);
                 else
+                {
+                    var v = (JValue)property.Value;
+                    if (v.Value == null && serializer.NullValueHandling == NullValueHandling.Ignore)
+                    {
+                        continue;
+                    }
+
                     property.WriteTo(writer);
+                }
             }
         }
     }

@@ -33,7 +33,7 @@ namespace Apworks.Integration.AspNetCore
     /// <summary>
     /// Provides the extension methods for integrating the Apworks facilities into ASP.NET Core MVC/Web API stack.
     /// </summary>
-    public static class DependencyInjectionExtensions
+    public static class IntegrationExtensions
     {
         /// <summary>
         /// Adds a <see cref="IRepositoryContext"/> instance to the service collection.

@@ -26,12 +26,12 @@ namespace Apworks.Integration.AspNetCore.Hal
 
         public bool Remove(IResource item) => resources.Remove(item);
 
-        public string ToJson()
+        public string ToJson(HalGenerationOption option)
         {
             throw new NotImplementedException();
         }
 
-        public string ToXml()
+        public string ToXml(HalGenerationOption option)
         {
             throw new NotImplementedException();
         }

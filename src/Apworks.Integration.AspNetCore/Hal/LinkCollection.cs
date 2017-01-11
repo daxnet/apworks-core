@@ -26,12 +26,12 @@ namespace Apworks.Integration.AspNetCore.Hal
 
         public bool Remove(ILink item) => links.Remove(item);
 
-        public string ToJson()
+        public string ToJson(HalGenerationOption option)
         {
             throw new NotImplementedException();
         }
 
-        public string ToXml()
+        public string ToXml(HalGenerationOption option)
         {
             throw new NotImplementedException();
         }

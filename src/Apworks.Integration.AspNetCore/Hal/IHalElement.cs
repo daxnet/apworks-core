@@ -7,8 +7,9 @@ namespace Apworks.Integration.AspNetCore.Hal
 {
     public interface IHalElement
     {
-        string ToJson();
-        string ToXml();
+        string ToJson(HalGenerationOption option);
+
+        string ToXml(HalGenerationOption option);
 
     }
 }

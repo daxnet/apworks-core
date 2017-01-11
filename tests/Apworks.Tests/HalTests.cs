@@ -20,7 +20,7 @@ namespace Apworks.Tests
             linkItem.AddProperty("title", "kate");
             linkItem.AddProperty("age", 10);
 
-            var json = linkItem.ToJson();
+            var json = linkItem.ToJson(new HalGenerationOption(HalFormat.None, false));
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace Apworks.Tests
             var linkItemCollection = new LinkItemCollection();
             linkItemCollection.Add(linkItem);
 
-            var json = linkItemCollection.ToJson();
+            var json = linkItemCollection.ToJson(HalGenerationOption.Default);
         }
     }
 }

@@ -11,13 +11,13 @@ namespace Apworks.Integration.AspNetCore.Hal
     {
         private readonly Dictionary<string, object> properties = new Dictionary<string, object>();
 
-        [JsonProperty(PropertyName = "href", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "href")]
         public string Href { get; set; }
 
-        [JsonProperty(PropertyName = "name", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
-        [JsonProperty(PropertyName = "templated", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty(PropertyName = "templated")]
         public bool? Templated { get; set; }
 
         public IEnumerable<KeyValuePair<string, object>> Properties => properties;
@@ -27,12 +27,14 @@ namespace Apworks.Integration.AspNetCore.Hal
             this.properties.Add(name, value);
         }
 
-        public string ToJson()
+        public string ToJson(HalGenerationOption option)
         {
-            return JsonConvert.SerializeObject(this, Formatting.Indented, new FlattenConverter());
+            var settings = option.ToSerializerSettings();
+            settings.Converters.Add(new ObjectFlattenConverter());
+            return JsonConvert.SerializeObject(this, settings);
         }
 
-        public string ToXml()
+        public string ToXml(HalGenerationOption option)
         {
             throw new NotImplementedException();
         }
