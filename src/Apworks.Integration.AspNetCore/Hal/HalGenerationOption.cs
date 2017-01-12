@@ -47,18 +47,5 @@ namespace Apworks.Integration.AspNetCore.Hal
         ///   <c>True</c> if the Null values should be ignored in the generated HAL, otherwise, <c>False</c>.
         /// </value>
         public bool IgnoreNullValues { get; }
-
-        /// <summary>
-        /// Converts the current instance to the serializer settings.
-        /// </summary>
-        /// <returns>The instance of the serializer settings.</returns>
-        public JsonSerializerSettings ToSerializerSettings()
-        {
-            return new JsonSerializerSettings
-            {
-                NullValueHandling = this.IgnoreNullValues ? NullValueHandling.Ignore : NullValueHandling.Include,
-                Formatting = this.Format == HalFormat.Formatted ? Formatting.Indented : Formatting.None
-            };
-        }
     }
 }

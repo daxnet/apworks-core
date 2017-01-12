@@ -1,15 +1,14 @@
-﻿using Apworks.Integration.AspNetCore.Hal.Converters;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace Apworks.Integration.AspNetCore.Hal
 {
-    [JsonArray(ItemConverterType = typeof(ObjectFlattenConverter))]
-    public sealed class LinkItemCollection : ICollection<ILinkItem>, IHalElement
+    public sealed class LinkItemCollection : HalElement, ICollection<ILinkItem>
     {
         private readonly List<ILinkItem> items = new List<ILinkItem>();
 
@@ -29,16 +28,37 @@ namespace Apworks.Integration.AspNetCore.Hal
 
         public bool Remove(ILinkItem item) => items.Remove(item);
 
-        public string ToJson(HalGenerationOption option)
+        protected override void WriteJson(StringWriter writer, HalGenerationOption option)
         {
-            var settings = option.ToSerializerSettings();
-            settings.Converters.Add(new ArrayReductionConverter());
-            return JsonConvert.SerializeObject(this, settings);
-        }
-
-        public string ToXml(HalGenerationOption option)
-        {
-            throw new NotImplementedException();
+            if (this.items.Count == 1)
+            {
+                switch(option.Format)
+                {
+                    case HalFormat.Formatted:
+                        writer.WriteLine(this.items[0].ToJson(option));
+                        break;
+                    default:
+                        writer.Write(this.items[0].ToJson(option));
+                        break;
+                }
+            }
+            else
+            {
+                WriteStartArray(writer, option);
+                foreach(var item in items)
+                {
+                    switch (option.Format)
+                    {
+                        case HalFormat.Formatted:
+                            writer.WriteLine(item.ToJson(option));
+                            break;
+                        default:
+                            writer.Write(item.ToJson(option));
+                            break;
+                    }
+                }
+                WriteEndArray(writer, option);
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();

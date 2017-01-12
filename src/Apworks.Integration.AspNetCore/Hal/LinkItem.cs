@@ -1,23 +1,17 @@
-﻿using Apworks.Integration.AspNetCore.Hal.Converters;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace Apworks.Integration.AspNetCore.Hal
 {
-    public sealed class LinkItem : ILinkItem
+    public sealed class LinkItem : HalElement, ILinkItem
     {
         private readonly Dictionary<string, object> properties = new Dictionary<string, object>();
 
-        [JsonProperty(PropertyName = "href")]
         public string Href { get; set; }
 
-        [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
-        [JsonProperty(PropertyName = "templated")]
         public bool? Templated { get; set; }
 
         public IEnumerable<KeyValuePair<string, object>> Properties => properties;
@@ -27,16 +21,20 @@ namespace Apworks.Integration.AspNetCore.Hal
             this.properties.Add(name, value);
         }
 
-        public string ToJson(HalGenerationOption option)
+        protected override void WriteJson(StringWriter writer, HalGenerationOption option)
         {
-            var settings = option.ToSerializerSettings();
-            settings.Converters.Add(new ObjectFlattenConverter());
-            return JsonConvert.SerializeObject(this, settings);
-        }
+            WriteStartObject(writer, option);
+            WritePropertyValue("href", this.Href, writer, option);
+            WritePropertyValue("name", this.Name, writer, option);
+            WritePropertyValue("templated", this.Templated, writer, option);
 
-        public string ToXml(HalGenerationOption option)
-        {
-            throw new NotImplementedException();
+            var idx = 0;
+            foreach(var property in this.properties)
+            {
+                WritePropertyValue(property.Key, property.Value, writer, option, idx++ != this.properties.Count - 1);
+            }
+
+            WriteEndObject(writer, option);
         }
     }
 }
