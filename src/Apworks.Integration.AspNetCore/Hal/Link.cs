@@ -24,38 +24,71 @@
 // limitations under the License.
 // ==================================================================================================================
 
+using Apworks.Integration.AspNetCore.Hal.Converters;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace Apworks.Integration.AspNetCore.Hal
 {
     /// <summary>
-    /// Represents that the implemented classes are HAL resources.
+    /// Represents the link in the HAL.
     /// </summary>
-    public interface IResource
+    /// <seealso cref="Hal.ILink" />
+    public sealed class Link : ILink
     {
+        #region Ctor        
         /// <summary>
-        /// Gets or sets the state of the resource, usually it is the object
-        /// that holds the domain information.
+        /// Initializes a new instance of the <see cref="Link"/> class.
+        /// </summary>
+        /// <param name="rel">The relation of the resource location.</param>
+        public Link(string rel)
+        {
+            this.Rel = rel;
+        }
+        #endregion
+
+        #region Public Properties        
+        /// <summary>
+        /// Gets or sets the relation.
         /// </summary>
         /// <value>
-        /// The state of the resource.
+        /// The relation.
         /// </value>
-        object State { get; set; }
+        public string Rel { get; set; }
 
         /// <summary>
-        /// Gets or sets the links.
+        /// Gets or sets the link items that belongs to the current link.
         /// </summary>
         /// <value>
-        /// The links.
+        /// The link items.
         /// </value>
-        LinkCollection Links { get; set; }
+        public LinkItemCollection Items { get; set; }
+        #endregion
 
+        #region Public Methods        
         /// <summary>
-        /// Gets the embedded resources.
+        /// Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
-        /// <value>
-        /// The embedded resources.
-        /// </value>
-        EmbeddedResourceCollection EmbeddedResources { get; }
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            var serializerSettings = new JsonSerializerSettings
+            {
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Ignore,
+                Converters = new List<JsonConverter>
+                {
+                    new LinkItemConverter(),
+                    new LinkItemCollectionConverter(),
+                    new LinkConverter()
+                }
+            };
+
+            return JsonConvert.SerializeObject(this, serializerSettings);
+        }
+        #endregion
+
     }
 }

@@ -24,38 +24,18 @@
 // limitations under the License.
 // ==================================================================================================================
 
-using System.Collections.Generic;
-
-namespace Apworks.Integration.AspNetCore.Hal
+namespace Apworks.Integration.AspNetCore.Hal.Builders
 {
     /// <summary>
-    /// Represents that the implemented classes are HAL resources.
+    /// Represents that the implemented classes are the builders that can
+    /// build the HAL <see cref="Resource"/> instance.
     /// </summary>
-    public interface IResource
+    public interface IBuilder
     {
         /// <summary>
-        /// Gets or sets the state of the resource, usually it is the object
-        /// that holds the domain information.
+        /// Builds the <see cref="Resource"/> instance.
         /// </summary>
-        /// <value>
-        /// The state of the resource.
-        /// </value>
-        object State { get; set; }
-
-        /// <summary>
-        /// Gets or sets the links.
-        /// </summary>
-        /// <value>
-        /// The links.
-        /// </value>
-        LinkCollection Links { get; set; }
-
-        /// <summary>
-        /// Gets the embedded resources.
-        /// </summary>
-        /// <value>
-        /// The embedded resources.
-        /// </value>
-        EmbeddedResourceCollection EmbeddedResources { get; }
+        /// <returns>The <see cref="Resource"/> instance to be built.</returns>
+        Resource Build();
     }
 }

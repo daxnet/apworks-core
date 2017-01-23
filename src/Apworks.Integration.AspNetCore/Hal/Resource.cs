@@ -24,23 +24,49 @@
 // limitations under the License.
 // ==================================================================================================================
 
+using Apworks.Integration.AspNetCore.Hal.Converters;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace Apworks.Integration.AspNetCore.Hal
 {
     /// <summary>
-    /// Represents that the implemented classes are HAL resources.
+    /// Represents a resource in HAL.
     /// </summary>
-    public interface IResource
+    /// <seealso cref="Hal.IResource" />
+    public sealed class Resource : IResource
     {
+        #region Private Fields
+        private static readonly List<JsonConverter> converters = new List<JsonConverter>
+        {
+            new LinkItemConverter(), new LinkItemCollectionConverter(), new LinkConverter(),
+            new LinkCollectionConverter(), new ResourceConverter()
+        };
+
+        #endregion
+
         /// <summary>
-        /// Gets or sets the state of the resource, usually it is the object
-        /// that holds the domain information.
+        /// Initializes a new instance of the <see cref="Resource"/> class.
+        /// </summary>
+        public Resource() { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Resource"/> class.
+        /// </summary>
+        /// <param name="state">The state of the resource.</param>
+        public Resource(object state)
+        {
+            this.State = state;
+        }
+
+        #region Public Properties        
+        /// <summary>
+        /// Gets the embedded resources.
         /// </summary>
         /// <value>
-        /// The state of the resource.
+        /// The embedded resources.
         /// </value>
-        object State { get; set; }
+        public EmbeddedResourceCollection EmbeddedResources { get; set; }
 
         /// <summary>
         /// Gets or sets the links.
@@ -48,14 +74,37 @@ namespace Apworks.Integration.AspNetCore.Hal
         /// <value>
         /// The links.
         /// </value>
-        LinkCollection Links { get; set; }
+        public LinkCollection Links { get; set; }
 
         /// <summary>
-        /// Gets the embedded resources.
+        /// Gets or sets the state of the resource, usually it is the object
+        /// that holds the domain information.
         /// </summary>
         /// <value>
-        /// The embedded resources.
+        /// The state of the resource.
         /// </value>
-        EmbeddedResourceCollection EmbeddedResources { get; }
+        public object State { get; set; }
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        public override string ToString()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                Converters = converters,
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.Indented
+            };
+
+            return JsonConvert.SerializeObject(this, settings);
+        }
+        #endregion
     }
 }

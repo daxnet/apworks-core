@@ -24,38 +24,51 @@
 // limitations under the License.
 // ==================================================================================================================
 
-using System.Collections.Generic;
-
-namespace Apworks.Integration.AspNetCore.Hal
+namespace Apworks.Integration.AspNetCore.Hal.Builders
 {
     /// <summary>
-    /// Represents that the implemented classes are HAL resources.
+    /// Represents the base class for all the HAL builders.
     /// </summary>
-    public interface IResource
+    /// <seealso cref="Hal.Builders.IBuilder" />
+    public abstract class Builder : IBuilder
     {
-        /// <summary>
-        /// Gets or sets the state of the resource, usually it is the object
-        /// that holds the domain information.
-        /// </summary>
-        /// <value>
-        /// The state of the resource.
-        /// </value>
-        object State { get; set; }
+        #region Private Fields
+        private readonly IBuilder context;
+        #endregion
 
+        #region Ctor        
         /// <summary>
-        /// Gets or sets the links.
+        /// Initializes a new instance of the <see cref="Builder"/> class.
         /// </summary>
-        /// <value>
-        /// The links.
-        /// </value>
-        LinkCollection Links { get; set; }
+        /// <param name="context">The context.</param>
+        protected Builder(IBuilder context)
+        {
+            this.context = context;
+        }
+        #endregion
 
+        #region Public Methods        
         /// <summary>
-        /// Gets the embedded resources.
+        /// Builds the <see cref="Resource" /> instance.
         /// </summary>
-        /// <value>
-        /// The embedded resources.
-        /// </value>
-        EmbeddedResourceCollection EmbeddedResources { get; }
+        /// <returns>
+        /// The <see cref="Resource" /> instance to be built.
+        /// </returns>
+        public Resource Build()
+        {
+            var resource = this.context.Build();
+            return this.DoBuild(resource);
+        }
+        #endregion
+
+        #region Protected Methods
+        /// <summary>
+        /// Builds the <see cref="Resource" /> instance.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="Resource" /> instance to be built.
+        /// </returns>
+        protected abstract Resource DoBuild(Resource resource);
+        #endregion
     }
 }

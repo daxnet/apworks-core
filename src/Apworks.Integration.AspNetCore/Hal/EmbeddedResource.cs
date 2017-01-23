@@ -23,39 +23,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ==================================================================================================================
-
-using System.Collections.Generic;
-
 namespace Apworks.Integration.AspNetCore.Hal
 {
     /// <summary>
-    /// Represents that the implemented classes are HAL resources.
+    /// Represents the embedded resource in HAL.
     /// </summary>
-    public interface IResource
+    /// <seealso cref="Hal.IEmbeddedResource" />
+    public sealed class EmbeddedResource : IEmbeddedResource
     {
-        /// <summary>
-        /// Gets or sets the state of the resource, usually it is the object
-        /// that holds the domain information.
-        /// </summary>
-        /// <value>
-        /// The state of the resource.
-        /// </value>
-        object State { get; set; }
+        #region Ctor
 
         /// <summary>
-        /// Gets or sets the links.
+        /// Initializes a new instance of the <see cref="EmbeddedResource"/> class.
+        /// </summary>
+        public EmbeddedResource()
+        {
+            this.Resources = new ResourceCollection();
+        }
+        #endregion
+
+        #region Public Properties        
+        /// <summary>
+        /// Gets or sets the name of the embedded resource.
         /// </summary>
         /// <value>
-        /// The links.
+        /// The name of the embedded resource.
         /// </value>
-        LinkCollection Links { get; set; }
+        public string Name { get; set; }
 
         /// <summary>
-        /// Gets the embedded resources.
+        /// Gets or sets the collection of resources that is represented by current embedded resource
+        /// instance.
         /// </summary>
         /// <value>
-        /// The embedded resources.
+        /// The collection of resources that is represented by current embedded resource
+        /// instance.
         /// </value>
-        EmbeddedResourceCollection EmbeddedResources { get; }
+        public ResourceCollection Resources { get; set; }
+        #endregion
     }
 }

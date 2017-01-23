@@ -24,38 +24,51 @@
 // limitations under the License.
 // ==================================================================================================================
 
-using System.Collections.Generic;
-
-namespace Apworks.Integration.AspNetCore.Hal
+namespace Apworks.Integration.AspNetCore.Hal.Builders
 {
     /// <summary>
-    /// Represents that the implemented classes are HAL resources.
+    /// Represents that the implemented classes are HAL resource builders
+    /// that 
     /// </summary>
-    public interface IResource
+    /// <seealso cref="Hal.Builders.IBuilder" />
+    public interface IResourceStateBuilder : IBuilder { }
+
+    /// <summary>
+    /// Represents an internal implementation of <see cref="IResourceStateBuilder"/> interface.
+    /// </summary>
+    /// <seealso cref="Hal.Builders.Builder" />
+    /// <seealso cref="Hal.Builders.IResourceStateBuilder" />
+    internal sealed class ResourceStateBuilder : Builder, IResourceStateBuilder
     {
-        /// <summary>
-        /// Gets or sets the state of the resource, usually it is the object
-        /// that holds the domain information.
-        /// </summary>
-        /// <value>
-        /// The state of the resource.
-        /// </value>
-        object State { get; set; }
+        #region Private Fields
+        private readonly object state;
+        #endregion
 
+        #region Ctor        
         /// <summary>
-        /// Gets or sets the links.
+        /// Initializes a new instance of the <see cref="ResourceStateBuilder"/> class.
         /// </summary>
-        /// <value>
-        /// The links.
-        /// </value>
-        LinkCollection Links { get; set; }
+        /// <param name="context">The context.</param>
+        /// <param name="state">The state of the resource.</param>
+        public ResourceStateBuilder(IBuilder context, object state) : base(context)
+        {
+            this.state = state;
+        }
+        #endregion
 
+        #region Protected Methods        
         /// <summary>
-        /// Gets the embedded resources.
+        /// Builds the <see cref="Resource" /> instance.
         /// </summary>
-        /// <value>
-        /// The embedded resources.
-        /// </value>
-        EmbeddedResourceCollection EmbeddedResources { get; }
+        /// <param name="resource"></param>
+        /// <returns>
+        /// The <see cref="Resource" /> instance to be built.
+        /// </returns>
+        protected override Resource DoBuild(Resource resource)
+        {
+            resource.State = this.state;
+            return resource;
+        }
+        #endregion
     }
 }

@@ -24,38 +24,29 @@
 // limitations under the License.
 // ==================================================================================================================
 
-using System.Collections.Generic;
-
 namespace Apworks.Integration.AspNetCore.Hal
 {
     /// <summary>
-    /// Represents that the implemented classes are HAL resources.
+    /// Represents that the implemented classes are embedded resources.
     /// </summary>
-    public interface IResource
+    public interface IEmbeddedResource
     {
         /// <summary>
-        /// Gets or sets the state of the resource, usually it is the object
-        /// that holds the domain information.
+        /// Gets or sets the name of the embedded resource.
         /// </summary>
         /// <value>
-        /// The state of the resource.
+        /// The name of the embedded resource.
         /// </value>
-        object State { get; set; }
+        string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the links.
+        /// Gets or sets the collection of resources that is represented by current embedded resource
+        /// instance.
         /// </summary>
         /// <value>
-        /// The links.
+        /// The collection of resources that is represented by current embedded resource
+        /// instance.
         /// </value>
-        LinkCollection Links { get; set; }
-
-        /// <summary>
-        /// Gets the embedded resources.
-        /// </summary>
-        /// <value>
-        /// The embedded resources.
-        /// </value>
-        EmbeddedResourceCollection EmbeddedResources { get; }
+        ResourceCollection Resources { get; set; }
     }
 }

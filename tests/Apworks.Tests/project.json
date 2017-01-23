@@ -1,15 +1,15 @@
 {
-  "version": "0.9999.0.9999-*",
+  "version": "0.999.0-*",
   "testRunner": "xunit",
 
   "dependencies": {
-    "Apworks": "0.9999.0.9999-*",
+    "Apworks": "0.999.0-*",
     "xunit": "2.2.0-beta4-build3444",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Moq": "4.6.38-alpha",
-    "Apworks.Repositories.MongoDB": "0.9999.0.9999-*",
+    "Apworks.Repositories.MongoDB": "0.999.0-*",
     "NETStandard.Library": "1.6.1",
-    "Apworks.Integration.AspNetCore": "0.9999.0.9999-*"
+    "Apworks.Integration.AspNetCore": "0.999.0-*"
   },
 
   "frameworks": {

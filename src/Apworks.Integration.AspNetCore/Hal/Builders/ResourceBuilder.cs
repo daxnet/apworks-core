@@ -24,38 +24,41 @@
 // limitations under the License.
 // ==================================================================================================================
 
-using System.Collections.Generic;
-
-namespace Apworks.Integration.AspNetCore.Hal
+namespace Apworks.Integration.AspNetCore.Hal.Builders
 {
     /// <summary>
-    /// Represents that the implemented classes are HAL resources.
+    /// Represents that the implemented classes are the HAL resource
+    /// builders that simply returned the built HAL resource.
     /// </summary>
-    public interface IResource
+    /// <seealso cref="Hal.Builders.IBuilder" />
+    public interface IResourceBuilder : IBuilder { }
+
+    /// <summary>
+    /// Represents the HAL resource builder.
+    /// </summary>
+    /// <seealso cref="Hal.Builders.IResourceBuilder" />
+    public sealed class ResourceBuilder : IResourceBuilder
     {
-        /// <summary>
-        /// Gets or sets the state of the resource, usually it is the object
-        /// that holds the domain information.
-        /// </summary>
-        /// <value>
-        /// The state of the resource.
-        /// </value>
-        object State { get; set; }
+        #region Private Fields
+        private readonly Resource resource = new Resource();
+        #endregion
 
+        #region Ctor        
         /// <summary>
-        /// Gets or sets the links.
+        /// Initializes a new instance of the <see cref="ResourceBuilder"/> class.
         /// </summary>
-        /// <value>
-        /// The links.
-        /// </value>
-        LinkCollection Links { get; set; }
+        public ResourceBuilder() { }
+        #endregion
 
+        #region Public Methods        
         /// <summary>
-        /// Gets the embedded resources.
+        /// Builds the <see cref="Resource"/> instance.
         /// </summary>
-        /// <value>
-        /// The embedded resources.
-        /// </value>
-        EmbeddedResourceCollection EmbeddedResources { get; }
+        /// <returns>The <see cref="Resource"/> instance to be built.</returns>
+        public Resource Build()
+        {
+            return resource;
+        }
+        #endregion
     }
 }
