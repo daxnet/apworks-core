@@ -45,24 +45,28 @@ namespace Apworks.Repositories.MongoDB
             await this.collection.InsertOneAsync(aggregateRoot, options, cancellationToken);
         }
 
-        public override void Remove(TAggregateRoot aggregateRoot)
+        public override void RemoveByKey(TKey key)
         {
-            this.collection.DeleteOne(x => x.Id.Equals(aggregateRoot.Id));
+            var filterDefinition = Builders<TAggregateRoot>.Filter.Eq(x => x.Id, key);
+            this.collection.DeleteOne(filterDefinition);
         }
 
-        public override async Task RemoveAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task RemoveByKeyAsync(TKey key, CancellationToken cancellationToken = default(CancellationToken))
         {
-            await this.collection.DeleteOneAsync(x => x.Id.Equals(aggregateRoot.Id), cancellationToken);
+            var filterDefinition = Builders<TAggregateRoot>.Filter.Eq(x => x.Id, key);
+            await this.collection.DeleteOneAsync(filterDefinition, cancellationToken);
         }
 
-        public override void Update(TAggregateRoot aggregateRoot)
+        public override void UpdateByKey(TKey key, TAggregateRoot aggregateRoot)
         {
-            this.collection.ReplaceOne(x => x.Id.Equals(aggregateRoot.Id), aggregateRoot);
+            var filterDefinition = Builders<TAggregateRoot>.Filter.Eq(x => x.Id, key);
+            this.collection.ReplaceOne(filterDefinition, aggregateRoot);
         }
 
-        public override async Task UpdateAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task UpdateByKeyAsync(TKey key, TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken))
         {
-            await this.collection.ReplaceOneAsync(x => x.Id.Equals(aggregateRoot.Id), aggregateRoot, cancellationToken: cancellationToken);
+            var filterDefinition = Builders<TAggregateRoot>.Filter.Eq(x => x.Id, key);
+            await this.collection.ReplaceOneAsync(filterDefinition, aggregateRoot, cancellationToken: cancellationToken);
         }
 
         public override IQueryable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification)
@@ -144,5 +148,7 @@ namespace Apworks.Repositories.MongoDB
         {
             return (await this.collection.FindAsync(x => x.Id.Equals(key), cancellationToken: cancellationToken)).FirstOrDefault();
         }
+
+        
     }
 }

@@ -78,7 +78,10 @@ namespace Apworks.Repositories
         /// Removes the specified aggregate root from the current repository.
         /// </summary>
         /// <param name="aggregateRoot">The aggregate root.</param>
-        public abstract void Remove(TAggregateRoot aggregateRoot);
+        public virtual void Remove(TAggregateRoot aggregateRoot)
+        {
+            this.RemoveByKey(aggregateRoot.Id);
+        }
 
         /// <summary>
         /// Removes the specified aggregate root from the current repository asynchronously.
@@ -86,16 +89,26 @@ namespace Apworks.Repositories
         /// <param name="aggregateRoot">The aggregate root.</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public virtual Task RemoveAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual async Task RemoveAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return Task.Factory.StartNew(() => this.Remove(aggregateRoot), cancellationToken);
+            await this.RemoveByKeyAsync(aggregateRoot.Id, cancellationToken);
+        }
+
+        public abstract void RemoveByKey(TKey key);
+
+        public virtual Task RemoveByKeyAsync(TKey key, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return Task.Factory.StartNew(() => this.RemoveByKey(key), cancellationToken);
         }
 
         /// <summary>
         /// Updates the specified aggregate root.
         /// </summary>
         /// <param name="aggregateRoot">The aggregate root.</param>
-        public abstract void Update(TAggregateRoot aggregateRoot);
+        public virtual void Update(TAggregateRoot aggregateRoot)
+        {
+            this.UpdateByKey(aggregateRoot.Id, aggregateRoot);
+        }
 
         /// <summary>
         /// Updates the specified aggregate root asynchronously.
@@ -103,9 +116,16 @@ namespace Apworks.Repositories
         /// <param name="aggregateRoot">The aggregate root.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public virtual Task UpdateAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual async Task UpdateAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return Task.Factory.StartNew(() => this.Update(aggregateRoot), cancellationToken);
+            await this.UpdateByKeyAsync(aggregateRoot.Id, aggregateRoot, cancellationToken);
+        }
+
+        public abstract void UpdateByKey(TKey key, TAggregateRoot aggregateRoot);
+
+        public virtual Task UpdateByKeyAsync(TKey key, TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return Task.Factory.StartNew(() => this.UpdateByKey(key, aggregateRoot), cancellationToken);
         }
 
         /// <summary>

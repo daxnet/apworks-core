@@ -78,5 +78,7 @@ namespace Apworks.Integration.AspNetCore
                     return serviceCollection.AddTransient<IRepositoryContext>(instanceFactory);
             }
         }
+
+        
     }
 }

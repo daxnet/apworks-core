@@ -74,6 +74,10 @@ namespace Apworks.Repositories
         /// <returns></returns>
         Task RemoveAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken));
 
+        void RemoveByKey(TKey key);
+
+        Task RemoveByKeyAsync(TKey key, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <summary>
         /// Updates the specified aggregate root.
         /// </summary>
@@ -87,6 +91,10 @@ namespace Apworks.Repositories
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         Task UpdateAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken));
+
+        void UpdateByKey(TKey key, TAggregateRoot aggregateRoot);
+
+        Task UpdateByKeyAsync(TKey key, TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Gets the <see cref="IAggregateRoot{TKey}"/> instance from current repository by using a specified key.

@@ -85,6 +85,11 @@ namespace Apworks.Integration.AspNetCore.Hal.Converters
             {
                 //serializer.Serialize(writer, resource.State);
                 var obj = JToken.FromObject(resource.State);
+                if (obj.Type == JTokenType.Array)
+                {
+                    throw new InvalidOperationException("The state object cannot be an array. Consider putting an array of objects in the _embedded resource.");
+                }
+
                 if (obj.Type != JTokenType.Object)
                 {
                     obj.WriteTo(writer);
