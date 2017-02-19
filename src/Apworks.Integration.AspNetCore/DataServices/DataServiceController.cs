@@ -24,6 +24,7 @@
 // limitations under the License.
 // ==================================================================================================================
 
+using Apworks.KeyGeneration;
 using Apworks.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -46,16 +47,25 @@ namespace Apworks.Integration.AspNetCore.DataServices
     {
         private readonly IRepositoryContext repositoryContext;
         private readonly IRepository<TKey, TAggregateRoot> repository;
+        private readonly IKeyGenerator<TKey, TAggregateRoot> keyGenerator;
 
         #region Ctor
+
+        protected DataServiceController(IRepositoryContext repositoryContext)
+            : this(repositoryContext, new NullKeyGenerator<TKey>())
+        {
+
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="DataServiceController{TKey, TAggregateRoot}"/> class.
         /// </summary>
         /// <param name="repositoryContext">The repository context.</param>
-        protected DataServiceController(IRepositoryContext repositoryContext)
+        protected DataServiceController(IRepositoryContext repositoryContext, IKeyGenerator<TKey, TAggregateRoot> keyGenerator)
         {
             this.repositoryContext = repositoryContext;
             this.repository = repositoryContext.GetRepository<TKey, TAggregateRoot>();
+            this.keyGenerator = keyGenerator;
         }
         #endregion
 
@@ -78,6 +88,12 @@ namespace Apworks.Integration.AspNetCore.DataServices
         [HttpPost]
         public virtual async Task Post([FromBody] TAggregateRoot aggregateRoot)
         {
+            var generatedKey = this.keyGenerator.Generate(aggregateRoot);
+            if (!generatedKey.Equals(default(TKey)))
+            {
+                aggregateRoot.Id = generatedKey;
+            }
+
             await this.repository.AddAsync(aggregateRoot);
         }
 
