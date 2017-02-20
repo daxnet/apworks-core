@@ -25,6 +25,8 @@
 // ==================================================================================================================
 
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Apworks.Repositories
 {
@@ -58,6 +60,10 @@ namespace Apworks.Repositories
         IRepository<TKey, TAggregateRoot> GetRepository<TKey, TAggregateRoot>()
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRoot<TKey>;
+
+        void Commit();
+
+        Task CommitAsync(CancellationToken cancellationToken = default(CancellationToken));
     }
 
     /// <summary>

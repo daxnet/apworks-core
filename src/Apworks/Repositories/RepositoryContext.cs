@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Apworks.Repositories
@@ -34,5 +35,15 @@ namespace Apworks.Repositories
             where TAggregateRoot : class, IAggregateRoot<TKey>;
 
         protected override void Dispose(bool disposing) { }
+
+        public virtual void Commit()
+        {
+            
+        }
+
+        public virtual Task CommitAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return Task.Factory.StartNew(Commit, cancellationToken);
+        }
     }
 }

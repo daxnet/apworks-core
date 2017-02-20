@@ -80,14 +80,27 @@ namespace Apworks.Integration.AspNetCore.DataServices
         }
 
         [HttpGet("{id}")]
-        public virtual TAggregateRoot Get(TKey id)
+        public virtual async Task<TAggregateRoot> Get(TKey id)
         {
-            return this.repository.FindByKey(id);
+            var all = await this.repository.FindAllAsync(x => x.Id.Equals(id));
+            var first = all.FirstOrDefault();
+            if (first == null)
+            {
+                throw new EntityNotFoundException($"The entity with the key of '{id}' does not exist.");
+            }
+
+            return first;
         }
 
         [HttpPost]
-        public virtual async Task Post([FromBody] TAggregateRoot aggregateRoot)
+        public virtual async Task<IActionResult> Post([FromBody] TAggregateRoot aggregateRoot)
         {
+            if (!aggregateRoot.Id.Equals(default(TKey)) &&
+                await this.repository.ExistsAsync(x=>x.Id.Equals(aggregateRoot.Id)))
+            {
+                throw new EntityAlreadyExistsException($"The entity with the key of '{aggregateRoot.Id}' already exists.");
+            }
+
             var generatedKey = this.keyGenerator.Generate(aggregateRoot);
             if (!generatedKey.Equals(default(TKey)))
             {
@@ -95,6 +108,9 @@ namespace Apworks.Integration.AspNetCore.DataServices
             }
 
             await this.repository.AddAsync(aggregateRoot);
+            await this.repositoryContext.CommitAsync();
+
+            return Created(Url.Action("Get", new { id = aggregateRoot.Id }), aggregateRoot.Id);
         }
 
         [HttpPut("{id}")]

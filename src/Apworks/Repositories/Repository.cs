@@ -128,6 +128,16 @@ namespace Apworks.Repositories
             return Task.Factory.StartNew(() => this.UpdateByKey(key, aggregateRoot), cancellationToken);
         }
 
+        public virtual bool Exists(Expression<Func<TAggregateRoot, bool>> specification)
+        {
+            return this.FindAll(specification).Count() > 0;
+        }
+
+        public virtual async Task<bool> ExistsAsync(Expression<Func<TAggregateRoot, bool>> specification, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return (await this.FindAllAsync(specification, cancellationToken)).Count() > 0;
+        }
+
         /// <summary>
         /// Gets the <see cref="T:Apworks.IAggregateRoot`1" /> instance from current repository by using a specified key.
         /// </summary>

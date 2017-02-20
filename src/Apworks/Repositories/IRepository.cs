@@ -96,6 +96,10 @@ namespace Apworks.Repositories
 
         Task UpdateByKeyAsync(TKey key, TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken));
 
+        bool Exists(Expression<Func<TAggregateRoot, bool>> specification);
+
+        Task<bool> ExistsAsync(Expression<Func<TAggregateRoot, bool>> specification, CancellationToken cancellationToken = default(CancellationToken));
+
         /// <summary>
         /// Gets the <see cref="IAggregateRoot{TKey}"/> instance from current repository by using a specified key.
         /// </summary>
