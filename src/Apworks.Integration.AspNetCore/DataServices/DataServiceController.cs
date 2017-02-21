@@ -51,6 +51,11 @@ namespace Apworks.Integration.AspNetCore.DataServices
 
         #region Ctor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataServiceController{TKey, TAggregateRoot}"/> class.
+        /// </summary>
+        /// <param name="repositoryContext">The repository context that is used by the current
+        /// <see cref="DataServiceController{TKey, TAggregateRoot}"/> for managing the object lifecycle.</param>
         protected DataServiceController(IRepositoryContext repositoryContext)
             : this(repositoryContext, new NullKeyGenerator<TKey>())
         {
@@ -60,7 +65,10 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// <summary>
         /// Initializes a new instance of the <see cref="DataServiceController{TKey, TAggregateRoot}"/> class.
         /// </summary>
-        /// <param name="repositoryContext">The repository context.</param>
+        /// <param name="repositoryContext">The repository context that is used by the current
+        /// <see cref="DataServiceController{TKey, TAggregateRoot}"/> for managing the object lifecycle.</param>
+        /// <param name="keyGenerator">The <see cref="IKeyGenerator{TKey, TAggregateRoot}"/> instance
+        /// which generates the aggregate root key for the specified aggregate root type.</param>
         protected DataServiceController(IRepositoryContext repositoryContext, IKeyGenerator<TKey, TAggregateRoot> keyGenerator)
         {
             this.repositoryContext = repositoryContext;
@@ -69,9 +77,18 @@ namespace Apworks.Integration.AspNetCore.DataServices
         }
         #endregion
 
+        #region Protected Properties
+
+        /// <summary>
+        /// Gets the repository context that is used by the current
+        /// <see cref="DataServiceController{TKey, TAggregateRoot}"/> for managing the object lifecycle.
+        /// </summary>
         protected IRepositoryContext RepositoryContext => this.repositoryContext;
 
         protected IRepository<TKey, TAggregateRoot> Repository => this.repository;
+
+        protected IKeyGenerator<TKey, TAggregateRoot> KeyGenerator => this.keyGenerator;
+        #endregion
 
         [HttpGet]
         public virtual async Task<IQueryable<TAggregateRoot>> Get()
@@ -82,6 +99,11 @@ namespace Apworks.Integration.AspNetCore.DataServices
         [HttpGet("{id}")]
         public virtual async Task<TAggregateRoot> Get(TKey id)
         {
+            if (id.Equals(default(TKey)))
+            {
+                throw new InvalidArgumentException("Entity key has not been specified.");
+            }
+
             var all = await this.repository.FindAllAsync(x => x.Id.Equals(id));
             var first = all.FirstOrDefault();
             if (first == null)
@@ -95,8 +117,13 @@ namespace Apworks.Integration.AspNetCore.DataServices
         [HttpPost]
         public virtual async Task<IActionResult> Post([FromBody] TAggregateRoot aggregateRoot)
         {
+            if (aggregateRoot == null)
+            {
+                throw new InvalidOperationException("The entity that is going to be created has not been specified.");
+            }
+
             if (!aggregateRoot.Id.Equals(default(TKey)) &&
-                await this.repository.ExistsAsync(x=>x.Id.Equals(aggregateRoot.Id)))
+                await this.repository.ExistsAsync(x => x.Id.Equals(aggregateRoot.Id)))
             {
                 throw new EntityAlreadyExistsException($"The entity with the key of '{aggregateRoot.Id}' already exists.");
             }
@@ -114,13 +141,36 @@ namespace Apworks.Integration.AspNetCore.DataServices
         }
 
         [HttpPut("{id}")]
-        public virtual async Task Put(TKey id, [FromBody] TAggregateRoot aggregateRoot)
+        public virtual async Task<IActionResult> Put(TKey id, [FromBody] TAggregateRoot aggregateRoot)
         {
-            if (!aggregateRoot.Id.Equals(id))
+            if (id.Equals(default(TKey)))
             {
-                throw new InvalidOperationException();
+                throw new InvalidArgumentException("Entity key has not been specified.");
             }
-            await this.repository.UpdateAsync(aggregateRoot);
+
+            if (aggregateRoot == null)
+            {
+                throw new InvalidOperationException("The entity that is going to be updated has not been specified.");
+            }
+
+            await this.repository.UpdateByKeyAsync(id, aggregateRoot);
+            await this.repositoryContext.CommitAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public virtual async Task<IActionResult> Delete(TKey id)
+        {
+            if (id.Equals(default(TKey)))
+            {
+                throw new InvalidArgumentException("Entity key has not been specified.");
+            }
+
+            await this.repository.RemoveByKeyAsync(id);
+            await this.repositoryContext.CommitAsync();
+
+            return NoContent();
         }
     }
 }
