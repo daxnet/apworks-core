@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Apworks.Integration.AspNetCore.DataServices
 {
+    /// <summary>
+    /// Represents the middleware that handles <see cref="DataServiceException"/>
+    /// in the ASP.NET invocation chain.
+    /// </summary>
     public sealed class DataServiceExceptionHandler
     {
         private readonly RequestDelegate nextInvocation;

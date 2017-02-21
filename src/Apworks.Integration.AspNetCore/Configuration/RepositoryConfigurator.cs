@@ -7,11 +7,16 @@ using Apworks.Repositories;
 
 namespace Apworks.Integration.AspNetCore.Configuration
 {
+    /// <summary>
+    /// Represents that the implemented classes are configurators that
+    /// configures the repository in the service collection.
+    /// </summary>
+    /// <seealso cref="Apworks.Integration.AspNetCore.Configuration.IConfigurator" />
     public interface IRepositoryConfigurator : IConfigurator
     {
     }
 
-    internal sealed class RepositoryConfigurator<TRepositoryContext> : ServiceRegisterConfigurator<TRepositoryContext>, IRepositoryConfigurator
+    internal sealed class RepositoryConfigurator<TRepositoryContext> : ServiceRegisterConfigurator<IRepositoryContext, TRepositoryContext>, IRepositoryConfigurator
         where TRepositoryContext : class, IRepositoryContext
     {
         public RepositoryConfigurator(IConfigurator context, TRepositoryContext repositoryContext, ServiceLifetime serviceLifetime)

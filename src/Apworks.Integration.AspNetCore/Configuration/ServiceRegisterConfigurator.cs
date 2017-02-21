@@ -6,51 +6,58 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Apworks.Integration.AspNetCore.Configuration
 {
-    internal abstract class ServiceRegisterConfigurator<TService> : Configurator
+    internal abstract class ServiceRegisterConfigurator<TService, TImplementation> : Configurator
         where TService : class
+        where TImplementation : class, TService
     {
-        private readonly TService service;
-        private readonly Func<IServiceProvider, TService> serviceFactory;
+        private readonly TImplementation implementation;
+        private readonly Func<IServiceProvider, TImplementation> implementationFactory;
         private readonly ServiceLifetime serviceLifetime;
 
-        protected ServiceRegisterConfigurator(IConfigurator context, TService service, ServiceLifetime serviceLifetime) : base(context)
+        protected ServiceRegisterConfigurator(IConfigurator context, TImplementation implementation, ServiceLifetime serviceLifetime) : base(context)
         {
-            this.service = service;
+            this.implementation = implementation;
             this.serviceLifetime = serviceLifetime;
         }
 
-        protected ServiceRegisterConfigurator(IConfigurator context, Func<IServiceProvider, TService> serviceFactory, ServiceLifetime serviceLifetime)
+        protected ServiceRegisterConfigurator(IConfigurator context, Func<IServiceProvider, TImplementation> implementationFactory, ServiceLifetime serviceLifetime)
             : base(context)
         {
-            this.serviceFactory = serviceFactory;
+            this.implementationFactory = implementationFactory;
             this.serviceLifetime = serviceLifetime;
         }
 
         protected override IServiceCollection DoConfigure(IServiceCollection context)
         {
-            if (service != null)
+            if (implementation != null)
             {
                 switch (this.serviceLifetime)
                 {
                     case ServiceLifetime.Scoped:
-                        return context.AddScoped<TService>(serviceProvider => service);
+                        context.AddScoped<TService, TImplementation>(serviceProvider => implementation);
+                        break;
                     case ServiceLifetime.Singleton:
-                        return context.AddSingleton<TService>(serviceProvider => service);
+                        context.AddSingleton<TService, TImplementation>(serviceProvider => implementation);
+                        break;
                     default:
-                        return context.AddTransient<TService>(serviceProvider => service);
+                        context.AddTransient<TService, TImplementation>(serviceProvider => implementation);
+                        break;
                 }
             }
 
-            if (serviceFactory != null)
+            if (implementationFactory != null)
             {
                 switch (this.serviceLifetime)
                 {
                     case ServiceLifetime.Scoped:
-                        return context.AddScoped<TService>(serviceFactory);
+                        context.AddScoped<TService, TImplementation>(implementationFactory);
+                        break;
                     case ServiceLifetime.Singleton:
-                        return context.AddSingleton<TService>(serviceFactory);
+                        context.AddSingleton<TService, TImplementation>(implementationFactory);
+                        break;
                     default:
-                        return context.AddTransient<TService>(serviceFactory);
+                        context.AddTransient<TService, TImplementation>(implementationFactory);
+                        break;
                 }
             }
 
