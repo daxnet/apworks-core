@@ -37,52 +37,6 @@ namespace Apworks.Integration.AspNetCore
     /// </summary>
     public static class IntegrationExtensions
     {
-        #region Commented
-        /// <summary>
-        /// Adds a <see cref="IRepositoryContext"/> instance to the service collection.
-        /// </summary>
-        /// <typeparam name="TRepositoryContext">The type of the repository context.</typeparam>
-        /// <param name="serviceCollection">The service collection to which the instance is going to be added.</param>
-        /// <param name="instance">The instance of <see cref="IRepositoryContext"/> that needs to be added to the IoC container.</param>
-        /// <param name="lifetime">The lifetime of the instance.</param>
-        /// <returns></returns>
-        //public static IServiceCollection AddRepository<TRepositoryContext>(this IServiceCollection serviceCollection, TRepositoryContext instance, ServiceLifetime lifetime = ServiceLifetime.Scoped)
-        //    where TRepositoryContext : class, IRepositoryContext
-        //{
-        //    switch(lifetime)
-        //    {
-        //        case ServiceLifetime.Scoped:
-        //            return serviceCollection.AddScoped<IRepositoryContext>(serviceProvider => instance);
-        //        case ServiceLifetime.Singleton:
-        //            return serviceCollection.AddSingleton<IRepositoryContext>(serviceProvider => instance);
-        //        default:
-        //            return serviceCollection.AddTransient<IRepositoryContext>(serviceProvider => instance);
-        //    }
-        //}
-
-        /// <summary>
-        /// Adds a <see cref="IRepositoryContext"/> instance to the service collection.
-        /// </summary>
-        /// <typeparam name="TRepositoryContext">The type of the repository context.</typeparam>
-        /// <param name="serviceCollection">The service collection to which the instance is going to be added.</param>
-        /// <param name="instanceFactory">The factory that creates the <see cref="IRepositoryContext"/> instance to be added by using a given <see cref="IServiceProvider"/>.</param>
-        /// <param name="lifetime">The lifetime of the instance.</param>
-        /// <returns></returns>
-        //public static IServiceCollection AddRepository<TRepositoryContext>(this IServiceCollection serviceCollection, Func<IServiceProvider, IRepositoryContext> instanceFactory, ServiceLifetime lifetime = ServiceLifetime.Scoped)
-        //    where TRepositoryContext : class, IRepositoryContext
-        //{
-        //    switch(lifetime)
-        //    {
-        //        case ServiceLifetime.Scoped:
-        //            return serviceCollection.AddScoped<IRepositoryContext>(instanceFactory);
-        //        case ServiceLifetime.Singleton:
-        //            return serviceCollection.AddSingleton<IRepositoryContext>(instanceFactory);
-        //        default:
-        //            return serviceCollection.AddTransient<IRepositoryContext>(instanceFactory);
-        //    }
-        //}
-        #endregion
-
         #region IServiceCollection Extensions
         public static IApworksConfigurator AddApworks(this IServiceCollection serviceCollection)
         {
@@ -125,6 +79,32 @@ namespace Apworks.Integration.AspNetCore
         }
 
         public static IKeyGeneratorConfigurator WithKeyGenerator<TKey, TAggregateRoot>(this IRepositoryConfigurator configurator, Func<IServiceProvider, IKeyGenerator<TKey, TAggregateRoot>> keyGeneratorFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            where TKey : IEquatable<TKey>
+            where TAggregateRoot : class, IAggregateRoot<TKey>
+        {
+            return new KeyGeneratorConfigurator<TKey, TAggregateRoot, IKeyGenerator<TKey, TAggregateRoot>>(configurator, keyGeneratorFactory, serviceLifetime);
+        }
+
+        public static IRepositoryConfigurator WithRepository(this IRepositoryConfigurator configurator, IRepositoryContext repositoryContext, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        {
+            return new RepositoryConfigurator<IRepositoryContext>(configurator, repositoryContext, serviceLifetime);
+        }
+
+        public static IRepositoryConfigurator WithRepository(this IRepositoryConfigurator configurator, Func<IServiceProvider, IRepositoryContext> repositoryContextFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        {
+            return new RepositoryConfigurator<IRepositoryContext>(configurator, repositoryContextFactory, serviceLifetime);
+        }
+        #endregion
+
+        #region IKeyGeneratorConfigurator Extensions
+        public static IKeyGeneratorConfigurator WithKeyGenerator<TKey, TAggregateRoot>(this IKeyGeneratorConfigurator configurator, IKeyGenerator<TKey, TAggregateRoot> keyGenerator, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+            where TKey : IEquatable<TKey>
+            where TAggregateRoot : class, IAggregateRoot<TKey>
+        {
+            return new KeyGeneratorConfigurator<TKey, TAggregateRoot, IKeyGenerator<TKey, TAggregateRoot>>(configurator, keyGenerator, serviceLifetime);
+        }
+
+        public static IKeyGeneratorConfigurator WithKeyGenerator<TKey, TAggregateRoot>(this IKeyGeneratorConfigurator configurator, Func<IServiceProvider, IKeyGenerator<TKey, TAggregateRoot>> keyGeneratorFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRoot<TKey>
         {

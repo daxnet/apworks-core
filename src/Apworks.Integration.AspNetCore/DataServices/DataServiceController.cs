@@ -150,7 +150,12 @@ namespace Apworks.Integration.AspNetCore.DataServices
 
             if (aggregateRoot == null)
             {
-                throw new InvalidOperationException("The entity that is going to be updated has not been specified.");
+                throw new InvalidArgumentException("The entity that is going to be updated has not been specified.");
+            }
+
+            if (!(await this.repository.ExistsAsync(x => x.Id.Equals(id))))
+            {
+                throw new EntityNotFoundException($"The entity with the key of '{id}' does not exist.");
             }
 
             await this.repository.UpdateByKeyAsync(id, aggregateRoot);
@@ -165,6 +170,11 @@ namespace Apworks.Integration.AspNetCore.DataServices
             if (id.Equals(default(TKey)))
             {
                 throw new InvalidArgumentException("Entity key has not been specified.");
+            }
+
+            if (!await this.repository.ExistsAsync(x => x.Id.Equals(id)))
+            {
+                throw new EntityNotFoundException($"The entity with the key of '{id}' does not exist.");
             }
 
             await this.repository.RemoveByKeyAsync(id);
