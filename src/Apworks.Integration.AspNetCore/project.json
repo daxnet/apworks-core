@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "0.999.0-*",
   "authors": [ "daxnet" ],
   "description": "Apworks Application Development Framework",
@@ -6,6 +6,7 @@
 
   "dependencies": {
     "Apworks": "0.999.0-*",
+    "Microsoft.AspNetCore.JsonPatch": "1.1.0",
     "Microsoft.AspNetCore.Mvc": "1.1.0",
     "Microsoft.Extensions.DependencyInjection": "1.1.0",
     "NETStandard.Library": "1.6.1",

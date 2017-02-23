@@ -26,6 +26,7 @@
 
 using Apworks.KeyGeneration;
 using Apworks.Repositories;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -168,6 +169,33 @@ namespace Apworks.Integration.AspNetCore.DataServices
             }
 
             await this.repository.RemoveByKeyAsync(id);
+            await this.repositoryContext.CommitAsync();
+
+            return NoContent();
+        }
+
+        [HttpPatch("{id}")]
+        public virtual async Task<IActionResult> Patch(TKey id, [FromBody] JsonPatchDocument<TAggregateRoot> patch)
+        {
+            if (id.Equals(default(TKey)))
+            {
+                throw new InvalidArgumentException("Entity key has not been specified.");
+            }
+
+            var instance = (await this.repository.FindAllAsync(x => x.Id.Equals(id))).FirstOrDefault();
+            if (instance == null)
+            {
+                throw new EntityNotFoundException($"The entity with the key of '{id}' does not exist.");
+            }
+
+            patch.ApplyTo(instance, this.ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return new BadRequestObjectResult(this.ModelState);
+            }
+
+            await this.repository.UpdateByKeyAsync(id, instance);
             await this.repositoryContext.CommitAsync();
 
             return NoContent();
