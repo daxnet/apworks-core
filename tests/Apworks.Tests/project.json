@@ -1,0 +1,30 @@
+{
+  "version": "0.999.0-*",
+  "testRunner": "xunit",
+
+  "dependencies": {
+    "Apworks": "0.999.0-*",
+    "xunit": "2.2.0-beta4-build3444",
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "Moq": "4.6.38-alpha",
+    "Apworks.Repositories.MongoDB": "0.999.0-*",
+    "NETStandard.Library": "1.6.1",
+    "Apworks.Integration.AspNetCore": "0.999.0-*",
+    "Microsoft.DotNet.InternalAbstractions": "1.0.0"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.1.0"
+        }
+      }
+    }
+  }
+
+  //"buildOptions": {
+  //  "keyFile": "../../tools/Apworks.snk"
+  //}
+}
