@@ -124,7 +124,7 @@ namespace Apworks.Repositories.MongoDB
                     .AsQueryable();
             }
 
-            List<SortDefinition<TAggregateRoot>> sortDefinitions = new List<SortDefinition<TAggregateRoot>>();
+            var sortDefinitions = new List<SortDefinition<TAggregateRoot>>();
             foreach(var sort in sorts)
             {
                 sortDefinitions.Add(sort.Item2 == SortOrder.Ascending ?
@@ -149,6 +149,94 @@ namespace Apworks.Repositories.MongoDB
             return (await this.collection.FindAsync(x => x.Id.Equals(key), cancellationToken: cancellationToken)).FirstOrDefault();
         }
 
-        
+        public override PagedResult<TKey, TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, int pageNumber, int pageSize)
+        {
+            if (specification == null)
+            {
+                specification = _ => true;
+            }
+
+            if (sortSpecification == null)
+            {
+                throw new ArgumentNullException(nameof(sortSpecification), "The sort specification has not been specified.");
+            }
+
+            if (pageNumber <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageNumber), "The page number should be greater than 0.");
+            }
+
+            if (pageSize <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageSize), "The page size should be greater than 0.");
+            }
+
+            var sorts = sortSpecification.Specifications.ToList();
+            if (sorts.Any(s => s.Item2 == SortOrder.Unspecified))
+            {
+                throw new InvalidOperationException("The SortOrder of the items in the sort specification should be either Ascending or Descending.");
+            }
+
+            var totalCount = this.collection.Count(specification);
+            var skip = (pageNumber - 1) * pageSize;
+            var take = pageSize;
+            var totalPages = (totalCount + pageSize - 1) / pageSize;
+
+            var find = this.collection.Find(specification);
+            var firstSort = sorts[0];
+            var orderedFind = firstSort.Item2 == SortOrder.Ascending ?
+                find.SortBy(firstSort.Item1) : find.SortByDescending(firstSort.Item1);
+
+            for (var i = 1; i < sorts.Count; i++)
+            {
+                var current = sorts[i];
+                orderedFind = current.Item2 == SortOrder.Ascending ?
+                    orderedFind.SortBy(current.Item1) : orderedFind.SortByDescending(current.Item1);
+            }
+
+            return new PagedResult<TKey, TAggregateRoot>(find.Skip(skip).Limit(take).ToEnumerable(), pageNumber, pageSize, totalCount, totalPages);
+        }
+
+        public override async Task<PagedResult<TKey, TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, int pageNumber, int pageSize, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            if (specification == null)
+            {
+                specification = _ => true;
+            }
+
+            if (sortSpecification == null)
+            {
+                throw new ArgumentNullException(nameof(sortSpecification), "The sort specification has not been specified.");
+            }
+
+            if (pageNumber <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageNumber), "The page number should be greater than 0.");
+            }
+
+            if (pageSize <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageSize), "The page size should be greater than 0.");
+            }
+
+            var sortDefinitions = new List<SortDefinition<TAggregateRoot>>();
+            foreach (var sort in sortSpecification.Specifications)
+            {
+                sortDefinitions.Add(sort.Item2 == SortOrder.Ascending ?
+                    Builders<TAggregateRoot>.Sort.Ascending(sort.Item1) :
+                    Builders<TAggregateRoot>.Sort.Descending(sort.Item1));
+            }
+
+            var totalCount = await this.collection.CountAsync(specification);
+            var skip = (pageNumber - 1) * pageSize;
+            var take = pageSize;
+            var totalPages = (totalCount + pageSize - 1) / pageSize;
+
+            var aggregatedSortDefinition = Builders<TAggregateRoot>.Sort.Combine(sortDefinitions);
+            var findOptions = new FindOptions<TAggregateRoot> { Sort = aggregatedSortDefinition, Skip = skip, Limit = take };
+
+            return new PagedResult<TKey, TAggregateRoot>((await this.collection.FindAsync<TAggregateRoot>(specification, findOptions)).ToEnumerable(),
+                pageNumber, pageSize, totalCount, totalPages);
+        }
     }
 }

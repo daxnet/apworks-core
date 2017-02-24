@@ -159,5 +159,9 @@ namespace Apworks.Repositories
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that propagates the notification that the operation should be cancelled.</param>
         /// <returns>A <see cref="IQueryable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
         Task<IQueryable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, CancellationToken cancellationToken = default(CancellationToken));
+
+        PagedResult<TKey, TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, int pageNumber, int pageSize);
+
+        Task<PagedResult<TKey, TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, int pageNumber, int pageSize, CancellationToken cancellationToken = default(CancellationToken));
     }
 }
