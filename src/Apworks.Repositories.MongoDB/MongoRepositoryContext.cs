@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Apworks.Repositories.MongoDB
 {
-    public class MongoRepositoryContext : RepositoryContext<IMongoClient>
+    public sealed class MongoRepositoryContext : RepositoryContext<IMongoClient>
     {
         public MongoRepositoryContext(MongoRepositorySettings settings)
             : base(new MongoClient(settings.ClientSettings))

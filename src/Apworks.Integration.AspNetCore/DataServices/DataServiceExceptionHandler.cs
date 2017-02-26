@@ -25,6 +25,10 @@ namespace Apworks.Integration.AspNetCore.DataServices
             {
                 await this.nextInvocation.Invoke(context);
             }
+            catch(ArgumentException ex)
+            {
+                await ConstructExceptionResponseAsync(context, new InvalidArgumentException(ex.Message, ex));
+            }
             catch(Exception ex)
             {
                 await ConstructExceptionResponseAsync(context, ex);

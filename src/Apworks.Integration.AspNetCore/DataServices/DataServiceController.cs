@@ -25,6 +25,7 @@
 // ==================================================================================================================
 
 using Apworks.KeyGeneration;
+using Apworks.Querying;
 using Apworks.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -92,9 +93,13 @@ namespace Apworks.Integration.AspNetCore.DataServices
         #endregion
 
         [HttpGet]
-        public virtual async Task<IQueryable<TAggregateRoot>> Get()
+        public virtual async Task<IActionResult> Get([FromQuery] int size = 15, [FromQuery] int page = 1)
         {
-            return await this.repository.FindAllAsync();
+            var aggregateRoots = await this.repository.FindAllAsync(x => true,
+                new SortSpecification<TKey, TAggregateRoot> { { x => x.Id, SortOrder.Ascending } },
+                page, size);
+
+            return Ok(aggregateRoots);
         }
 
         [HttpGet("{id}")]

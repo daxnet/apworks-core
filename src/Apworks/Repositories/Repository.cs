@@ -238,5 +238,15 @@ namespace Apworks.Repositories
         {
             return Task.FromResult(this.FindAll(specification, sortSpecification, pageNumber, pageSize));
         }
+
+        public virtual PagedResult<TKey, TAggregateRoot> FindAll(SortSpecification<TKey, TAggregateRoot> sortSpecification, int pageNumber, int pageSize)
+        {
+            return this.FindAll(_ => true, sortSpecification, pageNumber, pageSize);
+        }
+
+        public virtual Task<PagedResult<TKey, TAggregateRoot>> FindAllAsync(SortSpecification<TKey, TAggregateRoot> sortSpecification, int pageNumber, int pageSize, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return this.FindAllAsync(_ => true, sortSpecification, pageNumber, pageSize, cancellationToken);
+        }
     }
 }

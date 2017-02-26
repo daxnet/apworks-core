@@ -28,6 +28,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
         }
 
         protected DataServiceException(HttpStatusCode httpStatusCode, string message, Exception innerException)
+            : base(message, innerException)
         {
             this.httpStatusCode = httpStatusCode;
         }

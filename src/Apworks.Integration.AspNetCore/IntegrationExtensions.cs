@@ -25,8 +25,10 @@
 // ==================================================================================================================
 
 using Apworks.Integration.AspNetCore.Configuration;
+using Apworks.Integration.AspNetCore.DataServices;
 using Apworks.KeyGeneration;
 using Apworks.Repositories;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -109,6 +111,13 @@ namespace Apworks.Integration.AspNetCore
             where TAggregateRoot : class, IAggregateRoot<TKey>
         {
             return new KeyGeneratorConfigurator<TKey, TAggregateRoot, IKeyGenerator<TKey, TAggregateRoot>>(configurator, keyGeneratorFactory, serviceLifetime);
+        }
+        #endregion
+
+        #region IApplicationBuilder Extensions
+        public static IApplicationBuilder EnrichDataServiceExceptionResponse(this IApplicationBuilder applicationBuilder)
+        {
+            return applicationBuilder.UseMiddleware<DataServiceExceptionHandler>();
         }
         #endregion
     }

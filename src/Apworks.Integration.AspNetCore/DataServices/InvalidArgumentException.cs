@@ -15,5 +15,9 @@ namespace Apworks.Integration.AspNetCore.DataServices
         public InvalidArgumentException(string format, params object[] args)
             : base(HttpStatusCode.BadRequest, format, args)
         { }
+
+        public InvalidArgumentException(string message, Exception innerException)
+            : base(HttpStatusCode.BadRequest, message, innerException)
+        { }
     }
 }
