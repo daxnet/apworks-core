@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Apworks.Querying;
 
-namespace Apworks.Repositories.DictionaryRepository
+namespace Apworks.Repositories.Dictionary
 {
     internal sealed class DictionaryRepository<TKey, TAggregateRoot> : Repository<TKey, TAggregateRoot>
         where TKey : IEquatable<TKey>
@@ -20,7 +20,7 @@ namespace Apworks.Repositories.DictionaryRepository
 
         public override void Add(TAggregateRoot aggregateRoot)
         {
-            throw new NotImplementedException();
+            this.context.Session.TryAdd(aggregateRoot.Id, aggregateRoot);
         }
 
         public override IQueryable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification)
@@ -35,17 +35,24 @@ namespace Apworks.Repositories.DictionaryRepository
 
         public override TAggregateRoot FindByKey(TKey key)
         {
-            throw new NotImplementedException();
+            object result = null;
+            if (this.context.Session.TryGetValue(key, out result))
+            {
+                return (TAggregateRoot)result;
+            }
+
+            return null;
         }
 
         public override void RemoveByKey(TKey key)
         {
-            throw new NotImplementedException();
+            object result = null;
+            this.context.Session.TryRemove(key, out result);
         }
 
         public override void UpdateByKey(TKey key, TAggregateRoot aggregateRoot)
         {
-            throw new NotImplementedException();
+
         }
     }
 }

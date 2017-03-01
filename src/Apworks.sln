@@ -24,7 +24,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Apworks.Integration.AspNetC
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "WebApplication1", "WebApplication1\WebApplication1.xproj", "{01BC69AC-C871-4B10-91E4-6B21B51F0370}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Apworks.Repositories.DictionaryRepository", "Apworks.Repositories.DictionaryRepository\Apworks.Repositories.DictionaryRepository.xproj", "{D25157CF-2797-46B3-8B0F-83B744559EC5}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Apworks.Repositories.Dictionary", "Apworks.Repositories.Dictionary\Apworks.Repositories.Dictionary.xproj", "{D25157CF-2797-46B3-8B0F-83B744559EC5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
