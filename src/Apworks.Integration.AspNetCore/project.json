@@ -6,7 +6,7 @@
 
   "dependencies": {
     "Apworks": "0.999.0-*",
-    "Hal": "1.0.5",
+    "Hal": "1.0.6",
     "Microsoft.AspNetCore.JsonPatch": "1.1.0",
     "Microsoft.AspNetCore.Mvc": "1.1.0",
     "Microsoft.Extensions.DependencyInjection": "1.1.0",
