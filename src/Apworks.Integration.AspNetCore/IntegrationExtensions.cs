@@ -26,6 +26,7 @@
 
 using Apworks.Integration.AspNetCore.Configuration;
 using Apworks.Integration.AspNetCore.DataServices;
+using Apworks.Integration.AspNetCore.Hal;
 using Apworks.KeyGeneration;
 using Apworks.Repositories;
 using Microsoft.AspNetCore.Builder;
@@ -57,19 +58,32 @@ namespace Apworks.Integration.AspNetCore
             return new RepositoryConfigurator<IRepositoryContext>(configurator, repositoryContextFactory, serviceLifetime);
         }
 
-        public static IKeyGeneratorConfigurator WithKeyGenerator<TKey, TAggregateRoot>(this IApworksConfigurator configurator, IKeyGenerator<TKey, TAggregateRoot> keyGenerator, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
-            where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRoot<TKey>
+        //public static IKeyGeneratorConfigurator WithKeyGenerator<TKey, TAggregateRoot>(this IApworksConfigurator configurator, IKeyGenerator<TKey, TAggregateRoot> keyGenerator, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        //    where TKey : IEquatable<TKey>
+        //    where TAggregateRoot : class, IAggregateRoot<TKey>
+        //{
+        //    return new KeyGeneratorConfigurator<TKey, TAggregateRoot, IKeyGenerator<TKey, TAggregateRoot>>(configurator, keyGenerator, serviceLifetime);
+        //}
+
+        //public static IKeyGeneratorConfigurator WithKeyGenerator<TKey, TAggregateRoot>(this IApworksConfigurator configurator, Func<IServiceProvider, IKeyGenerator<TKey, TAggregateRoot>> keyGeneratorFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        //    where TKey : IEquatable<TKey>
+        //    where TAggregateRoot : class, IAggregateRoot<TKey>
+        //{
+        //    return new KeyGeneratorConfigurator<TKey, TAggregateRoot, IKeyGenerator<TKey, TAggregateRoot>>(configurator, keyGeneratorFactory, serviceLifetime);
+        //}
+
+        public static IHalSupportConfigurator WithHalSupport<THalBuildConfiguration>(this IApworksConfigurator configurator, THalBuildConfiguration halBuildConfiguration, ServiceLifetime serviceLifeTime = ServiceLifetime.Scoped)
+            where THalBuildConfiguration : class, IHalBuildConfiguration
         {
-            return new KeyGeneratorConfigurator<TKey, TAggregateRoot, IKeyGenerator<TKey, TAggregateRoot>>(configurator, keyGenerator, serviceLifetime);
+            return new HalSupportConfigurator<THalBuildConfiguration>(configurator, halBuildConfiguration, serviceLifeTime);
         }
 
-        public static IKeyGeneratorConfigurator WithKeyGenerator<TKey, TAggregateRoot>(this IApworksConfigurator configurator, Func<IServiceProvider, IKeyGenerator<TKey, TAggregateRoot>> keyGeneratorFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
-            where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRoot<TKey>
+        public static IHalSupportConfigurator WithHalSupport<THalBuildConfiguration>(this IApworksConfigurator configurator, Func<IServiceProvider, THalBuildConfiguration> halBuildConfigurationFactory, ServiceLifetime serviceLifeTime = ServiceLifetime.Scoped)
+            where THalBuildConfiguration : class, IHalBuildConfiguration
         {
-            return new KeyGeneratorConfigurator<TKey, TAggregateRoot, IKeyGenerator<TKey, TAggregateRoot>>(configurator, keyGeneratorFactory, serviceLifetime);
+            return new HalSupportConfigurator<THalBuildConfiguration>(configurator, halBuildConfigurationFactory, serviceLifeTime);
         }
+
         #endregion
 
         #region IRepositoryConfigurator Extensions
@@ -87,14 +101,16 @@ namespace Apworks.Integration.AspNetCore
             return new KeyGeneratorConfigurator<TKey, TAggregateRoot, IKeyGenerator<TKey, TAggregateRoot>>(configurator, keyGeneratorFactory, serviceLifetime);
         }
 
-        public static IRepositoryConfigurator WithRepository(this IRepositoryConfigurator configurator, IRepositoryContext repositoryContext, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        public static IHalSupportConfigurator WithHalSupport<THalBuildConfiguration>(this IRepositoryConfigurator configurator, THalBuildConfiguration halBuildConfiguration, ServiceLifetime serviceLifeTime = ServiceLifetime.Scoped)
+            where THalBuildConfiguration : class, IHalBuildConfiguration
         {
-            return new RepositoryConfigurator<IRepositoryContext>(configurator, repositoryContext, serviceLifetime);
+            return new HalSupportConfigurator<THalBuildConfiguration>(configurator, halBuildConfiguration, serviceLifeTime);
         }
 
-        public static IRepositoryConfigurator WithRepository(this IRepositoryConfigurator configurator, Func<IServiceProvider, IRepositoryContext> repositoryContextFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        public static IHalSupportConfigurator WithHalSupport<THalBuildConfiguration>(this IRepositoryConfigurator configurator, Func<IServiceProvider, THalBuildConfiguration> halBuildConfigurationFactory, ServiceLifetime serviceLifeTime = ServiceLifetime.Scoped)
+            where THalBuildConfiguration : class, IHalBuildConfiguration
         {
-            return new RepositoryConfigurator<IRepositoryContext>(configurator, repositoryContextFactory, serviceLifetime);
+            return new HalSupportConfigurator<THalBuildConfiguration>(configurator, halBuildConfigurationFactory, serviceLifeTime);
         }
         #endregion
 
@@ -111,6 +127,28 @@ namespace Apworks.Integration.AspNetCore
             where TAggregateRoot : class, IAggregateRoot<TKey>
         {
             return new KeyGeneratorConfigurator<TKey, TAggregateRoot, IKeyGenerator<TKey, TAggregateRoot>>(configurator, keyGeneratorFactory, serviceLifetime);
+        }
+
+        //public static IRepositoryConfigurator WithRepository(this IKeyGeneratorConfigurator configurator, IRepositoryContext repositoryContext, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        //{
+        //    return new RepositoryConfigurator<IRepositoryContext>(configurator, repositoryContext, serviceLifetime);
+        //}
+
+        //public static IRepositoryConfigurator WithRepository(this IKeyGeneratorConfigurator configurator, Func<IServiceProvider, IRepositoryContext> repositoryContextFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        //{
+        //    return new RepositoryConfigurator<IRepositoryContext>(configurator, repositoryContextFactory, serviceLifetime);
+        //}
+
+        public static IHalSupportConfigurator WithHalSupport<THalBuildConfiguration>(this IKeyGeneratorConfigurator configurator, THalBuildConfiguration halBuildConfiguration, ServiceLifetime serviceLifeTime = ServiceLifetime.Scoped)
+            where THalBuildConfiguration : class, IHalBuildConfiguration
+        {
+            return new HalSupportConfigurator<THalBuildConfiguration>(configurator, halBuildConfiguration, serviceLifeTime);
+        }
+
+        public static IHalSupportConfigurator WithHalSupport<THalBuildConfiguration>(this IKeyGeneratorConfigurator configurator, Func<IServiceProvider, THalBuildConfiguration> halBuildConfigurationFactory, ServiceLifetime serviceLifeTime = ServiceLifetime.Scoped)
+            where THalBuildConfiguration : class, IHalBuildConfiguration
+        {
+            return new HalSupportConfigurator<THalBuildConfiguration>(configurator, halBuildConfigurationFactory, serviceLifeTime);
         }
         #endregion
 

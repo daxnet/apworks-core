@@ -24,54 +24,48 @@
 // limitations under the License.
 // ==================================================================================================================
 
-using Apworks.KeyGeneration;
-using Microsoft.Extensions.DependencyInjection;
 using System;
+using Microsoft.Extensions.DependencyInjection;
+using Apworks.Integration.AspNetCore.Hal;
 
 namespace Apworks.Integration.AspNetCore.Configuration
 {
     /// <summary>
     /// Represents that the implemented classes are the configurators that can register
-    /// an <see cref="IKeyGenerator{TKey, TAggregateRoot}"/> instance to the <see cref="IServiceCollection"/> instance.
+    /// an <see cref="IHalBuildConfiguration"/> instance to the <see cref="IServiceCollection"/> object.
     /// </summary>
     /// <seealso cref="Apworks.Integration.AspNetCore.Configuration.IConfigurator" />
-    public interface IKeyGeneratorConfigurator : IConfigurator
+    public interface IHalSupportConfigurator : IConfigurator
     {
-
     }
 
     /// <summary>
-    /// Represents the default implementation of <see cref="IKeyGenerator{TKey, TAggregateRoot}"/> interface.
+    /// Represents the default implementation of <see cref="IHalSupportConfigurator"/> interface.
     /// </summary>
-    /// <typeparam name="TKey">The type of the key.</typeparam>
-    /// <typeparam name="TAggregateRoot">The type of the aggregate root.</typeparam>
-    /// <typeparam name="TKeyGenerator">The type of the key generator.</typeparam>
-    /// <seealso cref="Apworks.Integration.AspNetCore.Configuration.ServiceRegisterConfigurator{Apworks.KeyGeneration.IKeyGenerator{TKey, TAggregateRoot}, TKeyGenerator}" />
-    /// <seealso cref="Apworks.Integration.AspNetCore.Configuration.IKeyGeneratorConfigurator" />
-    internal sealed class KeyGeneratorConfigurator<TKey, TAggregateRoot, TKeyGenerator> 
-        : ServiceRegisterConfigurator<IKeyGenerator<TKey, TAggregateRoot>, TKeyGenerator>, IKeyGeneratorConfigurator
-        where TKey : IEquatable<TKey>
-        where TAggregateRoot : class, IAggregateRoot<TKey>
-        where TKeyGenerator : class, IKeyGenerator<TKey, TAggregateRoot>
+    /// <typeparam name="THalBuildConfiguration">The type of the HAL build configuration.</typeparam>
+    /// <seealso cref="Apworks.Integration.AspNetCore.Configuration.ServiceRegisterConfigurator{Apworks.Integration.AspNetCore.Hal.IHalBuildConfiguration, THalBuildConfiguration}" />
+    /// <seealso cref="Apworks.Integration.AspNetCore.Configuration.IHalSupportConfigurator" />
+    internal sealed class HalSupportConfigurator<THalBuildConfiguration> : ServiceRegisterConfigurator<IHalBuildConfiguration, THalBuildConfiguration>, IHalSupportConfigurator
+        where THalBuildConfiguration : class, IHalBuildConfiguration
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="KeyGeneratorConfigurator{TKey, TAggregateRoot, TKeyGenerator}"/> class.
+        /// Initializes a new instance of the <see cref="HalSupportConfigurator{THalBuildConfiguration}"/> class.
         /// </summary>
         /// <param name="context">The context.</param>
-        /// <param name="implementation">The implementation.</param>
+        /// <param name="halBuildConfiguration">The HAL build configuration.</param>
         /// <param name="serviceLifetime">The service lifetime.</param>
-        public KeyGeneratorConfigurator(IConfigurator context, TKeyGenerator implementation, ServiceLifetime serviceLifetime)
-            : base(context, implementation, serviceLifetime)
+        public HalSupportConfigurator(IConfigurator context, THalBuildConfiguration halBuildConfiguration, ServiceLifetime serviceLifetime)
+            : base(context, halBuildConfiguration, serviceLifetime)
         { }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="KeyGeneratorConfigurator{TKey, TAggregateRoot, TKeyGenerator}"/> class.
+        /// Initializes a new instance of the <see cref="HalSupportConfigurator{THalBuildConfiguration}"/> class.
         /// </summary>
         /// <param name="context">The context.</param>
-        /// <param name="implementationFactory">The implementation factory.</param>
+        /// <param name="halBuildConfigurationFactory">The HAL build configuration factory.</param>
         /// <param name="serviceLifetime">The service lifetime.</param>
-        public KeyGeneratorConfigurator(IConfigurator context, Func<IServiceProvider, TKeyGenerator> implementationFactory, ServiceLifetime serviceLifetime)
-            : base(context, implementationFactory, serviceLifetime)
+        public HalSupportConfigurator(IConfigurator context, Func<IServiceProvider, THalBuildConfiguration> halBuildConfigurationFactory, ServiceLifetime serviceLifetime)
+            : base(context, halBuildConfigurationFactory, serviceLifetime)
         { }
     }
 }
