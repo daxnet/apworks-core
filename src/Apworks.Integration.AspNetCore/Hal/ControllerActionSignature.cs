@@ -13,15 +13,27 @@ namespace Apworks.Integration.AspNetCore.Hal
     public sealed class ControllerActionSignature : IEquatable<ControllerActionSignature>
     {
         /// <summary>
+        /// Represents the <see cref="ControllerActionSignature"/> that represents any controller and action.
+        /// </summary>
+        public static readonly ControllerActionSignature Current = "*.*";
+
+        public ControllerActionSignature(string actionName)
+            : this(Current.ControllerName, actionName, Type.EmptyTypes)
+        { }
+
+        public ControllerActionSignature(string actionName, IEnumerable<Type> parameterTypes)
+            : this(Current.ControllerName, actionName, parameterTypes)
+        { }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ControllerActionSignature"/> class.
         /// </summary>
         /// <param name="controllerName">Name of the controller.</param>
         /// <param name="actionName">Name of the action.</param>
         public ControllerActionSignature(string controllerName, string actionName)
+            : this(controllerName, actionName, Type.EmptyTypes)
         {
-            this.ControllerName = controllerName;
-            this.ActionName = actionName;
-            this.ParameterTypes = Type.EmptyTypes;
+            
         }
 
         /// <summary>
@@ -64,7 +76,7 @@ namespace Apworks.Integration.AspNetCore.Hal
 
             var equals = !string.IsNullOrEmpty(this.ControllerName) &&
                 !string.IsNullOrEmpty(this.ActionName) &&
-                this.ControllerName.Equals(other.ControllerName, StringComparison.CurrentCultureIgnoreCase) &&
+                (this.ControllerName.Equals(Current.ControllerName) || this.ControllerName.Equals(other.ControllerName, StringComparison.CurrentCultureIgnoreCase)) &&
                 this.ActionName.Equals(other.ActionName, StringComparison.CurrentCultureIgnoreCase) &&
                 this.ParameterTypes.All(parameterType => other.ParameterTypes.Any(otherParameterType => otherParameterType.Equals(parameterType)));
 

@@ -6,7 +6,7 @@ using Hal.Builders;
 
 namespace Apworks.Integration.AspNetCore.Hal
 {
-    public sealed class HalBuildConfiguration : ICollection<HalBuildConfigurationItem>, IHalBuildConfiguration
+    public class HalBuildConfiguration : ICollection<HalBuildConfigurationItem>, IHalBuildConfiguration
     {
         private readonly List<HalBuildConfigurationItem> items = new List<HalBuildConfigurationItem>();
 
@@ -68,6 +68,13 @@ namespace Apworks.Integration.AspNetCore.Hal
             this.items.Add(new HalBuildConfigurationItem(signature, halBuilderFactory));
         }
 
+        /// <summary>
+        /// Removes the first occurrence of a specific object from the <see cref="T:System.Collections.Generic.ICollection`1" />.
+        /// </summary>
+        /// <param name="item">The object to remove from the <see cref="T:System.Collections.Generic.ICollection`1" />.</param>
+        /// <returns>
+        /// true if <paramref name="item" /> was successfully removed from the <see cref="T:System.Collections.Generic.ICollection`1" />; otherwise, false. This method also returns false if <paramref name="item" /> is not found in the original <see cref="T:System.Collections.Generic.ICollection`1" />.
+        /// </returns>
         public bool Remove(HalBuildConfigurationItem item) => this.items.Remove(item);
 
         public Func<HalBuildContext, IBuilder> RetrieveHalBuilderFactory(ControllerActionSignature signature)
@@ -81,6 +88,12 @@ namespace Apworks.Integration.AspNetCore.Hal
             return item.HalBuilderFactory;
         }
 
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
+        /// </returns>
         IEnumerator IEnumerable.GetEnumerator() => this.items.GetEnumerator();
     }
 }

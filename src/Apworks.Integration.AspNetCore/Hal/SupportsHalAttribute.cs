@@ -3,6 +3,11 @@ using System;
 
 namespace Apworks.Integration.AspNetCore.Hal
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="System.Attribute" />
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Filters.IFilterFactory" />
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public sealed class SupportsHalAttribute : Attribute, IFilterFactory
     {

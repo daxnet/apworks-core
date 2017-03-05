@@ -84,6 +84,11 @@ namespace Apworks.Integration.AspNetCore
             return new HalSupportConfigurator<THalBuildConfiguration>(configurator, halBuildConfigurationFactory, serviceLifeTime);
         }
 
+        public static IHalSupportConfigurator WithHalSupportForDataService(this IApworksConfigurator configurator, ServiceLifetime serviceLifeTime = ServiceLifetime.Scoped)
+        {
+            return new HalSupportConfigurator<DataServiceHalBuildConfiguration>(configurator, new DataServiceHalBuildConfiguration(), serviceLifeTime);
+        }
+
         #endregion
 
         #region IRepositoryConfigurator Extensions
@@ -111,6 +116,11 @@ namespace Apworks.Integration.AspNetCore
             where THalBuildConfiguration : class, IHalBuildConfiguration
         {
             return new HalSupportConfigurator<THalBuildConfiguration>(configurator, halBuildConfigurationFactory, serviceLifeTime);
+        }
+
+        public static IHalSupportConfigurator WithHalSupportForDataService(this IRepositoryConfigurator configurator, ServiceLifetime serviceLifeTime = ServiceLifetime.Scoped)
+        {
+            return new HalSupportConfigurator<DataServiceHalBuildConfiguration>(configurator, new DataServiceHalBuildConfiguration(), serviceLifeTime);
         }
         #endregion
 
@@ -149,6 +159,11 @@ namespace Apworks.Integration.AspNetCore
             where THalBuildConfiguration : class, IHalBuildConfiguration
         {
             return new HalSupportConfigurator<THalBuildConfiguration>(configurator, halBuildConfigurationFactory, serviceLifeTime);
+        }
+
+        public static IHalSupportConfigurator WithHalSupportForDataService(this IKeyGeneratorConfigurator configurator, ServiceLifetime serviceLifeTime = ServiceLifetime.Scoped)
+        {
+            return new HalSupportConfigurator<DataServiceHalBuildConfiguration>(configurator, new DataServiceHalBuildConfiguration(), serviceLifeTime);
         }
         #endregion
 

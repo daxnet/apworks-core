@@ -72,6 +72,39 @@ namespace Apworks.Tests
             ControllerActionSignature cas2 = null;
             Assert.False(cas1 == cas2);
         }
+
+        [Fact]
+        public void SignatureWithDifferentParamTest()
+        {
+            var cas1 = new ControllerActionSignature("Values", "Get", new[] { typeof(int) });
+            var cas2 = new ControllerActionSignature("Values", "Get", new[] { typeof(string) });
+
+            Assert.False(cas1 == cas2);
+        }
+
+        [Fact]
+        public void ControllerInsensitiveTest()
+        {
+            var cas1 = new ControllerActionSignature("Get", new[] { typeof(int) });
+            var cas2 = new ControllerActionSignature("Values", "get", new[] { typeof(int) });
+            Assert.True(cas1 == cas2);
+        }
+
+        [Fact]
+        public void ControllerInsensitiveWithDifferentParamTest()
+        {
+            var cas1 = new ControllerActionSignature("Get", new[] { typeof(int) });
+            var cas2 = new ControllerActionSignature("Values", "get", new[] { typeof(string) });
+            Assert.False(cas1 == cas2);
+        }
+
+        [Fact]
+        public void ImplicitConvertTest()
+        {
+            ControllerActionSignature cas = "values.get";
+            Assert.True(cas.ControllerName == "values");
+            Assert.True(cas.ActionName == "get");
+        }
     }
 }
 

@@ -24,6 +24,7 @@
 // limitations under the License.
 // ==================================================================================================================
 
+using Apworks.Integration.AspNetCore.Hal;
 using Apworks.KeyGeneration;
 using Apworks.Querying;
 using Apworks.Repositories;
@@ -43,6 +44,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
     /// <typeparam name="TAggregateRoot">The type of the aggregate root.</typeparam>
     /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [Route("api/[controller]")]
+    [SupportsHal]
     public abstract class DataServiceController<TKey, TAggregateRoot> : Controller
         where TAggregateRoot : class, IAggregateRoot<TKey>
         where TKey : IEquatable<TKey>
