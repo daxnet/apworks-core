@@ -105,6 +105,30 @@ namespace Apworks.Tests
             Assert.True(cas.ControllerName == "values");
             Assert.True(cas.ActionName == "get");
         }
+
+        [Fact]
+        public void ImplicitConvertWithAnyControllerNameTest()
+        {
+            ControllerActionSignature cas = "*.get";
+            Assert.True(cas.ControllerName == "*");
+            Assert.True(cas.ActionName == "get");
+        }
+
+        [Fact]
+        public void ImplicitConvertWithOneParameterTest()
+        {
+            ControllerActionSignature cas = "values.get(int)";
+            Assert.True(cas.ControllerName == "values");
+            Assert.True(cas.ActionName == "get");
+        }
+
+        [Fact]
+        public void ImplicitConvertWithMultipleParameterTest()
+        {
+            ControllerActionSignature cas = "values.get(int ,  string   ,    double?)";
+            Assert.True(cas.ControllerName == "values");
+            Assert.True(cas.ActionName == "get");
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Apworks.Integration.AspNetCore.Hal
@@ -134,13 +135,77 @@ namespace Apworks.Integration.AspNetCore.Hal
 
         public static implicit operator ControllerActionSignature (string src)
         {
-            if (!src.Contains('.'))
+            const string pattern = @"(?<ctrl>\w+|\*)\.(?<action>\w+|\*)(?<parms>\(.+(\s*\,\s*.+)*\))?";
+            var regex = new Regex(pattern);
+            var match = regex.Match(src);
+            if (!match.Success)
             {
                 throw new InvalidCastException("Cannot cast the given string into a ControllerActionSignature object.");
             }
 
-            var ctrlActionNames = src.Split('.');
-            return new ControllerActionSignature(ctrlActionNames[0], ctrlActionNames[1]);
+            var controllerName = match.Groups["ctrl"].Value;
+            var actionName = match.Groups["action"].Value;
+            var parametersName = match.Groups["parms"].Value;
+            if (!string.IsNullOrEmpty(parametersName))
+            {
+                var parameterTokens = parametersName.Trim('(', ')').Split(',').Select(x => x.Trim());
+                var parameterTypes = InferParameterTypes(parameterTokens);
+                return new ControllerActionSignature(controllerName, actionName, parameterTypes);
+            }
+
+            return new ControllerActionSignature(controllerName, actionName);
+        }
+
+        private static IEnumerable<Type> InferParameterTypes(IEnumerable<string> parameterTokens)
+        {
+            foreach (var token in parameterTokens) yield return InferParameterType(token);
+        }
+
+        private static Type InferParameterType(string token)
+        {
+            switch (token.ToLowerInvariant())
+            {
+                case "int":
+                case "int32":
+                    return typeof(int);
+                case "int16":
+                    return typeof(short);
+                case "int64":
+                    return typeof(long);
+                case "double":
+                    return typeof(double);
+                case "float":
+                    return typeof(float);
+                case "decimal":
+                    return typeof(decimal);
+                case "datetime":
+                    return typeof(DateTime);
+                case "bool":
+                case "boolean":
+                    return typeof(bool);
+                case "string":
+                    return typeof(string);
+                case "int?":
+                case "int32?":
+                    return typeof(int?);
+                case "int16?":
+                    return typeof(short?);
+                case "int64?":
+                    return typeof(long?);
+                case "double?":
+                    return typeof(double?);
+                case "float?":
+                    return typeof(float?);
+                case "decimal?":
+                    return typeof(decimal?);
+                case "datetime?":
+                    return typeof(DateTime?);
+                case "bool?":
+                case "boolean?":
+                    return typeof(bool?);
+                default:
+                    return Type.GetType(token);
+            }
         }
     }
 }
