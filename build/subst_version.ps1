@@ -5,7 +5,7 @@ param (
 	[string]$version = "1.0.0"
 )
 
-$files = Get-ChildItem . -include project.json,AssemblyInfo.cs -Recurse
+$files = Get-ChildItem . -include AssemblyInfo.cs,*.csproj -Recurse
 foreach ($file in $files)
 {
 	(Get-Content $file.FullName) |
