@@ -120,14 +120,44 @@ namespace Apworks.Tests
             ControllerActionSignature cas = "values.get(int)";
             Assert.True(cas.ControllerName == "values");
             Assert.True(cas.ActionName == "get");
+            Assert.Equal(1, cas.ParameterTypes.Count());
+            Assert.True(cas.ParameterTypes.First().Equals(typeof(int)));
         }
 
         [Fact]
-        public void ImplicitConvertWithMultipleParameterTest()
+        public void ImplicitConvertWithMultipleParametersTest()
         {
             ControllerActionSignature cas = "values.get(int ,  string   ,    double?)";
             Assert.True(cas.ControllerName == "values");
             Assert.True(cas.ActionName == "get");
+            Assert.Equal(3, cas.ParameterTypes.Count());
+            Assert.True(cas.ParameterTypes.First().Equals(typeof(int)));
+            Assert.True(cas.ParameterTypes.Skip(1).Take(1).First().Equals(typeof(string)));
+            Assert.True(cas.ParameterTypes.Last().Equals(typeof(double?)));
+        }
+
+        [Fact]
+        public void ImplicitConvertWithWildcardInParametersButParameterCountMismatchTest()
+        {
+            ControllerActionSignature cas = "values.get(int,*,*)";
+            ControllerActionSignature cas1 = "values.get(int)";
+            Assert.False(cas == cas1);
+        }
+
+        [Fact]
+        public void ImplicitConvertWithWildcardInParametersAndParameterCountMatches1Test()
+        {
+            ControllerActionSignature cas = "values.get(int,*,*)";
+            ControllerActionSignature cas1 = "values.get(int, string, double?)";
+            Assert.True(cas == cas1);
+        }
+
+        [Fact]
+        public void ImplicitConvertWithWildcardInParametersAndParameterCountMatches2Test()
+        {
+            ControllerActionSignature cas = "values.get(int,*,*)";
+            ControllerActionSignature cas1 = "values.get(int16, string, double?)";
+            Assert.False(cas == cas1);
         }
     }
 }

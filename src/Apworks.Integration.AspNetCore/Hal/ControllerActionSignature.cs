@@ -79,7 +79,7 @@ namespace Apworks.Integration.AspNetCore.Hal
                 !string.IsNullOrEmpty(this.ActionName) &&
                 (this.ControllerName.Equals(Current.ControllerName) || this.ControllerName.Equals(other.ControllerName, StringComparison.CurrentCultureIgnoreCase)) &&
                 this.ActionName.Equals(other.ActionName, StringComparison.CurrentCultureIgnoreCase) &&
-                this.ParameterTypes.All(parameterType => other.ParameterTypes.Any(otherParameterType => otherParameterType.Equals(parameterType)));
+                CompareTypes(this.ParameterTypes, other.ParameterTypes);
 
             return equals;
         }
@@ -110,6 +110,33 @@ namespace Apworks.Integration.AspNetCore.Hal
             return result != null && result.HasValue ? result.Value : base.GetHashCode();
         }
 
+        private bool CompareTypes(IEnumerable<Type> origin, IEnumerable<Type> destination)
+        {
+            var originList = origin.ToList();
+            var destinationList = destination.ToList();
+            if (originList.Count != destinationList.Count)
+            {
+                return false;
+            }
+
+            var result = true;
+            for (var i = 0; i < originList.Count; i++)
+            {
+                if (originList[i].Equals(typeof(Nil)) || destinationList[i].Equals(typeof(Nil)))
+                {
+                    continue;
+                }
+
+                result = originList[i].Equals(destinationList[i]);
+                if (!result)
+                {
+                    break;
+                }
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Implements the operator ==.
         /// </summary>
@@ -128,6 +155,12 @@ namespace Apworks.Integration.AspNetCore.Hal
             return a.Equals(b);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public static bool operator != (ControllerActionSignature a, ControllerActionSignature b)
         {
             return !(a == b);
@@ -203,9 +236,17 @@ namespace Apworks.Integration.AspNetCore.Hal
                 case "bool?":
                 case "boolean?":
                     return typeof(bool?);
+                case "*":
+                    return typeof(Nil);
                 default:
                     return Type.GetType(token);
             }
         }
+
+        /// <summary>
+        /// Represents an empty type that is used for checking a wildcard match
+        /// on the parameter types.
+        /// </summary>
+        private class Nil { }
     }
 }
