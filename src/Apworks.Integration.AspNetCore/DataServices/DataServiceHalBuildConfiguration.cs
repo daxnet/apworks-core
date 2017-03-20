@@ -40,7 +40,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
                     var selfLinkItem = context.HttpContext.Request.GetEncodedUrl();
 
                     string prevLinkItem = null;
-                    if (pageNumber > 1)
+                    if (pageNumber > 1 && pageNumber <= totalPages)
                     {
                         prevLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { "page", (pageNumber - 1).ToString() } });
                     }
