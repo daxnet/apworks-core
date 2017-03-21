@@ -6,6 +6,8 @@ using Xunit;
 using System.Collections.Concurrent;
 using Apworks.Repositories.Dictionary;
 using System.Threading.Tasks;
+using Apworks.Querying;
+using System.Collections.Generic;
 
 namespace Apworks.Tests
 {
@@ -110,21 +112,88 @@ namespace Apworks.Tests
             Assert.Equal("daxnet", customers[5].Name);
         }
 
-        //[Fact]
-        //public void UpdateByKeyTest()
-        //{
-        //    var customers = Customer.CreateMany();
-        //    foreach (var customer in customers)
-        //    {
-        //        this.repository.Add(customer);
-        //    }
+        [Fact]
+        public void UpdateByKeyTest()
+        {
+            var customers = Customer.CreateMany();
+            foreach (var customer in customers)
+            {
+                this.repository.Add(customer);
+            }
 
-        //    var srcCustomer = customers[4];
-        //    var newCustomer = Customer.CreateOne(srcCustomer.Id, "daxnet", "email");
+            var srcCustomer = customers[4];
+            var id = srcCustomer.Id;
+            var newCustomer = Customer.CreateOne();
 
-        //    this.repository.UpdateByKey(srcCustomer.Id, newCustomer);
+            this.repository.UpdateByKey(id, newCustomer);
 
-        //    Assert.Equal("daxnet", customers[4].Name);
-        //}
+            Assert.Equal(newCustomer.Name, this.repository.FindByKey(id).Name);
+        }
+
+        [Fact]
+        public void Paging1Test()
+        {
+            var customers = Customer.CreateMany(21);
+            foreach (var customer in customers)
+            {
+                this.repository.Add(customer);
+            }
+
+            var idList = customers.OrderBy(x => x.Email).Select(x => x.Id).Skip(5).Take(5).ToList();
+
+            var pagedResult = this.repository.FindAll(new SortSpecification<int, Customer> { { x => x.Email, SortOrder.Ascending } }, 2, 5);
+
+            Assert.Equal(21, pagedResult.TotalRecords);
+            Assert.Equal(5, pagedResult.TotalPages);
+            Assert.Equal(2, pagedResult.PageNumber);
+            Assert.Equal(5, pagedResult.PageSize);
+            Assert.True(CompareIds(idList, pagedResult.Select(x => x.Id).ToList()));
+        }
+
+        [Fact]
+        public void Paging2Test()
+        {
+            var customers = Customer.CreateMany(1000);
+            foreach (var customer in customers)
+            {
+                this.repository.Add(customer);
+            }
+
+            var selectedCustomers = customers.Where(x => x.Id > 100000).OrderByDescending(x => x.Email);
+            var idList = selectedCustomers.Select(x => x.Id).Skip(15).Take(15).ToList();
+            var totalRecords = selectedCustomers.Count();
+            var totalPages = (totalRecords + 14) / 15;
+
+            var pagedResult = this.repository.FindAll(c => c.Id > 100000,
+                new SortSpecification<int, Customer> { { x => x.Email, SortOrder.Descending } }, 2, 15);
+
+            Assert.Equal(totalRecords, pagedResult.TotalRecords);
+            Assert.Equal(totalPages, pagedResult.TotalPages);
+            Assert.Equal(2, pagedResult.PageNumber);
+            Assert.Equal(15, pagedResult.PageSize);
+            Assert.True(CompareIds(idList, pagedResult.Select(x => x.Id).ToList()));
+        }
+
+        private static bool CompareIds(List<int> a, List<int> b)
+        {
+            var ret = true;
+            if (a.Count != b.Count)
+            {
+                ret = false;
+            }
+            else
+            {
+                for (var i = 0; i < a.Count; i++)
+                {
+                    if (a[i] != b[i])
+                    {
+                        ret = false;
+                        break;
+                    }
+                }
+            }
+
+            return ret;
+        }
     }
 }

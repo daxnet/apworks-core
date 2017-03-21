@@ -137,7 +137,11 @@ namespace Apworks.Repositories.Dictionary
         public override void UpdateByKey(TKey key, TAggregateRoot aggregateRoot)
         {
             var comparison = this.FindByKey(key);
-            var result = this.context.Session.TryUpdate(key, aggregateRoot, comparison);
+            if (comparison != null)
+            {
+                aggregateRoot.Id = key;
+                this.context.Session.TryUpdate(key, aggregateRoot, comparison);
+            }
         }
     }
 }
