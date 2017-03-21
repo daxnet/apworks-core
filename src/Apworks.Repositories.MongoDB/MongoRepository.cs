@@ -69,7 +69,7 @@ namespace Apworks.Repositories.MongoDB
             await this.collection.ReplaceOneAsync(filterDefinition, aggregateRoot, cancellationToken: cancellationToken);
         }
 
-        public override IQueryable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification)
+        public override IEnumerable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification)
         {
             var find = this.collection.Find(specification);
             if (sortSpecification == null)
@@ -97,17 +97,17 @@ namespace Apworks.Repositories.MongoDB
             return orderedFind.ToEnumerable().AsQueryable();
         }
 
-        public override async Task<IQueryable<TAggregateRoot>> FindAllAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task<IEnumerable<TAggregateRoot>> FindAllAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             return await this.FindAllAsync(_ => true, null, cancellationToken);
         }
 
-        public override async Task<IQueryable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task<IEnumerable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await this.FindAllAsync(specification, null, cancellationToken);
         }
 
-        public override async Task<IQueryable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task<IEnumerable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (sortSpecification == null || sortSpecification.Specifications == null || sortSpecification.Specifications.Count() == 0)
             {
@@ -156,7 +156,7 @@ namespace Apworks.Repositories.MongoDB
                 specification = _ => true;
             }
 
-            if (sortSpecification == null)
+            if (sortSpecification?.Count == 0)
             {
                 throw new ArgumentNullException(nameof(sortSpecification), "The sort specification has not been specified.");
             }

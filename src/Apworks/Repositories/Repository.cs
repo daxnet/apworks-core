@@ -30,6 +30,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Apworks.Querying;
+using System.Collections.Generic;
 
 namespace Apworks.Repositories
 {
@@ -164,9 +165,9 @@ namespace Apworks.Repositories
         /// Gets all the <see cref="T:Apworks.IAggregateRoot`1" /> instances from current repository.
         /// </summary>
         /// <returns>
-        /// A <see cref="T:System.Linq.IQueryable`1" /> instance which queries over the collection of the <see cref="T:Apworks.IAggregateRoot`1" /> objects.
+        /// A <see cref="T:System.Linq.IEnumerable`1" /> instance which queries over the collection of the <see cref="T:Apworks.IAggregateRoot`1" /> objects.
         /// </returns>
-        public virtual IQueryable<TAggregateRoot> FindAll()
+        public virtual IEnumerable<TAggregateRoot> FindAll()
         {
             return this.FindAll(_ => true, null);
         }
@@ -176,9 +177,9 @@ namespace Apworks.Repositories
         /// </summary>
         /// <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> that propagates the notification that the operation should be cancelled.</param>
         /// <returns>
-        /// A <see cref="T:System.Linq.IQueryable`1" /> instance which queries over the collection of the <see cref="T:Apworks.IAggregateRoot`1" /> objects.
+        /// A <see cref="T:System.Linq.IEnumerable`1" /> instance which queries over the collection of the <see cref="T:Apworks.IAggregateRoot`1" /> objects.
         /// </returns>
-        public virtual Task<IQueryable<TAggregateRoot>> FindAllAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<IEnumerable<TAggregateRoot>> FindAllAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             return Task.FromResult(this.FindAll());
         }
@@ -188,9 +189,9 @@ namespace Apworks.Repositories
         /// </summary>
         /// <param name="specification">The specification which specifies the query criteria.</param>
         /// <returns>
-        /// A <see cref="T:System.Linq.IQueryable`1" /> instance which queries over the collection of the <see cref="T:Apworks.IAggregateRoot`1" /> objects.
+        /// A <see cref="T:System.Linq.IEnumerable`1" /> instance which queries over the collection of the <see cref="T:Apworks.IAggregateRoot`1" /> objects.
         /// </returns>
-        public virtual IQueryable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification)
+        public virtual IEnumerable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification)
         {
             return this.FindAll(specification, null);
         }
@@ -201,9 +202,9 @@ namespace Apworks.Repositories
         /// <param name="specification">The specification which specifies the query criteria.</param>
         /// <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> that propagates the notification that the operation should be cancelled.</param>
         /// <returns>
-        /// A <see cref="T:System.Linq.IQueryable`1" /> instance which queries over the collection of the <see cref="T:Apworks.IAggregateRoot`1" /> objects.
+        /// A <see cref="T:System.Linq.IEnumerable`1" /> instance which queries over the collection of the <see cref="T:Apworks.IAggregateRoot`1" /> objects.
         /// </returns>
-        public virtual Task<IQueryable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<IEnumerable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, CancellationToken cancellationToken = default(CancellationToken))
         {
             return Task.FromResult(this.FindAll(specification));
         }
@@ -214,9 +215,9 @@ namespace Apworks.Repositories
         /// <param name="specification">The specification which specifies the query criteria.</param>
         /// <param name="sortSpecification">The specifications which implies the sorting.</param>
         /// <returns>
-        /// A <see cref="T:System.Linq.IQueryable`1" /> instance which queries over the collection of the <see cref="T:Apworks.IAggregateRoot`1" /> objects.
+        /// A <see cref="T:System.Linq.IEnumerable`1" /> instance which queries over the collection of the <see cref="T:Apworks.IAggregateRoot`1" /> objects.
         /// </returns>
-        public abstract IQueryable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification);
+        public abstract IEnumerable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification);
 
         /// <summary>
         /// Gets all the <see cref="T:Apworks.IAggregateRoot`1" /> instances from current repository according to a given query specification with the sorting enabled.
@@ -225,9 +226,9 @@ namespace Apworks.Repositories
         /// <param name="sortSpecification">The specifications which implies the sorting.</param>
         /// <param name="cancellationToken">The <see cref="T:System.Threading.CancellationToken" /> that propagates the notification that the operation should be cancelled.</param>
         /// <returns>
-        /// A <see cref="T:System.Linq.IQueryable`1" /> instance which queries over the collection of the <see cref="T:Apworks.IAggregateRoot`1" /> objects.
+        /// A <see cref="T:System.Linq.IEnumerable`1" /> instance which queries over the collection of the <see cref="T:Apworks.IAggregateRoot`1" /> objects.
         /// </returns>
-        public virtual Task<IQueryable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<IEnumerable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, CancellationToken cancellationToken = default(CancellationToken))
         {
             return Task.FromResult(this.FindAll(specification, sortSpecification));
         }

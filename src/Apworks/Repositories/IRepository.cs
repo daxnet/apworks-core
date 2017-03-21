@@ -118,38 +118,38 @@ namespace Apworks.Repositories
         /// <summary>
         /// Gets all the <see cref="IAggregateRoot{TKey}"/> instances from current repository.
         /// </summary>
-        /// <returns>A <see cref="IQueryable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
-        IQueryable<TAggregateRoot> FindAll();
+        /// <returns>A <see cref="IEnumerable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
+        IEnumerable<TAggregateRoot> FindAll();
 
         /// <summary>
         /// Gets all the <see cref="IAggregateRoot{TKey}"/> instances from current repository asynchronously.
         /// </summary>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that propagates the notification that the operation should be cancelled.</param>
-        /// <returns>A <see cref="IQueryable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
-        Task<IQueryable<TAggregateRoot>> FindAllAsync(CancellationToken cancellationToken = default(CancellationToken));
+        /// <returns>A <see cref="IEnumerable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
+        Task<IEnumerable<TAggregateRoot>> FindAllAsync(CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Gets all the <see cref="IAggregateRoot{TKey}"/> instances from current repository according to a given query specification.
         /// </summary>
         /// <param name="specification">The specification which specifies the query criteria.</param>
-        /// <returns>A <see cref="IQueryable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
-        IQueryable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification);
+        /// <returns>A <see cref="IEnumerable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
+        IEnumerable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification);
 
         /// <summary>
         /// Gets all the <see cref="IAggregateRoot{TKey}"/> instances from current repository according to a given query specification asynchronously.
         /// </summary>
         /// <param name="specification">The specification which specifies the query criteria.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that propagates the notification that the operation should be cancelled.</param>
-        /// <returns>A <see cref="IQueryable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
-        Task<IQueryable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, CancellationToken cancellationToken = default(CancellationToken));
+        /// <returns>A <see cref="IEnumerable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
+        Task<IEnumerable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Gets all the <see cref="IAggregateRoot{TKey}"/> instances from current repository according to a given query specification with the sorting enabled.
         /// </summary>
         /// <param name="specification">The specification which specifies the query criteria.</param>
         /// <param name="sortSpecification">The specifications which implies the sorting.</param>
-        /// <returns>A <see cref="IQueryable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
-        IQueryable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification);
+        /// <returns>A <see cref="IEnumerable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
+        IEnumerable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification);
 
         /// <summary>
         /// Gets all the <see cref="IAggregateRoot{TKey}"/> instances from current repository according to a given query specification with the sorting enabled.
@@ -157,8 +157,8 @@ namespace Apworks.Repositories
         /// <param name="specification">The specification which specifies the query criteria.</param>
         /// <param name="sortSpecification">The specifications which implies the sorting.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that propagates the notification that the operation should be cancelled.</param>
-        /// <returns>A <see cref="IQueryable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
-        Task<IQueryable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, CancellationToken cancellationToken = default(CancellationToken));
+        /// <returns>A <see cref="IEnumerable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
+        Task<IEnumerable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, CancellationToken cancellationToken = default(CancellationToken));
 
         PagedResult<TKey, TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, int pageNumber, int pageSize);
 
