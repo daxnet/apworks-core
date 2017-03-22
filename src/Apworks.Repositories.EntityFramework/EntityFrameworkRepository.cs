@@ -14,6 +14,7 @@ namespace Apworks.Repositories.EntityFramework
         where TKey : IEquatable<TKey>
         where TAggregateRoot : class, IAggregateRoot<TKey>
     {
+        private const string IdPropertyName = "Id";
         private readonly DbContext dbContext;
 
         public EntityFrameworkRepository(IRepositoryContext context) : base(context)
@@ -38,29 +39,132 @@ namespace Apworks.Repositories.EntityFramework
 
         public override IEnumerable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification)
         {
-            return this.dbContext
-                .Set<TAggregateRoot>()
-                .Where(specification);
+            var query = this.dbContext.Set<TAggregateRoot>().Where(specification);
+            if (sortSpecification?.Count > 0)
+            {
+                IOrderedQueryable<TAggregateRoot> orderedQuery = null;
+                (from sort in sortSpecification.Specifications
+                 where sort.Item2 != SortOrder.Unspecified
+                 select sort)
+                .ToList()
+                .ForEach(sort =>
+                {
+                    switch (sort.Item2)
+                    {
+                        case SortOrder.Ascending:
+                            if (orderedQuery == null)
+                            {
+                                orderedQuery = query.OrderBy(sort.Item1);
+                            }
+                            else
+                            {
+                                orderedQuery = orderedQuery.OrderBy(sort.Item1);
+                            }
+                            break;
+                        case SortOrder.Descending:
+                            if (orderedQuery == null)
+                            {
+                                orderedQuery = query.OrderByDescending(sort.Item1);
+                            }
+                            else
+                            {
+                                orderedQuery = orderedQuery.OrderByDescending(sort.Item1);
+                            }
+                            break;
+                    }
+                });
+
+                return orderedQuery;
+            }
+
+            return query;
         }
 
         public override PagedResult<TKey, TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, int pageNumber, int pageSize)
         {
-            throw new NotImplementedException();
+            if (specification == null)
+            {
+                specification = _ => true;
+            }
+
+            if (sortSpecification?.Count == 0)
+            {
+                throw new ArgumentNullException(nameof(sortSpecification), "The sort specification has not been specified.");
+            }
+
+            if (pageNumber <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageNumber), "The page number should be greater than 0.");
+            }
+
+            if (pageSize <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(pageSize), "The page size should be greater than 0.");
+            }
+
+            var sorts = sortSpecification.Specifications.ToList();
+            if (sorts.Any(s => s.Item2 == SortOrder.Unspecified))
+            {
+                throw new InvalidOperationException("The SortOrder of the items in the sort specification should be either Ascending or Descending.");
+            }
+
+            var query = this.dbContext.Set<TAggregateRoot>().Where(specification);
+            var skip = (pageNumber - 1) * pageSize;
+            var take = pageSize;
+
+            IOrderedQueryable<TAggregateRoot> orderedQuery = null;
+            foreach(var sort in sorts)
+            {
+                switch(sort.Item2)
+                {
+                    case SortOrder.Ascending:
+                        orderedQuery = orderedQuery == null ? query.OrderBy(sort.Item1) : orderedQuery.OrderBy(sort.Item1);
+                        break;
+                    case SortOrder.Descending:
+                        orderedQuery = orderedQuery == null ? query.OrderByDescending(sort.Item1) : orderedQuery.OrderByDescending(sort.Item1);
+                        break;
+                }
+            }
+
+            var pagedQuery = orderedQuery.Skip(skip).Take(take).GroupBy(p => new { Total = query.Count() }).FirstOrDefault();
+            return pagedQuery == null ? null :
+                new PagedResult<TKey, TAggregateRoot>(pagedQuery.Select(_ => _), pageNumber, pageSize, pagedQuery.Key.Total, (pagedQuery.Key.Total + pageSize - 1) / pageSize);
         }
 
         public override TAggregateRoot FindByKey(TKey key)
         {
-            throw new NotImplementedException();
+            return this.dbContext.Find<TAggregateRoot>(key);
+        }
+
+        public override async Task<TAggregateRoot> FindByKeyAsync(TKey key, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await this.dbContext.FindAsync<TAggregateRoot>(new[] { key }, cancellationToken);
         }
 
         public override void RemoveByKey(TKey key)
         {
-            throw new NotImplementedException();
+            var aggregateRoot = this.FindByKey(key);
+            if (aggregateRoot != null)
+            {
+                this.dbContext.Set<TAggregateRoot>().Remove(aggregateRoot);
+            }
+        }
+
+        public override async Task RemoveByKeyAsync(TKey key, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var aggregateRoot = await this.FindByKeyAsync(key, cancellationToken);
+            if (aggregateRoot != null)
+            {
+                this.dbContext.Set<TAggregateRoot>().Remove(aggregateRoot);
+            }
         }
 
         public override void UpdateByKey(TKey key, TAggregateRoot aggregateRoot)
         {
-            throw new NotImplementedException();
+            this.dbContext.Set<TAggregateRoot>().Update(aggregateRoot);
         }
+
+        private static Expression<Func<TAggregateRoot, bool>> BuildIdEqualsPredicate(TKey id) =>
+            Expression.Lambda<Func<TAggregateRoot, bool>>(Expression.Equal(Expression.Property(Expression.Parameter(typeof(TAggregateRoot)), IdPropertyName), Expression.Constant(id)));
     }
 }
