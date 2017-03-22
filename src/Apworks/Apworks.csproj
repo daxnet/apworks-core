@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <Description>Apworks Application Development Framework</Description>
-    <Copyright>Copyright (C) 2009-2017 by daxnet.</Copyright>
+    <Copyright>Copyright (C) 2009-2017 by daxnet (Sunny Chen).</Copyright>
     <VersionPrefix>0.999.0</VersionPrefix>
-    <Authors>daxnet</Authors>
+    <Authors>Sunny Chen (daxnet)</Authors>
     <TargetFrameworks>net461;netstandard1.6</TargetFrameworks>
     <AssemblyName>Apworks</AssemblyName>
     <AssemblyOriginatorKeyFile>../../tools/Apworks.snk</AssemblyOriginatorKeyFile>

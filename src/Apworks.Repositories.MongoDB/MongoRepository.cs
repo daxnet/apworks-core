@@ -15,7 +15,7 @@ namespace Apworks.Repositories.MongoDB
     /// <typeparam name="TKey">The type of the key.</typeparam>
     /// <typeparam name="TAggregateRoot">The type of the aggregate root.</typeparam>
     /// <seealso cref="Apworks.Repositories.Repository{TKey, TAggregateRoot}" />
-    public class MongoRepository<TKey, TAggregateRoot> : Repository<TKey, TAggregateRoot>
+    internal sealed class MongoRepository<TKey, TAggregateRoot> : Repository<TKey, TAggregateRoot>
         where TKey : IEquatable<TKey>
         where TAggregateRoot : class, IAggregateRoot<TKey>
     {

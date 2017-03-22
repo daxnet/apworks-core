@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Integration.AspNetC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Repositories.Dictionary", "src\Apworks.Repositories.Dictionary\Apworks.Repositories.Dictionary.csproj", "{D25157CF-2797-46B3-8B0F-83B744559EC5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Repositories.EntityFramework", "src\Apworks.Repositories.EntityFramework\Apworks.Repositories.EntityFramework.csproj", "{430DB685-ADEB-42C3-B06A-0D06E9A25A57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{D25157CF-2797-46B3-8B0F-83B744559EC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D25157CF-2797-46B3-8B0F-83B744559EC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D25157CF-2797-46B3-8B0F-83B744559EC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{430DB685-ADEB-42C3-B06A-0D06E9A25A57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{430DB685-ADEB-42C3-B06A-0D06E9A25A57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{430DB685-ADEB-42C3-B06A-0D06E9A25A57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{430DB685-ADEB-42C3-B06A-0D06E9A25A57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,5 +66,6 @@ Global
 		{A712C353-CDD1-4481-BE50-F1A85BFE6875} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 		{9C80A8BA-4BA4-4772-9F56-B9C860C32941} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 		{D25157CF-2797-46B3-8B0F-83B744559EC5} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
+		{430DB685-ADEB-42C3-B06A-0D06E9A25A57} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 	EndGlobalSection
 EndGlobal
