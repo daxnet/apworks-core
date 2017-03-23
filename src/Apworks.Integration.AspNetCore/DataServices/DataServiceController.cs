@@ -217,5 +217,15 @@ namespace Apworks.Integration.AspNetCore.DataServices
 
             return NoContent();
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.repositoryContext.Dispose();
+            }
+
+            base.Dispose(disposing);
+        }
     }
 }

@@ -52,24 +52,10 @@ namespace Apworks.Repositories.EntityFramework
                     switch (sort.Item2)
                     {
                         case SortOrder.Ascending:
-                            if (orderedQuery == null)
-                            {
-                                orderedQuery = query.OrderBy(sort.Item1);
-                            }
-                            else
-                            {
-                                orderedQuery = orderedQuery.OrderBy(sort.Item1);
-                            }
+                            orderedQuery = orderedQuery == null ? query.OrderBy(sort.Item1) : orderedQuery.OrderBy(sort.Item1);
                             break;
                         case SortOrder.Descending:
-                            if (orderedQuery == null)
-                            {
-                                orderedQuery = query.OrderByDescending(sort.Item1);
-                            }
-                            else
-                            {
-                                orderedQuery = orderedQuery.OrderByDescending(sort.Item1);
-                            }
+                            orderedQuery = orderedQuery == null ? query.OrderByDescending(sort.Item1) : orderedQuery.OrderByDescending(sort.Item1);
                             break;
                     }
                 });
@@ -109,6 +95,12 @@ namespace Apworks.Repositories.EntityFramework
             }
 
             var query = this.dbContext.Set<TAggregateRoot>().Where(specification);
+            var total = query.Count();
+            if (total == 0)
+            {
+                return PagedResult<TKey, TAggregateRoot>.CreateDefault(pageNumber, pageSize);
+            }
+
             var skip = (pageNumber - 1) * pageSize;
             var take = pageSize;
 
@@ -126,7 +118,7 @@ namespace Apworks.Repositories.EntityFramework
                 }
             }
 
-            var pagedQuery = orderedQuery.Skip(skip).Take(take).GroupBy(p => new { Total = query.Count() }).FirstOrDefault();
+            var pagedQuery = orderedQuery.Skip(skip).Take(take).GroupBy(p => new { Total = total }).FirstOrDefault();
             return pagedQuery == null ? null :
                 new PagedResult<TKey, TAggregateRoot>(pagedQuery.Select(_ => _), pageNumber, pageSize, pagedQuery.Key.Total, (pagedQuery.Key.Total + pageSize - 1) / pageSize);
         }
@@ -138,7 +130,7 @@ namespace Apworks.Repositories.EntityFramework
 
         public override async Task<TAggregateRoot> FindByKeyAsync(TKey key, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await this.dbContext.FindAsync<TAggregateRoot>(new[] { key }, cancellationToken);
+            return await this.dbContext.FindAsync<TAggregateRoot>(key);
         }
 
         public override void RemoveByKey(TKey key)

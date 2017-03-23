@@ -48,7 +48,10 @@ namespace Apworks.Querying
         #region Ctor
         public PagedResult(IEnumerable<TAggregateRoot> source, int pageNumber, int pageSize, long totalRecords, long totalPages)
         {
-            this.entities.AddRange(source);
+            if (source != null)
+            {
+                this.entities.AddRange(source);
+            }
             this.PageNumber = pageNumber;
             this.PageSize = pageSize;
             this.TotalRecords = totalRecords;
@@ -111,5 +114,10 @@ namespace Apworks.Querying
         public IEnumerator<TAggregateRoot> GetEnumerator() => entities.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => entities.GetEnumerator();
+
+        public static PagedResult<TKey, TAggregateRoot> CreateDefault(int pageNumber, int pageSize)
+        {
+            return new PagedResult<TKey, TAggregateRoot>(null, pageNumber, pageSize, 0, 0);
+        }
     }
 }
