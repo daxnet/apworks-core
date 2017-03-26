@@ -218,6 +218,11 @@ namespace Apworks.Integration.AspNetCore.DataServices
             return NoContent();
         }
 
+        /// <summary>
+        /// Releases all resources currently used by this <see cref="T:Microsoft.AspNetCore.Mvc.Controller" /> instance.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> if this method is being invoked by the <see cref="M:Microsoft.AspNetCore.Mvc.Controller.Dispose" /> method,
+        /// otherwise <c>false</c>.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
