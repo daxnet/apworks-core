@@ -1,6 +1,10 @@
 # Apworks Core
 Apworks framework supporting .NET Core.
 
+Branch          | All               | Windows           | Ubuntu Linux             
+----------------|-------------------|-------------------|--------------------------
+master          | [![Build Status](http://daxnet-win-svr.eastasia.cloudapp.azure.com:8080/buildStatus/icon?job=apworks-core)](http://daxnet-win-svr.eastasia.cloudapp.azure.com:8080/view/apworks/job/apworks-core/) | [![Build Status](http://daxnet-win-svr.eastasia.cloudapp.azure.com:8080/buildStatus/icon?job=apworks-core-win)](http://daxnet-win-svr.eastasia.cloudapp.azure.com:8080/view/apworks/job/apworks-core-win/) | [![Build Status](http://daxnet-win-svr.eastasia.cloudapp.azure.com:8080/buildStatus/icon?job=apworks-core-ubuntu)](http://daxnet-win-svr.eastasia.cloudapp.azure.com:8080/view/apworks/job/apworks-core-ubuntu/)
+
 ## Introduction
 Apworks is an application development framework which provides essential components and building blocks for creating, implementing and deploying enterprise applications with either classic layered architecture or event-driven CQRS architecture styles. The original repo of Apworks framework is [here](https://github.com/daxnet/Apworks), which was targeting specifically on .NET Framework 4.5.1 based on some legacy technologies and not being maintained anymore.
 
