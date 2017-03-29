@@ -95,12 +95,13 @@ namespace Apworks.Repositories.Dictionary
                 throw new InvalidOperationException("The SortOrder of the items in the sort specification should be either Ascending or Descending.");
             }
 
-            var totalCount = this.context.Session.Count;
+            var query = this.context.Session.Values.Select(x => (TAggregateRoot)x).Where(specification.Compile());
+
+            var totalCount = query.Count();
             var skip = (pageNumber - 1) * pageSize;
             var take = pageSize;
             var totalPages = (totalCount + pageSize - 1) / pageSize;
-
-            var query = this.context.Session.Values.Select(x => (TAggregateRoot)x).Where(specification.Compile());
+            
             IOrderedEnumerable<TAggregateRoot> orderedQuery = null;
             foreach (var sort in sorts)
             {

@@ -159,12 +159,12 @@ namespace Apworks.Tests
                 this.repository.Add(customer);
             }
 
-            var selectedCustomers = customers.Where(x => x.Id > 100000).OrderByDescending(x => x.Email);
+            var selectedCustomers = customers.Where(x => x.Id > 20000000).OrderByDescending(x => x.Email);
             var idList = selectedCustomers.Select(x => x.Id).Skip(15).Take(15).ToList();
             var totalRecords = selectedCustomers.Count();
             var totalPages = (totalRecords + 14) / 15;
 
-            var pagedResult = this.repository.FindAll(c => c.Id > 100000,
+            var pagedResult = this.repository.FindAll(c => c.Id > 20000000,
                 new SortSpecification<int, Customer> { { x => x.Email, SortOrder.Descending } }, 2, 15);
 
             Assert.Equal(totalRecords, pagedResult.TotalRecords);
