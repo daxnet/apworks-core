@@ -66,7 +66,9 @@ cd $workspace
 dotnet restore -s https://api.nuget.org/v3/index.json -s https://www.myget.org/F/daxnet-utils/api/v3/index.json
 
 # Remove the "build" folder, if it exists
-Remove-Item -Recurse -Force $workspace\build
+if (Test-Path -Path $workspace\build) {
+	Remove-Item -Recurse -Force $workspace\build
+}
 
 # Enumerates all the folders under 'src' and perform either build or generates the NuGet Packages
 # according to the $generatePackages argument
@@ -89,7 +91,9 @@ foreach ($srcDir in $srcDirs)
 
 # Run unit tests, if the user wants to
 if ($runUnitTests) {
+	if (Test-Path -Path $workspace\tests\Apworks.Tests\TestResults) {
+		Remove-Item -Recurse -Force $workspace\tests\Apworks.Tests\TestResults
+	}
 	cd $workspace\tests\Apworks.Tests
-	Remove-Item -Recurse -Force *.trx
 	dotnet test --logger "trx"
 }
