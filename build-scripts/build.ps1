@@ -32,12 +32,15 @@
 # -version               Specifies the version number
 # -generatePackages      Switch indicates whether NuGet packages should be generated
 #                        instead of built artifacts
+# -framework             Specifies the framework of the build. This parameter is ignored
+#                        when -generatePackages parameter is specified
 # -runUnitTests          Switch indicates if the unit tests should run
 # -runIntegrationTests   Switch indicates if the integration tests should run
 
 param (
 	[string]$version = "1.0.0",
 	[switch]$generatePackages = $false,
+	[string]$framework = "all",
 	[switch]$runUnitTests = $true,
 	[switch]$runIntegrationTests = $false
 )
@@ -76,7 +79,11 @@ foreach ($srcDir in $srcDirs)
 		dotnet pack --output $workspace\build -c Release $projectDirectory
 	} else {
 		$csproj = $projectDirectory + "\" + $srcDir.Name + ".csproj"
-		dotnet build --output $workspace\build -c Release $csproj
+		if ($framework -eq "all") {
+			dotnet build --output $workspace\build -c Release $csproj
+		} else {
+			dotnet build -f $framework --output $workspace\build -c Release $csproj
+		}
 	}
 }
 
