@@ -91,5 +91,5 @@ foreach ($srcDir in $srcDirs)
 if ($runUnitTests) {
 	cd $workspace\tests\Apworks.Tests
 	Remove-Item -Recurse -Force *.trx
-	dotnet test --no-build --logger "trx"
+	dotnet test --logger "trx"
 }
