@@ -41,7 +41,7 @@ param (
 	[string]$version = "1.0.0",
 	[switch]$generatePackages = $false,
 	[string]$framework = "all",
-	[switch]$runUnitTests = $true,
+	[switch]$runUnitTests = $false,
 	[switch]$runIntegrationTests = $false
 )
 
