@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		build-scripts\build.ps1 = build-scripts\build.ps1
 		global.json = global.json
-		build-scripts\subst_version.sh = build-scripts\subst_version.sh
+		build-scripts\init-itest-env.sh = build-scripts\init-itest-env.sh
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Repositories.MongoDB", "src\Apworks.Repositories.MongoDB\Apworks.Repositories.MongoDB.csproj", "{A712C353-CDD1-4481-BE50-F1A85BFE6875}"

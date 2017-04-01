@@ -97,3 +97,13 @@ if ($runUnitTests) {
 	cd $workspace\tests\Apworks.Tests
 	dotnet test --logger "trx"
 }
+
+# Run integration tests, if the user wants to
+if ($runIntegrationTests) {
+	$linuxOS = $false
+	if (Test-Path -Path $workspace\tests\Apworks.Tests.Integration\TestResults) {
+		Remove-Item -Recurse -Force $workspace\tests\Apworks.Tests.Integration\TestResults
+	}
+	cd $workspace\tests\Apworks.Tests.Integration
+	dotnet test --logger "trx"
+}
