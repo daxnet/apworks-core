@@ -54,23 +54,24 @@ namespace Apworks.Tests.Integration
             }
         }
 
-        //[Fact]
-        //public void RemoveByKeyTest()
-        //{
-        //    using (var repositoryContext = new EntityFrameworkRepositoryContext(new SalesContext()))
-        //    {
-        //        var customer = Customer.CreateOne(1, "Sunny Chen", "daxnet@abc.com");
-        //        var repository = repositoryContext.GetRepository<int, Customer>();
-        //        repository.Add(customer);
-        //        repositoryContext.Commit();
+        [Fact]
+        public void RemoveByKeyTest()
+        {
+            using (var repositoryContext = new EntityFrameworkRepositoryContext(new SalesContext()))
+            {
+                var customer = Customer.CreateOne(1, "Sunny Chen", "daxnet@abc.com");
+                var repository = repositoryContext.GetRepository<int, Customer>();
+                repository.Add(customer);
+                repositoryContext.Commit();
 
-        //        repository.RemoveByKey(1);
+                repository.RemoveByKey(1);
+                repositoryContext.Commit();
 
-        //        var customersCount = repository.FindAll().Count();
+                var customersCount = repository.FindAll().Count();
 
-        //        Assert.Equal(0, customersCount);
-        //    }
-        //}
+                Assert.Equal(0, customersCount);
+            }
+        }
 
         [Fact]
         public void UpdateByKeyTest()
@@ -205,14 +206,6 @@ namespace Apworks.Tests.Integration
                 repositoryContext.Commit();
 
                 var selectedCustomers = customers.Where(x => x.Id > 20000000).OrderByDescending(x => x.Id);
-                //var allIds = selectedCustomers.Select(x => new { x.Id, x.Email }).ToList();
-                //var sb = new StringBuilder();
-                //var idx = 0;
-                //foreach(var id in allIds)
-                //{
-                //    sb.AppendLine($"[{idx++}] {id.Id}, {id.Email}");
-                //}
-                //File.WriteAllText(@"c:\users\chenqn\ids.txt", sb.ToString());
                 var idList = selectedCustomers.Select(x => x.Id).Skip(15).Take(15).ToList();
                 var totalRecords = selectedCustomers.Count();
                 var totalPages = (totalRecords + 14) / 15;
@@ -225,6 +218,25 @@ namespace Apworks.Tests.Integration
                 Assert.Equal(2, pagedResult.PageNumber);
                 Assert.Equal(15, pagedResult.PageSize);
                 Assert.True(CompareIds(idList, pagedResult.Select(x => x.Id).ToList()));
+            }
+        }
+
+        [Fact]
+        public void AddNavigationPropertyTest()
+        {
+            using (var repositoryContext = new EntityFrameworkRepositoryContext(new SalesContext()))
+            {
+                var repository = repositoryContext.GetRepository<int, Customer>();
+                var customer = Customer.CreateOne();
+                var id = customer.Id;
+                customer.Addresses = new List<Address> { new Address { Country = "China", State = "SH", City = "Shanghai", Street = "SF", ZipCode = "200000", Id = 1 } };
+                repository.Add(customer);
+
+                repositoryContext.Commit();
+
+                var retrieved = repository.FindByKey(id);
+
+                Assert.Equal(1, retrieved.Addresses.Count);
             }
         }
 
@@ -273,6 +285,9 @@ namespace Apworks.Tests.Integration
             modelBuilder.Entity<Customer>().ForNpgsqlToTable("Customers")
                 .Property(x => x.Id).ForNpgsqlUseSequenceHiLo();
             modelBuilder.Entity<Customer>().HasKey(x => x.Id);
+            modelBuilder.Entity<Address>().ForNpgsqlToTable("Addresses");
+            modelBuilder.Entity<Customer>().HasMany(x => x.Addresses);
+
             base.OnModelCreating(modelBuilder);
         }
 

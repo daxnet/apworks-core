@@ -12,7 +12,7 @@ namespace Apworks.Tests.Integration.Fixtures
 
         public PostgreSQLFixture()
         {
-            if (CheckTableExists())
+            if (CheckTableExists("Customers") || CheckTableExists("Addresses"))
             {
                 DropTable();
             }
@@ -22,12 +22,13 @@ namespace Apworks.Tests.Integration.Fixtures
 
         public void ClearTable()
         {
+            ExecuteCommand("DELETE FROM public.\"Addresses\"");
             ExecuteCommand("DELETE FROM public.\"Customers\"");
         }
 
-        private static bool CheckTableExists()
+        private static bool CheckTableExists(string tableName)
         {
-            var sql = "SELECT * FROM information_schema.tables WHERE table_name = 'Customers'";
+            var sql = $"SELECT * FROM information_schema.tables WHERE table_name = '{tableName}'";
             var tableExists = false;
             using (var con = new NpgsqlConnection(ConnectionString))
             {
@@ -62,6 +63,7 @@ namespace Apworks.Tests.Integration.Fixtures
 
         private static void DropTable()
         {
+            ExecuteCommand("DROP TABLE public.\"Addresses\"");
             ExecuteCommand("DROP TABLE public.\"Customers\"");
         }
 
@@ -81,20 +83,43 @@ WITH(
 
 ALTER TABLE public.""Customers""
   OWNER TO test;
+
+CREATE TABLE ""Addresses"" (
+    ""Id"" serial NOT NULL,
+    ""City"" text,
+    ""Country"" text,
+    ""CustomerId"" int4,
+    ""State"" text,
+    ""Street"" text,
+    ""ZipCode"" text,
+    CONSTRAINT ""PK_Addresses"" PRIMARY KEY(""Id""),
+    CONSTRAINT ""FK_Addresses_Customers_CustomerId"" FOREIGN KEY(""CustomerId"") REFERENCES ""Customers""(""Id"") ON DELETE NO ACTION
+);
+
+CREATE INDEX ""IX_Addresses_CustomerId"" ON ""Addresses"" (""CustomerId"");
+
+ALTER TABLE public.""Addresses""
+  OWNER TO test;
+
 ";
             ExecuteCommand(createScript);
         }
 
         private static void ExecuteCommand(string sql)
         {
-            using (var con = new NpgsqlConnection(ConnectionString))
+            try
             {
-                con.Open();
-                using (var cmd = new NpgsqlCommand(sql, con))
+                using (var con = new NpgsqlConnection(ConnectionString))
                 {
-                    cmd.ExecuteNonQuery();
+                    con.Open();
+                    using (var cmd = new NpgsqlCommand(sql, con))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
+            catch (PostgresException)
+            { }
         }
     }
 }

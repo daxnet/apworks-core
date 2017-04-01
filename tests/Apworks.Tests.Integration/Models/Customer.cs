@@ -15,6 +15,8 @@ namespace Apworks.Tests.Integration.Models
 
         public string Email { get; set; }
 
+        public virtual List<Address> Addresses { get; set; }
+
         /// <summary>
         /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
         /// </summary>

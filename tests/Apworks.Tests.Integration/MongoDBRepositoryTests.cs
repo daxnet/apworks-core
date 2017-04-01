@@ -72,6 +72,7 @@ namespace Apworks.Tests.Integration
                 repositoryContext.Commit();
 
                 repository.RemoveByKey(1);
+                repositoryContext.Commit();
 
                 var customersCount = repository.FindAll().Count();
 
