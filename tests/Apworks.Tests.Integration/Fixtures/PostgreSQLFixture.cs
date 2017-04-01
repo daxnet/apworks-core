@@ -8,7 +8,7 @@ namespace Apworks.Tests.Integration.Fixtures
 {
     public class PostgreSQLFixture
     {
-        public const string ConnectionString = "User ID=test;Password=test;Host=localhost;Port=5432;Database=test;";
+        public const string ConnectionString = "User ID=test;Password=oe9jaacZLbR9pN;Host=localhost;Port=5432;Database=test;";
 
         public PostgreSQLFixture()
         {
