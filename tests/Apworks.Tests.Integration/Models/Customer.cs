@@ -58,6 +58,8 @@ namespace Apworks.Tests.Integration.Models
 
         public static Customer CreateOne() => CreateOne(rnd.Next(), $"Customer Name {rnd.Next()}", $"CustomerEmail{rnd.Next()}@domain.com");
 
+        public static Customer CreateOne(int id) => CreateOne(id, $"Customer Name {rnd.Next()}", $"CustomerEmail{rnd.Next()}@domain.com");
+
         public static Customer CreateOne(int id, string name, string email)
         {
             return new Customer

@@ -118,9 +118,12 @@ namespace Apworks.Repositories.EntityFramework
                 }
             }
 
-            var pagedQuery = orderedQuery.Skip(skip).Take(take).GroupBy(p => new { Total = total }).FirstOrDefault();
+            //var pagedQuery = orderedQuery.Skip(skip).Take(take).GroupBy(p => new { Total = total }).FirstOrDefault();
+            //return pagedQuery == null ? null :
+            //    new PagedResult<TKey, TAggregateRoot>(pagedQuery.Select(_ => _), pageNumber, pageSize, pagedQuery.Key.Total, (pagedQuery.Key.Total + pageSize - 1) / pageSize);
+            var pagedQuery = orderedQuery.Skip(skip).Take(take);
             return pagedQuery == null ? null :
-                new PagedResult<TKey, TAggregateRoot>(pagedQuery.Select(_ => _), pageNumber, pageSize, pagedQuery.Key.Total, (pagedQuery.Key.Total + pageSize - 1) / pageSize);
+                new PagedResult<TKey, TAggregateRoot>(pagedQuery, pageNumber, pageSize, total, (total + pageSize - 1) / pageSize);
         }
 
         public override TAggregateRoot FindByKey(TKey key)
