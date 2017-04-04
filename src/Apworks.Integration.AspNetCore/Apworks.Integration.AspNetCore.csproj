@@ -37,4 +37,8 @@
     <DefineConstants>$(DefineConstants);_NETCORE_</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.6\Apworks.Integration.AspNetCore.xml</DocumentationFile>
+  </PropertyGroup>
+
 </Project>

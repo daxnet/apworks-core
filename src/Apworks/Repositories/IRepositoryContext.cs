@@ -61,8 +61,16 @@ namespace Apworks.Repositories
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRoot<TKey>;
 
+        /// <summary>
+        /// Commits the changes to the repository as a single transaction.
+        /// </summary>
         void Commit();
 
+        /// <summary>
+        /// Commits the changes to the repository asynchronously as a single transaction.
+        /// </summary>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that propagates the notification that the operation should be cancelled.</param>
+        /// <returns>The <see cref="Task"/> which performs the commit operation.</returns>
         Task CommitAsync(CancellationToken cancellationToken = default(CancellationToken));
     }
 

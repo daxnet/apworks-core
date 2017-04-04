@@ -27,7 +27,6 @@
 using Apworks.Querying;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -59,6 +58,7 @@ namespace Apworks.Repositories
         /// </summary>
         /// <param name="aggregateRoot">The <see cref="IAggregateRoot{TKey}"/> instance to be added.</param>
         /// <param name="cancellationToken">The object that propagates notification that operations should be canceled.</param>
+        /// <returns>The <see cref="Task"/> instance which performs the add operation.</returns>
         Task AddAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
@@ -71,33 +71,67 @@ namespace Apworks.Repositories
         /// Removes the specified aggregate root from the current repository asynchronously.
         /// </summary>
         /// <param name="aggregateRoot">The aggregate root.</param>
-        /// <returns></returns>
+        /// <param name="cancellationToken">The object that propagates notification that operations should be canceled.</param>
+        /// <returns>The <see cref="Task"/> instance which performs the remove operation.</returns>
         Task RemoveAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <summary>
+        /// Removes the specified aggregate root from the current repository by using its key.
+        /// </summary>
+        /// <param name="key">The key of the aggregate root to be removed.</param>
         void RemoveByKey(TKey key);
 
+        /// <summary>
+        /// Removes the specified aggregate root from the current repository by using its key asynchronously.
+        /// </summary>
+        /// <param name="key">The key of the aggregate root to be removed.</param>
+        /// <param name="cancellationToken">The object that propagates notification that operations should be canceled.</param>
+        /// <returns>The <see cref="Task"/> instance that performs the remove operation.</returns>
         Task RemoveByKeyAsync(TKey key, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Updates the specified aggregate root.
         /// </summary>
-        /// <param name="aggregateRoot">The aggregate root.</param>
+        /// <param name="aggregateRoot">The aggregate root to be updated.</param>
         void Update(TAggregateRoot aggregateRoot);
 
         /// <summary>
         /// Updates the specified aggregate root asynchronously.
         /// </summary>
-        /// <param name="aggregateRoot">The aggregate root.</param>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
+        /// <param name="aggregateRoot">The aggregate root to be updated.</param>
+        /// <param name="cancellationToken">The object that propagates notification that operations should be canceled.</param>
+        /// <returns>The <see cref="Task"/> instance that performs the update operation.</returns>
         Task UpdateAsync(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <summary>
+        /// Updates the aggregate root by using its key.
+        /// </summary>
+        /// <param name="key">The key of the aggregate root that is going to be updated.</param>
+        /// <param name="aggregateRoot">The aggregate root that is going to be updated.</param>
         void UpdateByKey(TKey key, TAggregateRoot aggregateRoot);
 
+        /// <summary>
+        /// Updates the aggregate root by using its key asynchronously.
+        /// </summary>
+        /// <param name="key">The key of the aggregate root that is going to be updated.</param>
+        /// <param name="aggregateRoot">The aggregate root that is going to be updated.</param>
+        /// <param name="cancellationToken">The object that propagates notification that operations should be canceled.</param>
+        /// <returns>The <see cref="Task"/> instance that performs the update operation.</returns>
         Task UpdateByKeyAsync(TKey key, TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <summary>
+        /// Checks if the aggregate roots that meet the specified specification exist in the current repository.
+        /// </summary>
+        /// <param name="specification">The specification that filters the aggregate roots.</param>
+        /// <returns><c>True</c> if the aggregate roots that meet the specified specification exist, otherwise, <c>False</c>.</returns>
         bool Exists(Expression<Func<TAggregateRoot, bool>> specification);
 
+        /// <summary>
+        /// Checks if the aggregate roots that meet the specified specification exist in the current repository asynchronously.
+        /// </summary>
+        /// <param name="specification">The specification that filters the aggregate roots.</param>
+        /// <param name="cancellationToken">The object that propagates notification that operations should be canceled.</param>
+        /// <returns>The task that performs the checking operation and returns the existance of the aggregate roots.</returns>
         Task<bool> ExistsAsync(Expression<Func<TAggregateRoot, bool>> specification, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
@@ -152,7 +186,7 @@ namespace Apworks.Repositories
         IEnumerable<TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification);
 
         /// <summary>
-        /// Gets all the <see cref="IAggregateRoot{TKey}"/> instances from current repository according to a given query specification with the sorting enabled.
+        /// Gets all the <see cref="IAggregateRoot{TKey}"/> instances from current repository according to a given query specification with the sorting enabled asynchronously.
         /// </summary>
         /// <param name="specification">The specification which specifies the query criteria.</param>
         /// <param name="sortSpecification">The specifications which implies the sorting.</param>
@@ -160,12 +194,48 @@ namespace Apworks.Repositories
         /// <returns>A <see cref="IEnumerable{TAggregateRoot}"/> instance which queries over the collection of the <see cref="IAggregateRoot{TKey}"/> objects.</returns>
         Task<IEnumerable<TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <summary>
+        /// Gets all the <see cref="IAggregateRoot{TKey}"/> instances from current repository according to a given query specification for
+        /// the specified page size and page number that matches the given sorting specification.
+        /// </summary>
+        /// <param name="specification">The specification which specifies the query criteria.</param>
+        /// <param name="sortSpecification">The specifications which implies the sorting.</param>
+        /// <param name="pageNumber">The number of the page to be returned from the query.</param>
+        /// <param name="pageSize">The number of records per page.</param>
+        /// <returns>A <see cref="PagedResult{TKey, TAggregateRoot}"/> instance which contains the returned objects and the pagination information.</returns>
         PagedResult<TKey, TAggregateRoot> FindAll(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, int pageNumber, int pageSize);
 
+        /// <summary>
+        /// Gets all the <see cref="IAggregateRoot{TKey}"/> instances from current repository according to a given query specification for
+        /// the specified page size and page number that matches the given sorting specification.
+        /// </summary>
+        /// <param name="specification">The specification which specifies the query criteria.</param>
+        /// <param name="sortSpecification">The specifications which implies the sorting.</param>
+        /// <param name="pageNumber">The number of the page to be returned from the query.</param>
+        /// <param name="pageSize">The number of records per page.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that propagates the notification that the operation should be cancelled.</param>
+        /// <returns>The task that performs the querying and returns the <see cref="PagedResult{TKey, TAggregateRoot}"/> instance which contains both
+        /// query result and the pagination information.</returns>
         Task<PagedResult<TKey, TAggregateRoot>> FindAllAsync(Expression<Func<TAggregateRoot, bool>> specification, SortSpecification<TKey, TAggregateRoot> sortSpecification, int pageNumber, int pageSize, CancellationToken cancellationToken = default(CancellationToken));
 
+        /// <summary>
+        /// Gets all the <see cref="IAggregateRoot{TKey}"/> instances from current repository for the specified page size and page number that matches the given sorting specification.
+        /// </summary>
+        /// <param name="sortSpecification">The sort specification.</param>
+        /// <param name="pageNumber">The number of the page to be returned from the query.</param>
+        /// <param name="pageSize">The number of records per page.</param>
+        /// <returns>A <see cref="PagedResult{TKey, TAggregateRoot}"/> instance which contains the returned objects and the pagination information.</returns>
         PagedResult<TKey, TAggregateRoot> FindAll(SortSpecification<TKey, TAggregateRoot> sortSpecification, int pageNumber, int pageSize);
 
+        /// <summary>
+        /// Gets all the <see cref="IAggregateRoot{TKey}"/> instances from current repository for the specified page size and page number that matches the given sorting specification asynchronously.
+        /// </summary>
+        /// <param name="sortSpecification">The sort specification.</param>
+        /// <param name="pageNumber">The number of the page to be returned from the query.</param>
+        /// <param name="pageSize">The number of records per page.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that propagates the notification that the operation should be cancelled.</param>
+        /// <returns>The task that performs the querying and returns the <see cref="PagedResult{TKey, TAggregateRoot}"/> instance which contains both
+        /// query result and the pagination information.</returns>
         Task<PagedResult<TKey, TAggregateRoot>> FindAllAsync(SortSpecification<TKey, TAggregateRoot> sortSpecification, int pageNumber, int pageSize, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

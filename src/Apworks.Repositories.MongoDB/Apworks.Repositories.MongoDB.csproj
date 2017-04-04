@@ -43,4 +43,12 @@
     <DefineConstants>$(DefineConstants);_NETCORE_</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net461|AnyCPU'">
+    <DocumentationFile></DocumentationFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
+    <DocumentationFile>bin\Release\net461\Apworks.Repositories.MongoDB.xml</DocumentationFile>
+  </PropertyGroup>
+
 </Project>

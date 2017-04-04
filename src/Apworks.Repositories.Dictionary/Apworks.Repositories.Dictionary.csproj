@@ -41,4 +41,8 @@
     <DefineConstants>$(DefineConstants);_NETCORE_</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
+    <DocumentationFile>bin\Release\net461\Apworks.Repositories.Dictionary.xml</DocumentationFile>
+  </PropertyGroup>
+
 </Project>

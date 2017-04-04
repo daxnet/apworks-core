@@ -60,7 +60,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// </summary>
         /// <param name="repositoryContext">The repository context that is used by the current
         /// <see cref="DataServiceController{TKey, TAggregateRoot}"/> for managing the object lifecycle.</param>
-        protected DataServiceController(IRepositoryContext repositoryContext)
+        public DataServiceController(IRepositoryContext repositoryContext)
             : this(repositoryContext, new NullKeyGenerator<TKey>())
         {
 
@@ -73,7 +73,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// <see cref="DataServiceController{TKey, TAggregateRoot}"/> for managing the object lifecycle.</param>
         /// <param name="keyGenerator">The <see cref="IKeyGenerator{TKey, TAggregateRoot}"/> instance
         /// which generates the aggregate root key for the specified aggregate root type.</param>
-        protected DataServiceController(IRepositoryContext repositoryContext, IKeyGenerator<TKey, TAggregateRoot> keyGenerator)
+        public DataServiceController(IRepositoryContext repositoryContext, IKeyGenerator<TKey, TAggregateRoot> keyGenerator)
         {
             this.repositoryContext = repositoryContext;
             this.repository = repositoryContext.GetRepository<TKey, TAggregateRoot>();
