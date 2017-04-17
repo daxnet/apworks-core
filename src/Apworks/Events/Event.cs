@@ -7,13 +7,23 @@ using Apworks.Messaging;
 
 namespace Apworks.Events
 {
-    public abstract class Event : IEvent
+    /// <summary>
+    /// Represents the base class for events.
+    /// </summary>
+    /// <seealso cref="Apworks.Messaging.Message" />
+    /// <seealso cref="Apworks.Events.IEvent" />
+    public abstract class Event : Message, IEvent
     {
+        public const string EventClrTypeMetadataKey = "apworks:event.clrtype";
+        public const string EventNameMetadataKey = "apworks:event.name";
 
-        public Guid Id { get; set; }
-
-        public DateTime Timestamp { get; set; }
-
-        public MessageMetadata Metadata => throw new NotImplementedException();
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Event"/> class.
+        /// </summary>
+        protected Event()
+        {
+            Metadata.Add(EventClrTypeMetadataKey, this.GetType().AssemblyQualifiedName);
+            Metadata.Add(EventNameMetadataKey, this.GetType().Name);
+        }
     }
 }

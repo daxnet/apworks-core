@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Apworks.Tests
 {
@@ -16,6 +17,8 @@ namespace Apworks.Tests
             employee.ChangeName("Sunny");
             Assert.Equal("Sunny", employee.Name);
             Assert.Equal(1, employee.UncommittedEvents.Count());
+            Assert.NotEqual(Guid.Empty, employee.UncommittedEvents.First().Id);
+            Assert.NotEqual(DateTime.MinValue, employee.UncommittedEvents.First().Timestamp);
         }
 
         [Fact]
@@ -25,6 +28,8 @@ namespace Apworks.Tests
             employee.ChangeTitle("Software Engineer");
             Assert.Equal("Sr. Software Engineer", employee.Title);
             Assert.Equal(1, employee.UncommittedEvents.Count());
+            Assert.NotEqual(Guid.Empty, employee.UncommittedEvents.First().Id);
+            Assert.NotEqual(DateTime.MinValue, employee.UncommittedEvents.First().Timestamp);
         }
 
         [Fact]
@@ -54,6 +59,39 @@ namespace Apworks.Tests
             Assert.Equal("daxnet", employee.Name);
             Assert.Equal("Sr. racer", employee.Title);
             Assert.NotEqual(DateTime.MinValue, employee.DateRegistered);
+        }
+
+        [Fact]
+        public void EventMetadataTest1()
+        {
+            var nameChangedEvent = new NameChangedEvent("daxnet");
+            Assert.Equal(2, nameChangedEvent.Metadata.Count);
+            Assert.True(nameChangedEvent.Metadata.ContainsKey(Event.EventClrTypeMetadataKey));
+            Assert.True(nameChangedEvent.Metadata.ContainsKey(Event.EventNameMetadataKey));
+        }
+
+        [Fact]
+        public void EventMetadataTest2()
+        {
+            var nameChangedEvent = new NameChangedEvent("daxnet");
+            Assert.Equal(typeof(NameChangedEvent).AssemblyQualifiedName, nameChangedEvent.Metadata[Event.EventClrTypeMetadataKey]);
+            Assert.Equal(typeof(NameChangedEvent).Name, nameChangedEvent.Metadata[Event.EventNameMetadataKey]);
+        }
+
+        [Fact]
+        public void SerializeAndDeserializeEventTest1()
+        {
+            var eventId = Guid.NewGuid();
+            var nameChangedEvent = new NameChangedEvent("daxnet");
+            nameChangedEvent.Id = eventId;
+            nameChangedEvent.Timestamp = DateTime.UtcNow;
+            var json = JsonConvert.SerializeObject(nameChangedEvent);
+            Assert.NotNull(json);
+
+            var deserialized = JsonConvert.DeserializeObject<NameChangedEvent>(json);
+            Assert.Equal(eventId, deserialized.Id);
+            Assert.Equal(nameChangedEvent.Name, deserialized.Name);
+            Assert.Equal(nameChangedEvent.Timestamp, deserialized.Timestamp);
         }
     }
 
