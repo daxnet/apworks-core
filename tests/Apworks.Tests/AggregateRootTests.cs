@@ -26,6 +26,35 @@ namespace Apworks.Tests
             Assert.Equal("Sr. Software Engineer", employee.Title);
             Assert.Equal(1, employee.UncommittedEvents.Count());
         }
+
+        [Fact]
+        public void ApplyEventTest3()
+        {
+            var employee = new Employee();
+            employee.ChangeName("Sunny");
+            employee.ChangeTitle("Software Engineer");
+            employee.Register();
+            Assert.Equal(3, employee.UncommittedEvents.Count());
+        }
+
+        [Fact]
+        public void ReplayEventsTest()
+        {
+            var events = new List<IDomainEvent>
+            {
+                new NameChangedEvent("daxnet"),
+                new TitleChangedEvent("racer"),
+                new RegisteredEvent()
+            };
+
+            var employee = new Employee();
+            employee.Replay(events);
+
+            Assert.Equal(0, employee.UncommittedEvents.Count());
+            Assert.Equal("daxnet", employee.Name);
+            Assert.Equal("Sr. racer", employee.Title);
+            Assert.NotEqual(DateTime.MinValue, employee.DateRegistered);
+        }
     }
 
     #region Test Data
@@ -34,6 +63,8 @@ namespace Apworks.Tests
         public string Name { get; private set; }
 
         public string Title { get; private set; }
+
+        public DateTime DateRegistered { get; private set; }
 
         public void ChangeName(string name)
         {
@@ -45,10 +76,21 @@ namespace Apworks.Tests
             this.Apply<TitleChangedEvent>(new TitleChangedEvent(title));
         }
 
+        public void Register()
+        {
+            this.Apply<RegisteredEvent>();
+        }
+
         [Handles(typeof(TitleChangedEvent))]
         private void HandlesTitleChangedEvent(TitleChangedEvent evnt)
         {
             this.Title = $"Sr. {evnt.Title}";
+        }
+
+        [Handles(typeof(RegisteredEvent))]
+        private void HandlesRegisteredEvent(RegisteredEvent evnt)
+        {
+            this.DateRegistered = DateTime.UtcNow;
         }
     }
 
@@ -70,6 +112,11 @@ namespace Apworks.Tests
         }
 
         public string Title { get; }
+    }
+
+    class RegisteredEvent : DomainEvent
+    {
+
     }
     #endregion
 }

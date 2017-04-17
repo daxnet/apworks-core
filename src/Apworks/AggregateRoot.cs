@@ -142,6 +142,18 @@ namespace Apworks
         }
 
         /// <summary>
+        /// Applies the specified domain event. This will cause the event to be handled
+        /// in the current aggregate root and then be put into the uncommitted events
+        /// queue.
+        /// </summary>
+        /// <typeparam name="TEvent">The type of the event to be raised.</typeparam>
+        protected void Apply<TEvent>()
+            where TEvent : class, IDomainEvent, new()
+        {
+            this.Apply(new TEvent());
+        }
+
+        /// <summary>
         /// Replays the domain events one by one to restore the aggregate state.
         /// </summary>
         /// <param name="domainEvents"></param>
