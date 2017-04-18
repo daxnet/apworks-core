@@ -39,7 +39,7 @@ namespace Apworks
     /// both standard event-driven and CQRS-based applications.
     /// </summary>
     /// <typeparam name="TKey">The type of the aggregate root key.</typeparam>
-    public abstract class AggregateRoot<TKey> : IAggregateRoot<TKey>, IPurgeable
+    public abstract class AggregateRootWithEventSourcing<TKey> : IAggregateRootWithEventSourcing<TKey>, IPurgeable
         where TKey : IEquatable<TKey>
     {
         private readonly Queue<IDomainEvent> uncommittedEvents = new Queue<IDomainEvent>();
@@ -180,7 +180,7 @@ namespace Apworks
         /// <summary>
         /// Replays the domain events one by one to restore the aggregate state.
         /// </summary>
-        /// <param name="domainEvents"></param>
+        /// <param name="domainEvents">The domain events to be replayed on the current aggregate.</param>
         public void Replay(IEnumerable<IDomainEvent> domainEvents)
         {
             ((IPurgeable)this).Purge();
@@ -208,7 +208,7 @@ namespace Apworks
                 return true;
             }
 
-            var other = obj as AggregateRoot<TKey>;
+            var other = obj as AggregateRootWithEventSourcing<TKey>;
             if (other == null)
             {
                 return false;
@@ -247,7 +247,7 @@ namespace Apworks
         /// <returns>
         /// The result of the operator.
         /// </returns>
-        public static bool operator ==(AggregateRoot<TKey> a, AggregateRoot<TKey> b)
+        public static bool operator ==(AggregateRootWithEventSourcing<TKey> a, AggregateRootWithEventSourcing<TKey> b)
         {
             if ((object)a == null)
             {
@@ -265,6 +265,6 @@ namespace Apworks
         /// <returns>
         /// The result of the operator.
         /// </returns>
-        public static bool operator !=(AggregateRoot<TKey> a, AggregateRoot<TKey> b) => !(a == b);
+        public static bool operator !=(AggregateRootWithEventSourcing<TKey> a, AggregateRootWithEventSourcing<TKey> b) => !(a == b);
     }
 }

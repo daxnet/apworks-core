@@ -96,7 +96,7 @@ namespace Apworks.Tests
     }
 
     #region Test Data
-    class Employee : AggregateRoot<Guid>
+    class Employee : AggregateRootWithEventSourcing<Guid>
     {
         public string Name { get; private set; }
 

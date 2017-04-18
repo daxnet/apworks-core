@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Apworks.Repositories
@@ -12,10 +13,22 @@ namespace Apworks.Repositories
     /// which has the specified aggregate root key. The domain repository implemented the repository pattern as well
     /// as the concept of event sourcing in CQRS system architectures.
     /// </summary>
-    public interface IDomainRepository
+    public interface IDomainRepository : IDisposable
     {
         TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id)
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : IAggregateRoot<TKey>; // TODO, cannot use the constraint IAggregateRoot. Need a dedicated interface constraint for event sourced aggregate root.
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+
+        void Save<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot)
+            where TKey : IEquatable<TKey>
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+
+        Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, CancellationToken cancellationToken = default(CancellationToken))
+            where TKey : IEquatable<TKey>
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+
+        Task SaveAsync<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken))
+            where TKey : IEquatable<TKey>
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
     }
 }
