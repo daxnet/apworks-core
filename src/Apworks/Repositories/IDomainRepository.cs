@@ -15,6 +15,11 @@ namespace Apworks.Repositories
     /// </summary>
     public interface IDomainRepository : IDisposable
     {
+        /// <summary>
+        /// Gets the identifier of the current domain repository.
+        /// </summary>
+        Guid Id { get; }
+
         TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id)
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;

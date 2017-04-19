@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Apworks.Events
 {
+    /// <summary>
+    /// Represents that the implemented classes are event publishers.
+    /// </summary>
     public interface IEventPublisher : IMessagePublisher
     {
     }
