@@ -25,4 +25,8 @@
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Apworks\Apworks.csproj" />
+  </ItemGroup>
+
 </Project>
