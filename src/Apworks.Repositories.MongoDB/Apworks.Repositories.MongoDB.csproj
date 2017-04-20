@@ -7,6 +7,9 @@
     <Authors>Sunny Chen (daxnet)</Authors>
     <TargetFrameworks>net461;netstandard1.6</TargetFrameworks>
     <AssemblyName>Apworks.Repositories.MongoDB</AssemblyName>
+    <AssemblyOriginatorKeyFile>../../tools/Apworks.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <PackageId>Apworks.Repositories.MongoDB</PackageId>
     <PackageTags>apworks</PackageTags>
     <PackageLicenseUrl>https://github.com/daxnet/apworks-core/blob/master/LICENSE</PackageLicenseUrl>

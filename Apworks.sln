@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks", "src\Apworks\Apworks.csproj", "{9D0B1FC5-57E6-4A60-8AFD-CDCAEC271A3A}"
 EndProject
@@ -27,6 +27,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Repositories.EntityFramework", "src\Apworks.Repositories.EntityFramework\Apworks.Repositories.EntityFramework.csproj", "{430DB685-ADEB-42C3-B06A-0D06E9A25A57}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Tests.Integration", "tests\Apworks.Tests.Integration\Apworks.Tests.Integration.csproj", "{F1BBE04B-E611-4DF6-8EB4-64A16570E895}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.EventStore.Dictionary", "src\Apworks.EventStore.Dictionary\Apworks.EventStore.Dictionary.csproj", "{75107DCE-CE99-4F3F-98D3-87BE7624E2FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -62,6 +64,10 @@ Global
 		{F1BBE04B-E611-4DF6-8EB4-64A16570E895}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1BBE04B-E611-4DF6-8EB4-64A16570E895}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1BBE04B-E611-4DF6-8EB4-64A16570E895}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75107DCE-CE99-4F3F-98D3-87BE7624E2FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75107DCE-CE99-4F3F-98D3-87BE7624E2FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75107DCE-CE99-4F3F-98D3-87BE7624E2FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75107DCE-CE99-4F3F-98D3-87BE7624E2FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,5 +80,6 @@ Global
 		{D25157CF-2797-46B3-8B0F-83B744559EC5} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 		{430DB685-ADEB-42C3-B06A-0D06E9A25A57} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 		{F1BBE04B-E611-4DF6-8EB4-64A16570E895} = {071FB34B-BD54-4C86-B8EF-E679F81BEDE0}
+		{75107DCE-CE99-4F3F-98D3-87BE7624E2FE} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 	EndGlobalSection
 EndGlobal
