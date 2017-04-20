@@ -17,7 +17,7 @@ namespace Apworks.Repositories
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
 
-        public Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, CancellationToken cancellationToken)
+        public virtual Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, CancellationToken cancellationToken)
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey> => Task.FromResult(this.GetById<TKey, TAggregateRoot>(id));
 
@@ -25,7 +25,7 @@ namespace Apworks.Repositories
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
 
-        public Task SaveAsync<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot, CancellationToken cancellationToken)
+        public virtual Task SaveAsync<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot, CancellationToken cancellationToken)
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>
             => Task.Factory.StartNew(() => Save<TKey, TAggregateRoot>(aggregateRoot), cancellationToken);

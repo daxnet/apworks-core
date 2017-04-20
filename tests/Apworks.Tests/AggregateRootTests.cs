@@ -67,7 +67,7 @@ namespace Apworks.Tests
             var nameChangedEvent = new NameChangedEvent("daxnet");
             Assert.Equal(2, nameChangedEvent.Metadata.Count);
             Assert.True(nameChangedEvent.Metadata.ContainsKey(Event.EventClrTypeMetadataKey));
-            Assert.True(nameChangedEvent.Metadata.ContainsKey(Event.EventNameMetadataKey));
+            Assert.True(nameChangedEvent.Metadata.ContainsKey(Event.EventIntentMetadataKey));
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace Apworks.Tests
         {
             var nameChangedEvent = new NameChangedEvent("daxnet");
             Assert.Equal(typeof(NameChangedEvent).AssemblyQualifiedName, nameChangedEvent.Metadata[Event.EventClrTypeMetadataKey]);
-            Assert.Equal(typeof(NameChangedEvent).Name, nameChangedEvent.Metadata[Event.EventNameMetadataKey]);
+            Assert.Equal(typeof(NameChangedEvent).Name, nameChangedEvent.Metadata[Event.EventIntentMetadataKey]);
         }
 
         [Fact]

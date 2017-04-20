@@ -15,7 +15,7 @@ namespace Apworks.Events
     public abstract class Event : Message, IEvent
     {
         public const string EventClrTypeMetadataKey = "apworks:event.clrtype";
-        public const string EventNameMetadataKey = "apworks:event.name";
+        public const string EventIntentMetadataKey = "apworks:event.intent";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Event"/> class.
@@ -23,7 +23,11 @@ namespace Apworks.Events
         protected Event()
         {
             Metadata.Add(EventClrTypeMetadataKey, this.GetType().AssemblyQualifiedName);
-            Metadata.Add(EventNameMetadataKey, this.GetType().Name);
+            Metadata.Add(EventIntentMetadataKey, this.GetType().Name);
         }
+
+        public string GetEventClrType() => this.Metadata[EventClrTypeMetadataKey].ToString();
+
+        public string GetEventIntent() => this.Metadata[EventIntentMetadataKey].ToString();
     }
 }

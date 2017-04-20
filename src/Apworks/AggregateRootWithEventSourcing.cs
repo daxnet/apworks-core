@@ -160,6 +160,7 @@ namespace Apworks
 
             @event.Id = Guid.NewGuid();
             @event.Timestamp = DateTime.UtcNow;
+            @event.AttachTo(this);
 
             this.HandleEvent(@event);
             this.Raise(@event);
