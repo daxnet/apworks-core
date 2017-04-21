@@ -29,5 +29,18 @@ namespace Apworks.Events
         public string GetEventClrType() => this.Metadata[EventClrTypeMetadataKey].ToString();
 
         public string GetEventIntent() => this.Metadata[EventIntentMetadataKey].ToString();
+
+        public virtual EventDescriptor ToDescriptor()
+        {
+            return new EventDescriptor
+            {
+                Id = Guid.NewGuid(),
+                EventClrType = this.GetEventClrType(),
+                EventId = this.Id,
+                EventIntent = this.GetEventIntent(),
+                EventTimestamp = this.Timestamp,
+                EventPayload = this
+            };
+        }
     }
 }

@@ -24,5 +24,11 @@ namespace Apworks.Events
         /// The intent of the current event.
         /// </value>
         string GetEventIntent();
+
+        /// <summary>
+        /// Converts the current <see cref="IEvent"/> instance to a <see cref="EventDescriptor"/>.
+        /// </summary>
+        /// <returns>The event descriptor.</returns>
+        EventDescriptor ToDescriptor();
     }
 }

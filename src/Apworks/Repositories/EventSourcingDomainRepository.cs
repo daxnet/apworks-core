@@ -9,9 +9,9 @@ namespace Apworks.Repositories
 {
     public sealed class EventSourcingDomainRepository : EventPublishingDomainRepository
     {
-        private readonly IDomainEventStore eventStore;
+        private readonly IEventStore eventStore;
 
-        public EventSourcingDomainRepository(IDomainEventStore eventStore, IEventPublisher publisher) : base(publisher)
+        public EventSourcingDomainRepository(IEventStore eventStore, IEventPublisher publisher) : base(publisher)
         {
             this.eventStore = eventStore;
         }
