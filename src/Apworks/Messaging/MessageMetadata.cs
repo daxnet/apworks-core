@@ -24,7 +24,11 @@ namespace Apworks.Messaging
         /// </value>
         /// <param name="key">The key.</param>
         /// <returns></returns>
-        public object this[string key] { get => bank[key]; set => bank[key] = value; }
+        public object this[string key]
+        {
+            get => this.bank.ContainsKey(key) ? this.bank[key] : null;
+            set => this.bank[key] = value;
+        }
 
         public ICollection<string> Keys => bank.Keys;
 

@@ -15,9 +15,5 @@ namespace Apworks.Events
         /// <param name="aggregateRoot">The aggregate root to which the current event will be attached.</param>
         void AttachTo<TKey>(IAggregateRoot<TKey> aggregateRoot)
             where TKey : IEquatable<TKey>;
-
-        string GetAggregateRootIdStringRepresentation();
-
-        string GetAggregateRootClrType();
     }
 }

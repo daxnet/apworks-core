@@ -17,6 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Apworks.EventStore.Dictionary\Apworks.EventStore.Dictionary.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Repositories.Dictionary\Apworks.Repositories.Dictionary.csproj" />
     <ProjectReference Include="..\..\src\Apworks\Apworks.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Repositories.MongoDB\Apworks.Repositories.MongoDB.csproj" />

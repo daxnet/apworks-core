@@ -5,6 +5,7 @@ using System.Text;
 using Xunit;
 using System.Linq;
 using Newtonsoft.Json;
+using Apworks.Tests.Models;
 
 namespace Apworks.Tests
 {
@@ -30,6 +31,8 @@ namespace Apworks.Tests
             Assert.Equal(1, employee.UncommittedEvents.Count());
             Assert.NotEqual(Guid.Empty, employee.UncommittedEvents.First().Id);
             Assert.NotEqual(DateTime.MinValue, employee.UncommittedEvents.First().Timestamp);
+            Assert.NotNull(employee.UncommittedEvents.First().GetOriginatorClrType());
+            Assert.NotNull(employee.UncommittedEvents.First().GetOriginatorIdentifier());
         }
 
         [Fact]
@@ -66,16 +69,22 @@ namespace Apworks.Tests
         {
             var nameChangedEvent = new NameChangedEvent("daxnet");
             Assert.Equal(2, nameChangedEvent.Metadata.Count);
-            Assert.True(nameChangedEvent.Metadata.ContainsKey(Event.EventClrTypeMetadataKey));
-            Assert.True(nameChangedEvent.Metadata.ContainsKey(Event.EventIntentMetadataKey));
         }
 
         [Fact]
         public void EventMetadataTest2()
         {
             var nameChangedEvent = new NameChangedEvent("daxnet");
-            Assert.Equal(typeof(NameChangedEvent).AssemblyQualifiedName, nameChangedEvent.Metadata[Event.EventClrTypeMetadataKey]);
-            Assert.Equal(typeof(NameChangedEvent).Name, nameChangedEvent.Metadata[Event.EventIntentMetadataKey]);
+            Assert.Equal(typeof(NameChangedEvent).AssemblyQualifiedName, nameChangedEvent.GetEventClrType());
+            Assert.Equal(typeof(NameChangedEvent).Name, nameChangedEvent.GetEventIntent());
+        }
+
+        [Fact]
+        public void EventMetadataTest3()
+        {
+            var nameChangedEvent = new NameChangedEvent("daxnet");
+            Assert.Null(nameChangedEvent.GetOriginatorClrType());
+            Assert.Null(nameChangedEvent.GetOriginatorIdentifier());
         }
 
         [Fact]
@@ -132,29 +141,6 @@ namespace Apworks.Tests
         }
     }
 
-    class NameChangedEvent : DomainEvent
-    {
-        public NameChangedEvent(string name)
-        {
-            this.Name = name;
-        }
-
-        public string Name { get; }
-    }
-
-    class TitleChangedEvent : DomainEvent
-    {
-        public TitleChangedEvent(string title)
-        {
-            this.Title = title;
-        }
-
-        public string Title { get; }
-    }
-
-    class RegisteredEvent : DomainEvent
-    {
-
-    }
+    
     #endregion
 }

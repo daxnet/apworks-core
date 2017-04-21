@@ -26,6 +26,18 @@ namespace Apworks.Events
         string GetEventIntent();
 
         /// <summary>
+        /// Gets the CLR type (a.k.a. assembly qualified type) of the originator of the current event.
+        /// </summary>
+        /// <returns>The CLR type of the originator.</returns>
+        string GetOriginatorClrType();
+
+        /// <summary>
+        /// Gets the originator identifier.
+        /// </summary>
+        /// <returns></returns>
+        string GetOriginatorIdentifier();
+
+        /// <summary>
         /// Converts the current <see cref="IEvent"/> instance to a <see cref="EventDescriptor"/>.
         /// </summary>
         /// <returns>The event descriptor.</returns>
