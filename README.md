@@ -72,13 +72,15 @@ For more information about using Apworks Core framework in your application scaf
 
 ## Components and Packages
 
-Component | Package Name                      | Package Source (preview)         | Package Source (release)
+Component | Package Name                      | Package Source (preview)         | Package Source (stable)
 -----------------------|--------------------------|----------------------------------|--------------------------
 Base Framework Library | Apworks                   | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks) | (n/a)
-MongoDB Repository implementation | Apworks.Repositories.MongoDB | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Repositories.MongoDB)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Repositories.MongoDB) | (n/a)
-Entity Framework Core Repository implementation | Apworks.Repositories.EntityFramework | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Repositories.EntityFramework)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Repositories.EntityFramework) | (n/a)
-In-Memory Repository implementation | Apworks.Repositories.Dictionary | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Repositories.Dictionary)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Repositories.Dictionary) | (n/a)
 ASP.NET Core integration component | Apworks.Integration.AspNetCore | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Integration.AspNetCore)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Integration.AspNetCore) | (n/a)
+MongoDB repository implementation | Apworks.Repositories.MongoDB | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Repositories.MongoDB)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Repositories.MongoDB) | (n/a)
+Entity Framework Core repository implementation | Apworks.Repositories.EntityFramework | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Repositories.EntityFramework)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Repositories.EntityFramework) | (n/a)
+Simple repository implementation | Apworks.Repositories.Simple | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Repositories.Simple)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Repositories.Simple) | (n/a)
+Simple event store implementation | Apworks.EventStore.Simple | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.EventStore.Simple)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.EventStore.Simple) | (n/a)
+Simple messaging Infrastructure implementation | Apworks.Messaging.Simple | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Messaging.Simple)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Messaging.Simple) | (n/a)
 
 ## Documentation
 Please find the latest documentation [here](http://apworks-core.readthedocs.io/en/latest/).
