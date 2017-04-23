@@ -17,8 +17,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Apworks.EventStore.Dictionary\Apworks.EventStore.Dictionary.csproj" />
-    <ProjectReference Include="..\..\src\Apworks.Repositories.Dictionary\Apworks.Repositories.Dictionary.csproj" />
+    <ProjectReference Include="..\..\src\Apworks.EventStore.Simple\Apworks.EventStore.Simple.csproj" />
+    <ProjectReference Include="..\..\src\Apworks.Repositories.Simple\Apworks.Repositories.Simple.csproj" />
     <ProjectReference Include="..\..\src\Apworks\Apworks.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Repositories.MongoDB\Apworks.Repositories.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Integration.AspNetCore\Apworks.Integration.AspNetCore.csproj" />

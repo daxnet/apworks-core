@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Apworks.Events;
 
@@ -18,12 +19,44 @@ namespace Apworks.Repositories
 
         public override TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id)
         {
-            throw new NotImplementedException();
+            var events = this.eventStore.Load<TKey, IDomainEvent>(typeof(TAggregateRoot).AssemblyQualifiedName, id);
+            var aggregateRoot = new TAggregateRoot();
+            aggregateRoot.Replay(events);
+            return aggregateRoot;
+        }
+
+        public override async Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, CancellationToken cancellationToken)
+        {
+            var events = await this.eventStore.LoadAsync<TKey, IDomainEvent>(typeof(TAggregateRoot).AssemblyQualifiedName, id);
+            var aggregateRoot = new TAggregateRoot();
+            aggregateRoot.Replay(events);
+            return aggregateRoot;
         }
 
         public override void Save<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot)
         {
-            throw new NotImplementedException();
+            // Saves the uncommitted events to the event store.
+            var uncommittedEvents = aggregateRoot.UncommittedEvents;
+            this.eventStore.Save(uncommittedEvents); // This will save the uncommitted events in a transaction.
+
+            // Publishes the events.
+            this.Publisher.Publish(uncommittedEvents);
+
+            // Purges the uncommitted events.
+            ((IPurgeable)aggregateRoot).Purge();
+        }
+
+        public override async Task SaveAsync<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot, CancellationToken cancellationToken)
+        {
+            // Saves the uncommitted events to the event store.
+            var uncommittedEvents = aggregateRoot.UncommittedEvents;
+            await this.eventStore.SaveAsync(uncommittedEvents, cancellationToken); // This will save the uncommitted events in a transaction.
+
+            // Publishes the events.
+            await this.Publisher.PublishAsync(uncommittedEvents);
+
+            // Purges the uncommitted events.
+            ((IPurgeable)aggregateRoot).Purge();
         }
     }
 }

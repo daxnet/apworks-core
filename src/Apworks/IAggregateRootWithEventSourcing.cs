@@ -10,7 +10,7 @@ namespace Apworks
     /// </summary>
     /// <typeparam name="TKey">The type of the aggregate root key.</typeparam>
     /// <seealso cref="Apworks.IAggregateRoot{TKey}" />
-    public interface IAggregateRootWithEventSourcing<TKey> : IAggregateRoot<TKey>
+    public interface IAggregateRootWithEventSourcing<TKey> : IAggregateRoot<TKey>, IPurgeable
         where TKey : IEquatable<TKey>
     {
         /// <summary>

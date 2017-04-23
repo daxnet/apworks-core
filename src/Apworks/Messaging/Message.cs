@@ -15,6 +15,11 @@ namespace Apworks.Messaging
     {
         private readonly MessageMetadata metadata = new MessageMetadata();
 
+        protected Message()
+        {
+            this.Id = Guid.NewGuid();
+        }
+
         /// <summary>
         /// Gets or sets the identifier of the message.
         /// </summary>

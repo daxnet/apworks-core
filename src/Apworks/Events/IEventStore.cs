@@ -14,23 +14,25 @@ namespace Apworks.Events
     public interface IEventStore : IDisposable
     {
         /// <summary>
-        /// Saves the specified event descriptors to the current event store.
+        /// Saves the specified events to the current event store.
         /// </summary>
-        /// <param name="eventDescriptors">The event descriptors to be saved.</param>
-        void Save(IEnumerable<EventDescriptor> eventDescriptors);
+        /// <param name="events">The events to be saved.</param>
+        void Save(IEnumerable<IEvent> events);
 
         /// <summary>
-        /// Saves the specified event descriptors to the current event store asynchronously.
+        /// Saves the specified events to the current event store asynchronously.
         /// </summary>
-        /// <param name="eventDescriptors">The event descriptors to be saved.</param>
+        /// <param name="eventDescriptors">The events to be saved.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        Task SaveAsync(IEnumerable<EventDescriptor> eventDescriptors, CancellationToken cancellationToken = default(CancellationToken));
+        Task SaveAsync(IEnumerable<IEvent> eventDescriptors, CancellationToken cancellationToken = default(CancellationToken));
 
-        IEnumerable<EventDescriptor> Load<TKey>(string originatorClrType, TKey originatorId)
-            where TKey : IEquatable<TKey>;
+        IEnumerable<TEvent> Load<TKey, TEvent>(string originatorClrType, TKey originatorId)
+            where TKey : IEquatable<TKey>
+            where TEvent : IEvent;
 
-        Task<IEnumerable<EventDescriptor>> LoadAsync<TKey>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
-            where TKey : IEquatable<TKey>;
+        Task<IEnumerable<TEvent>> LoadAsync<TKey, TEvent>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
+            where TKey : IEquatable<TKey>
+            where TEvent : IEvent;
     }
 }

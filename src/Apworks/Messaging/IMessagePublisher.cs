@@ -22,6 +22,14 @@ namespace Apworks.Messaging
             where TMessage : IMessage;
 
         /// <summary>
+        /// Publishes a series of messages with the same message type.
+        /// </summary>
+        /// <typeparam name="TMessage">The type of the messages to be published.</typeparam>
+        /// <param name="messages">A series of messages to be published.</param>
+        void Publish<TMessage>(IEnumerable<TMessage> messages)
+            where TMessage : IMessage;
+
+        /// <summary>
         /// publishes the specified message asynchronously.
         /// </summary>
         /// <typeparam name="TMessage">The type of the message to be published.</typeparam>
@@ -29,6 +37,16 @@ namespace Apworks.Messaging
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> instance that propagates notification that operations should be canceled.</param>
         /// <returns></returns>
         Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default(CancellationToken))
+            where TMessage : IMessage;
+
+        /// <summary>
+        /// Publishes a series of messages with the same message type asynchronously.
+        /// </summary>
+        /// <typeparam name="TMessage">The type of the messages to be published.</typeparam>
+        /// <param name="messages">A series of messages to be published.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> which propagates notification that operations should be canceled.</param>
+        /// <returns></returns>
+        Task PublishAsync<TMessage>(IEnumerable<TMessage> messages, CancellationToken cancellationToken = default(CancellationToken))
             where TMessage : IMessage;
 
         /// <summary>

@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Apworks.Querying;
 
-namespace Apworks.Repositories.Dictionary
+namespace Apworks.Repositories.Simple
 {
     internal sealed class DictionaryRepository<TKey, TAggregateRoot> : Repository<TKey, TAggregateRoot>
         where TKey : IEquatable<TKey>

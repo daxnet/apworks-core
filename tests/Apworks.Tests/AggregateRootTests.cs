@@ -90,9 +90,9 @@ namespace Apworks.Tests
         [Fact]
         public void SerializeAndDeserializeEventTest1()
         {
-            var eventId = Guid.NewGuid();
             var nameChangedEvent = new NameChangedEvent("daxnet");
-            nameChangedEvent.Id = eventId;
+            var eventId = nameChangedEvent.Id;
+
             nameChangedEvent.Timestamp = DateTime.UtcNow;
             var json = JsonConvert.SerializeObject(nameChangedEvent);
             Assert.NotNull(json);

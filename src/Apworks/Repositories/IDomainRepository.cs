@@ -22,18 +22,18 @@ namespace Apworks.Repositories
 
         TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id)
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
 
         void Save<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot)
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
 
         Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, CancellationToken cancellationToken = default(CancellationToken))
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
 
         Task SaveAsync<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken))
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
     }
 }

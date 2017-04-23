@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace Apworks.Repositories
 {
+    /// <summary>
+    /// Represents the domain repository that can publish the domain events from an aggregate
+    /// to the message bus.
+    /// </summary>
     public abstract class EventPublishingDomainRepository : DomainRepository
     {
         private readonly IEventPublisher publisher;

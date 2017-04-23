@@ -15,19 +15,19 @@ namespace Apworks.Repositories
 
         public abstract TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id)
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
 
         public virtual Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, CancellationToken cancellationToken)
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey> => Task.FromResult(this.GetById<TKey, TAggregateRoot>(id));
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new() => Task.FromResult(this.GetById<TKey, TAggregateRoot>(id));
 
         public abstract void Save<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot)
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
 
         public virtual Task SaveAsync<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot, CancellationToken cancellationToken)
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new()
             => Task.Factory.StartNew(() => Save<TKey, TAggregateRoot>(aggregateRoot), cancellationToken);
     }
 }

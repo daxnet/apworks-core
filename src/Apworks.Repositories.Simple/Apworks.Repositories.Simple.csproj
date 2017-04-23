@@ -6,11 +6,11 @@
     <VersionPrefix>0.999.0</VersionPrefix>
     <Authors>Sunny Chen (daxnet)</Authors>
     <TargetFrameworks>net461;netstandard1.6</TargetFrameworks>
-    <AssemblyName>Apworks.EventStore.Dictionary</AssemblyName>
-    <PackageId>Apworks.EventStore.Dictionary</PackageId>
+    <AssemblyName>Apworks.Repositories.Simple</AssemblyName>
     <AssemblyOriginatorKeyFile>../../tools/Apworks.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+    <PackageId>Apworks.Repositories.Simple</PackageId>
     <PackageTags>apworks</PackageTags>
     <PackageLicenseUrl>https://github.com/daxnet/apworks-core/blob/master/LICENSE</PackageLicenseUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -20,13 +20,29 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <AssemblyVersion>0.999.0</AssemblyVersion>
+    <FileVersion>0.999.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Apworks\Apworks.csproj" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <DefineConstants>$(DefineConstants);_NET461_</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <DefineConstants>$(DefineConstants);_NETCORE_</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
+    <DocumentationFile>bin\Release\net461\Apworks.Repositories.Simple.xml</DocumentationFile>
+  </PropertyGroup>
+  
 </Project>

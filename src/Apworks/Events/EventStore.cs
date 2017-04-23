@@ -11,14 +11,62 @@ namespace Apworks.Events
     {
         public virtual void Dispose() { }
 
-        public abstract IEnumerable<EventDescriptor> Load<TKey>(string originatorClrType, TKey originatorId) 
+        public IEnumerable<TEvent> Load<TKey, TEvent>(string originatorClrType, TKey originatorId) 
+            where TKey : IEquatable<TKey>
+            where TEvent : IEvent
+        {
+            var descriptors = this.LoadDescriptors<TKey>(originatorClrType, originatorId);
+            foreach(var descriptor in descriptors)
+            {
+                if (descriptor.EventPayload != null &&
+                    descriptor.EventPayload is TEvent)
+                {
+                    yield return (TEvent)descriptor.EventPayload;
+                }
+            }
+            yield break;
+        }
+
+        public async Task<IEnumerable<TEvent>> LoadAsync<TKey, TEvent>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
+            where TKey : IEquatable<TKey>
+            where TEvent : IEvent
+        {
+            var descriptors = await this.LoadDescriptorsAsync<TKey>(originatorClrType, originatorId, cancellationToken);
+            List<TEvent> events = new List<TEvent>();
+            foreach(var descriptor in descriptors)
+            {
+                if (descriptor.EventPayload != null &&
+                    descriptor.EventPayload is TEvent)
+                {
+                    events.Add((TEvent)descriptor.EventPayload);
+                }
+            }
+            return events;
+        }
+
+        public void Save(IEnumerable<IEvent> events)
+        {
+            var descriptors = new List<EventDescriptor>();
+            descriptors.AddRange(events.Select(e => e.ToDescriptor()));
+            this.SaveDescriptors(descriptors);
+        }
+
+        public async Task SaveAsync(IEnumerable<IEvent> events, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var descriptors = new List<EventDescriptor>();
+            descriptors.AddRange(events.Select(e => e.ToDescriptor()));
+            await this.SaveDescriptorsAsync(descriptors, cancellationToken);
+        }
+
+        protected abstract IEnumerable<EventDescriptor> LoadDescriptors<TKey>(string originatorClrType, TKey originatorId)
             where TKey : IEquatable<TKey>;
 
-        public virtual Task<IEnumerable<EventDescriptor>> LoadAsync<TKey>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
-            where TKey : IEquatable<TKey> => Task.FromResult(Load<TKey>(originatorClrType, originatorId));
+        protected virtual Task<IEnumerable<EventDescriptor>> LoadDescriptorsAsync<TKey>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
+            where TKey : IEquatable<TKey> => Task.FromResult(LoadDescriptors(originatorClrType, originatorId));
 
-        public abstract void Save(IEnumerable<EventDescriptor> eventDescriptors);
+        protected abstract void SaveDescriptors(IEnumerable<EventDescriptor> descriptors);
 
-        public virtual Task SaveAsync(IEnumerable<EventDescriptor> eventDescriptors, CancellationToken cancellationToken = default(CancellationToken)) => Task.Factory.StartNew(() => Save(eventDescriptors), cancellationToken);
+        protected virtual Task SaveDescriptorsAsync(IEnumerable<EventDescriptor> descriptors, CancellationToken cancellationToken = default(CancellationToken))
+            => Task.Factory.StartNew(() => SaveDescriptors(descriptors), cancellationToken);
     }
 }

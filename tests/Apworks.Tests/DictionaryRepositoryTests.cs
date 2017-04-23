@@ -4,10 +4,10 @@ using System;
 using System.Linq;
 using Xunit;
 using System.Collections.Concurrent;
-using Apworks.Repositories.Dictionary;
 using System.Threading.Tasks;
 using Apworks.Querying;
 using System.Collections.Generic;
+using Apworks.Repositories.Simple;
 
 namespace Apworks.Tests
 {

@@ -4,20 +4,20 @@ using System.Linq;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Apworks.EventStore.Dictionary
+namespace Apworks.EventStore.Simple
 {
     public class DictionaryEventStore : Events.EventStore
     {
         private readonly ConcurrentDictionary<string, List<EventDescriptor>> bank = new ConcurrentDictionary<string, List<EventDescriptor>>();
 
-        public override IEnumerable<EventDescriptor> Load<TKey>(string originatorClrType, TKey originatorId)
+        protected override IEnumerable<EventDescriptor> LoadDescriptors<TKey>(string originatorClrType, TKey originatorId)
         {
             var key = $"{originatorClrType}_{originatorId.ToString()}";
             bank.TryGetValue(key, out List<EventDescriptor> descriptors);
             return descriptors;
         }
 
-        public override void Save(IEnumerable<EventDescriptor> eventDescriptors)
+        protected override void SaveDescriptors(IEnumerable<EventDescriptor> eventDescriptors)
         {
             var query = from p in eventDescriptors
                         where !string.IsNullOrEmpty(p.OriginatorClrType) &&
