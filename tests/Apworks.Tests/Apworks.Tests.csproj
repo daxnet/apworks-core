@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Apworks.EventStore.Simple\Apworks.EventStore.Simple.csproj" />
+    <ProjectReference Include="..\..\src\Apworks.Messaging.Simple\Apworks.Messaging.Simple.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Repositories.Simple\Apworks.Repositories.Simple.csproj" />
     <ProjectReference Include="..\..\src\Apworks\Apworks.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Repositories.MongoDB\Apworks.Repositories.MongoDB.csproj" />

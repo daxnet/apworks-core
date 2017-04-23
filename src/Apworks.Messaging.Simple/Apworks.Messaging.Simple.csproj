@@ -24,4 +24,8 @@
     <FileVersion>0.999.0</FileVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Apworks\Apworks.csproj" />
+  </ItemGroup>
+
 </Project>

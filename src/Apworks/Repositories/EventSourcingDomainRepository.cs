@@ -40,7 +40,7 @@ namespace Apworks.Repositories
             this.eventStore.Save(uncommittedEvents); // This will save the uncommitted events in a transaction.
 
             // Publishes the events.
-            this.Publisher.Publish(uncommittedEvents);
+            this.Publisher.PublishAll(uncommittedEvents);
 
             // Purges the uncommitted events.
             ((IPurgeable)aggregateRoot).Purge();
@@ -53,7 +53,7 @@ namespace Apworks.Repositories
             await this.eventStore.SaveAsync(uncommittedEvents, cancellationToken); // This will save the uncommitted events in a transaction.
 
             // Publishes the events.
-            await this.Publisher.PublishAsync(uncommittedEvents);
+            await this.Publisher.PublishAllAsync(uncommittedEvents);
 
             // Purges the uncommitted events.
             ((IPurgeable)aggregateRoot).Purge();

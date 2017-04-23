@@ -11,12 +11,12 @@ using Apworks.Repositories.Simple;
 
 namespace Apworks.Tests
 {
-    public class DictionaryRepositoryTests : IDisposable
+    public class SimpleRepositoryTests : IDisposable
     {
         private readonly IRepositoryContext repositoryContext;
         private readonly IRepository<int, Customer> repository;
 
-        public DictionaryRepositoryTests()
+        public SimpleRepositoryTests()
         {
             var session = new ConcurrentDictionary<object, object>();
             this.repositoryContext = new DictionaryRepositoryContext(session);

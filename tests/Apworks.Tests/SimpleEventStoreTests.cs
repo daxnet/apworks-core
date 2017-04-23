@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Apworks.Tests
 {
-    public class DictionaryEventStoreTests
+    public class SimpleEventStoreTests
     {
         [Fact]
         public void SaveEventsTest1()
