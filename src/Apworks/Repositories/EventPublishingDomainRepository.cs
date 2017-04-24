@@ -24,7 +24,7 @@ namespace Apworks.Repositories
 
         protected virtual void OnMessagePublished(object sender, MessagePublishedEventArgs e) { }
 
-        protected IEventPublisher Publisher { get; }
+        protected IEventPublisher Publisher => this.publisher;
 
         protected override void Dispose(bool disposing)
         {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Apworks.Events
 {
-    public interface IEventBus : IMessageBus, IEventPublisher, IEventSubscriber
+    public interface IEventSubscriber : IMessageSubscriber
     {
     }
 }

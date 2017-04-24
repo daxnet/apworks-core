@@ -6,6 +6,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
+using Apworks.EventStore.Simple;
+using Apworks.Repositories;
 
 namespace Apworks.Tests
 {
@@ -42,6 +44,30 @@ namespace Apworks.Tests
             mb.PublishAll(events);
 
             Assert.Equal(3, numOfMessagesReceived);
+        }
+
+        [Fact]
+        public void SimpleCQRSScenarioTest1()
+        {
+            var changedName = string.Empty;
+            var eventStore = new DictionaryEventStore();
+            var eventBus = new EventBus();
+            eventBus.MessageReceived += (s, e) =>
+            {
+                if (e.Message is NameChangedEvent)
+                {
+                    changedName = (e.Message as NameChangedEvent).Name;
+                }
+            };
+            eventBus.Subscribe();
+            var domainRepository = new EventSourcingDomainRepository(eventStore, eventBus);
+
+            var id = Guid.NewGuid();
+            var model = new Employee { Id = id };
+            model.ChangeName("daxnet");
+            domainRepository.Save<Guid, Employee>(model);
+
+            Assert.Equal("daxnet", changedName);
         }
     }
 }

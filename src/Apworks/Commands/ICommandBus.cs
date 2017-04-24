@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Apworks.Events
+namespace Apworks.Commands
 {
-    public interface IEventBus : IMessageBus, IEventPublisher, IEventSubscriber
+    public interface ICommandBus : IMessageBus, ICommandPublisher, ICommandSubscriber
     {
     }
 }

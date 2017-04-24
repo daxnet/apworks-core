@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Apworks.Messaging.Simple
 {
-    public sealed class MessageBus : DisposableObject, IMessageBus
+    public class MessageBus : DisposableObject, IMessageBus
     {
         private readonly MessageQueue messageQueue = new MessageQueue();
         private bool subscribed = false;
@@ -20,21 +20,12 @@ namespace Apworks.Messaging.Simple
             this.OnMessagePublished(new MessagePublishedEventArgs(message));
         }
 
-        public void PublishAll(IEnumerable<IMessage> messages)
-        {
-            messages.ToList().ForEach(msg => Publish(msg));
-        }
+        public void PublishAll(IEnumerable<IMessage> messages) => messages.ToList().ForEach(msg => Publish(msg));
 
         public Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default(CancellationToken)) 
-            where TMessage : IMessage
-        {
-            return Task.Factory.StartNew(() => Publish(message), cancellationToken);
-        }
+            where TMessage : IMessage => Task.Factory.StartNew(() => Publish(message), cancellationToken);
 
-        public Task PublishAllAsync(IEnumerable<IMessage> messages, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return Task.Factory.StartNew(() => PublishAll(messages), cancellationToken);
-        }
+        public Task PublishAllAsync(IEnumerable<IMessage> messages, CancellationToken cancellationToken = default(CancellationToken)) => Task.Factory.StartNew(() => PublishAll(messages), cancellationToken);
 
         public void Subscribe()
         {
@@ -60,7 +51,5 @@ namespace Apworks.Messaging.Simple
         {
             this.MessageReceived?.Invoke(this, e);
         }
-
-        
     }
 }

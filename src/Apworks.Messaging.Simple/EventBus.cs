@@ -1,13 +1,13 @@
-﻿using Apworks.Messaging;
+﻿using Apworks.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Apworks.Events
+namespace Apworks.Messaging.Simple
 {
-    public interface IEventBus : IMessageBus, IEventPublisher, IEventSubscriber
+    public sealed class EventBus : MessageBus, IEventBus
     {
     }
 }
