@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.EventStore.Simple",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Messaging.Simple", "src\Apworks.Messaging.Simple\Apworks.Messaging.Simple.csproj", "{4A9B5333-8203-48AF-9375-F24D9DDD1227}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.EventStore.AdoNet", "src\Apworks.EventStore.AdoNet\Apworks.EventStore.AdoNet.csproj", "{1092FFAD-106A-4125-94CB-666669E1E838}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,10 @@ Global
 		{4A9B5333-8203-48AF-9375-F24D9DDD1227}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A9B5333-8203-48AF-9375-F24D9DDD1227}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4A9B5333-8203-48AF-9375-F24D9DDD1227}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1092FFAD-106A-4125-94CB-666669E1E838}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1092FFAD-106A-4125-94CB-666669E1E838}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1092FFAD-106A-4125-94CB-666669E1E838}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1092FFAD-106A-4125-94CB-666669E1E838}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,5 +94,6 @@ Global
 		{D07753EE-45C4-47A0-95C5-30394C3E3A16} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 		{53A8D2B2-DFCC-4765-954E-102E4F46304E} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 		{4A9B5333-8203-48AF-9375-F24D9DDD1227} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
+		{1092FFAD-106A-4125-94CB-666669E1E838} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 	EndGlobalSection
 EndGlobal
