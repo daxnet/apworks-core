@@ -25,35 +25,33 @@ namespace Apworks.EventStore.AdoNet
             var originatorClrTypeParameterName = $"{ParameterChar}{nameof(originatorClrType)}";
             var originatorIdParameterName = $"{ParameterChar}{nameof(originatorId)}";
             var sql = $"SELECT {this.GetEscapedFieldNames()} FROM {this.GetEscapedTableName()} WHERE {this.GetEscapedFieldNames(x => x.OriginatorClrType)}={originatorClrTypeParameterName} AND {this.GetEscapedFieldNames(x => x.OriginatorId)}={originatorIdParameterName}";
+            var result = new List<EventDescriptor>();
             using (var connection = this.CreateDatabaseConnection(this.config.ConnectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = sql;
-                    var originatorClrTypeParameter = command.CreateParameter();
-                    originatorClrTypeParameter.ParameterName = originatorClrTypeParameterName;
-                    originatorClrTypeParameter.Value = originatorClrType;
-                    command.Parameters.Add(originatorClrTypeParameter);
-
-                    return null;
+                    command.Parameters.Clear();
+                    command.Parameters.Add(CreateParameter(command, originatorClrTypeParameterName, originatorClrType));
+                    command.Parameters.Add(CreateParameter(command, originatorIdParameterName, originatorId));
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while(reader.Read())
+                        {
+                            result.Add(this.CreateFromReader(reader));
+                        }
+                        reader.Close();
+                    }
                 }
             }
-        }
 
-        protected override Task<IEnumerable<EventDescriptor>> LoadDescriptorsAsync<TKey>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return base.LoadDescriptorsAsync(originatorClrType, originatorId, cancellationToken);
+            return result;
         }
 
         protected override void SaveDescriptors(IEnumerable<EventDescriptor> descriptors)
         {
             throw new NotImplementedException();
-        }
-
-        protected override Task SaveDescriptorsAsync(IEnumerable<EventDescriptor> descriptors, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            return base.SaveDescriptorsAsync(descriptors, cancellationToken);
         }
 
         #region Database Dialect Overrides
@@ -66,6 +64,29 @@ namespace Apworks.EventStore.AdoNet
         protected virtual char EndLiteralEscapeChar { get => ']'; }
 
         #endregion
+
+        private static IDbDataParameter CreateParameter(IDbCommand command, string parameterName, object parameterValue)
+        {
+            var parameter = command.CreateParameter();
+            parameter.ParameterName = parameterName;
+            parameter.Value = parameterValue;
+            return parameter;
+        }
+
+        private EventDescriptor CreateFromReader(IDataReader reader)
+        {
+            return new EventDescriptor
+            {
+                Id = (Guid)reader[this.config.GetFieldName(x => x.Id)],
+                EventClrType = (string)reader[this.config.GetFieldName(x => x.EventClrType)],
+                EventId = (Guid)reader[this.config.GetFieldName(x => x.EventId)],
+                EventIntent = (string)reader[this.config.GetFieldName(x => x.EventIntent)],
+                EventPayload = reader[this.config.GetFieldName(x => x.EventPayload)],
+                EventTimestamp = (DateTime)reader[this.config.GetFieldName(x => x.EventTimestamp)],
+                OriginatorClrType = (string)reader[this.config.GetFieldName(x => x.OriginatorClrType)],
+                OriginatorId = (string)reader[this.config.GetFieldName(x => x.OriginatorId)]
+            };
+        }
 
         private string GetEscapedFieldNames(params Expression<Func<EventDescriptor, object>>[] propertyExpressions)
         {
