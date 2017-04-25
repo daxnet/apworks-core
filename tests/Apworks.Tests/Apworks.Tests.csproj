@@ -17,6 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Apworks.EventStore.AdoNet\Apworks.EventStore.AdoNet.csproj" />
     <ProjectReference Include="..\..\src\Apworks.EventStore.Simple\Apworks.EventStore.Simple.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Messaging.Simple\Apworks.Messaging.Simple.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Repositories.Simple\Apworks.Repositories.Simple.csproj" />
