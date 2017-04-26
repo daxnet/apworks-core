@@ -9,6 +9,15 @@ namespace Apworks.Events
 {
     public abstract class EventStore : IEventStore
     {
+        private readonly IObjectSerializer payloadSerializer;
+
+        protected EventStore(IObjectSerializer payloadSerializer)
+        {
+            this.payloadSerializer = payloadSerializer;
+        }
+
+        protected IObjectSerializer PayloadSerializer { get => this.payloadSerializer; }
+
         public virtual void Dispose() { }
 
         public IEnumerable<TEvent> Load<TKey, TEvent>(string originatorClrType, TKey originatorId) 

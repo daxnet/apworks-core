@@ -10,6 +10,10 @@ namespace Apworks.EventStore.Simple
     {
         private readonly ConcurrentDictionary<string, List<EventDescriptor>> bank = new ConcurrentDictionary<string, List<EventDescriptor>>();
 
+        public DictionaryEventStore()
+            : base(new DummySerializer())
+        { }
+
         protected override IEnumerable<EventDescriptor> LoadDescriptors<TKey>(string originatorClrType, TKey originatorId)
         {
             var key = $"{originatorClrType}_{originatorId.ToString()}";
@@ -30,6 +34,19 @@ namespace Apworks.EventStore.Simple
                 this.bank.AddOrUpdate($"{item.Key.OriginatorClrType}_{item.Key.OriginatorId}",
                     item.Values, (k, origin) => { origin.AddRange(item.Values); return origin; });
             }
+        }
+    }
+
+    internal sealed class DummySerializer : ObjectSerializer
+    {
+        public override object Deserialize(Type objType, byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override byte[] Serialize(Type objType, object obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }

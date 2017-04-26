@@ -12,9 +12,9 @@ namespace Apworks.EventStore.PostgreSQL
 {
     public sealed class PostgreSqlEventStore : AdoNetEventStore
     {
-        public PostgreSqlEventStore(AdoNetEventStoreConfiguration config) : base(config)
-        {
-        }
+        public PostgreSqlEventStore(AdoNetEventStoreConfiguration config, IObjectSerializer payloadSerializer)
+            : base(config, payloadSerializer)
+        { }
 
         protected override char ParameterChar => '@';
 
@@ -89,5 +89,9 @@ namespace Apworks.EventStore.PostgreSQL
                 }
             }
         }
+
+        protected override string BeginLiteralEscapeChar => "\"";
+
+        protected override string EndLiteralEscapeChar => "\"";
     }
 }

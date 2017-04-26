@@ -17,8 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Apworks.EventStore.AdoNet\Apworks.EventStore.AdoNet.csproj" />
+    <ProjectReference Include="..\..\src\Apworks.EventStore.PostgreSQL\Apworks.EventStore.PostgreSQL.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Repositories.EntityFramework\Apworks.Repositories.EntityFramework.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Repositories.MongoDB\Apworks.Repositories.MongoDB.csproj" />
+    <ProjectReference Include="..\..\src\Apworks.Serialization.Json\Apworks.Serialization.Json.csproj" />
     <ProjectReference Include="..\..\src\Apworks\Apworks.csproj" />
   </ItemGroup>
 

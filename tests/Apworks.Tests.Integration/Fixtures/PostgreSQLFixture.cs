@@ -12,7 +12,7 @@ namespace Apworks.Tests.Integration.Fixtures
 
         public PostgreSQLFixture()
         {
-            if (CheckTableExists("Customers") || CheckTableExists("Addresses"))
+            if (CheckTableExists("Customers") || CheckTableExists("Addresses") || CheckTableExists("EVENTS"))
             {
                 DropTable();
             }
@@ -24,6 +24,7 @@ namespace Apworks.Tests.Integration.Fixtures
         {
             ExecuteCommand("DELETE FROM public.\"Addresses\"");
             ExecuteCommand("DELETE FROM public.\"Customers\"");
+            ExecuteCommand("DELETE FROM public.\"EVENTS\"");
         }
 
         private static bool CheckTableExists(string tableName)
@@ -65,6 +66,7 @@ namespace Apworks.Tests.Integration.Fixtures
         {
             ExecuteCommand("DROP TABLE public.\"Addresses\"");
             ExecuteCommand("DROP TABLE public.\"Customers\"");
+            ExecuteCommand("DROP TABLE public.\"EVENTS\"");
         }
 
         private static void CreateTable()
@@ -101,6 +103,21 @@ CREATE INDEX ""IX_Addresses_CustomerId"" ON ""Addresses"" (""CustomerId"");
 ALTER TABLE public.""Addresses""
   OWNER TO test;
 
+CREATE TABLE public.""EVENTS""
+(
+    ""ID"" uuid NOT NULL,
+    ""EVENTID"" uuid NOT NULL,
+    ""EVENTTIMESTAMP"" timestamp without time zone NOT NULL,
+    ""EVENTCLRTYPE"" text COLLATE pg_catalog.""default"" NOT NULL,
+    ""EVENTINTENT"" text COLLATE pg_catalog.""default"" NOT NULL,
+    ""ORIGINATORCLRTYPE"" text COLLATE pg_catalog.""default"" NOT NULL,
+    ""ORIGINATORID"" text COLLATE pg_catalog.""default"" NOT NULL,
+    ""EVENTPAYLOAD"" bytea NOT NULL,
+    CONSTRAINT ""EVENTS_pkey"" PRIMARY KEY(""ID"")
+);
+
+ALTER TABLE public.""EVENTS""
+    OWNER TO test;
 ";
             ExecuteCommand(createScript);
         }

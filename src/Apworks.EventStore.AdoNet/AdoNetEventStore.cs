@@ -15,7 +15,8 @@ namespace Apworks.EventStore.AdoNet
     {
         private readonly AdoNetEventStoreConfiguration config;
 
-        protected AdoNetEventStore(AdoNetEventStoreConfiguration config)
+        protected AdoNetEventStore(AdoNetEventStoreConfiguration config, IObjectSerializer payloadSerializer)
+            : base(payloadSerializer)
         {
             this.config = config;
         }
@@ -93,9 +94,9 @@ namespace Apworks.EventStore.AdoNet
 
         protected abstract char ParameterChar { get; }
 
-        protected virtual char BeginLiteralEscapeChar { get => '['; }
+        protected virtual string BeginLiteralEscapeChar { get => "["; }
 
-        protected virtual char EndLiteralEscapeChar { get => ']'; }
+        protected virtual string EndLiteralEscapeChar { get => "]"; }
 
         #endregion
 
@@ -111,13 +112,15 @@ namespace Apworks.EventStore.AdoNet
 
         protected EventDescriptor CreateFromReader(IDataReader reader)
         {
+            var eventClrType = (string)reader[this.config.GetFieldName(x => x.EventClrType)];
+            var eventType = Type.GetType(eventClrType);
             return new EventDescriptor
             {
                 Id = (Guid)reader[this.config.GetFieldName(x => x.Id)],
-                EventClrType = (string)reader[this.config.GetFieldName(x => x.EventClrType)],
+                EventClrType = eventClrType,
                 EventId = (Guid)reader[this.config.GetFieldName(x => x.EventId)],
                 EventIntent = (string)reader[this.config.GetFieldName(x => x.EventIntent)],
-                EventPayload = reader[this.config.GetFieldName(x => x.EventPayload)],
+                EventPayload = this.PayloadSerializer.Deserialize(eventType, (byte[])reader[this.config.GetFieldName(x => x.EventPayload)]),
                 EventTimestamp = (DateTime)reader[this.config.GetFieldName(x => x.EventTimestamp)],
                 OriginatorClrType = (string)reader[this.config.GetFieldName(x => x.OriginatorClrType)],
                 OriginatorId = (string)reader[this.config.GetFieldName(x => x.OriginatorId)]
@@ -155,7 +158,9 @@ namespace Apworks.EventStore.AdoNet
                     var parameterName = $"{this.ParameterChar}P_{p.Name}";
                     var parameter = command.CreateParameter();
                     parameter.ParameterName = parameterName;
-                    parameter.Value = p.GetValue(eventDescriptor);
+                    parameter.Value = p.Name == "EventPayload" ?
+                        this.PayloadSerializer.Serialize(Type.GetType(eventDescriptor.EventClrType), p.GetValue(eventDescriptor)) :
+                        p.GetValue(eventDescriptor);
                     return new KeyValuePair<string, IDbDataParameter>(parameterName, parameter);
                 });
         }
