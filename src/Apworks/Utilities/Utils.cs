@@ -26,6 +26,7 @@
 
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Apworks.Utilities
@@ -127,6 +128,12 @@ namespace Apworks.Utilities
                     hash = hash * FactorPrime + code;
                 return hash;
             }
+        }
+
+        public static string GetPropertyNameFromExpression<T>(Expression<Func<T, object>> expr)
+        {
+            var memberExpression = expr.Body as MemberExpression;
+            return memberExpression?.Member?.Name;
         }
     }
 }

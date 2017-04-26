@@ -24,8 +24,8 @@ namespace Apworks.EventStore.AdoNet
         {
             var originatorClrTypeParameterName = $"{ParameterChar}{nameof(originatorClrType)}";
             var originatorIdParameterName = $"{ParameterChar}{nameof(originatorId)}";
-            var sql = $"SELECT {this.GetEscapedFieldNames()} FROM {this.GetEscapedTableName()} WHERE {this.GetEscapedFieldNames(x => x.OriginatorClrType)}={originatorClrTypeParameterName} AND {this.GetEscapedFieldNames(x => x.OriginatorId)}={originatorIdParameterName}";
-            var result = new List<EventDescriptor>();
+            var sql = $"SELECT {this.GetEscapedFieldNames()} FROM {this.GetEscapedTableName()} WHERE {this.GetEscapedFieldNames(propertyExpressions: x => x.OriginatorClrType)}={originatorClrTypeParameterName} AND {this.GetEscapedFieldNames(propertyExpressions: x => x.OriginatorId)}={originatorIdParameterName}";
+            var results = new List<EventDescriptor>();
             using (var connection = this.CreateDatabaseConnection(this.config.ConnectionString))
             {
                 connection.Open();
@@ -39,19 +39,53 @@ namespace Apworks.EventStore.AdoNet
                     {
                         while(reader.Read())
                         {
-                            result.Add(this.CreateFromReader(reader));
+                            results.Add(this.CreateFromReader(reader));
                         }
                         reader.Close();
                     }
                 }
             }
 
-            return result;
+            return results;
         }
 
         protected override void SaveDescriptors(IEnumerable<EventDescriptor> descriptors)
         {
-            throw new NotImplementedException();
+            var sql = $"INSERT INTO {this.GetEscapedTableName()} ({this.GetEscapedFieldNames(false)}) VALUES ";
+            using (var connection = this.CreateDatabaseConnection(this.config.ConnectionString))
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        using (var command = connection.CreateCommand())
+                        {
+                            var hasCommandPrepared = false;
+                            foreach (var descriptor in descriptors)
+                            {
+                                var parameters = this.GenerateInsertParameters(command, descriptor, false);
+                                if (!hasCommandPrepared)
+                                {
+                                    sql = $"{sql} ({string.Join(", ", parameters.Select(x => x.Key))})";
+                                    command.CommandText = sql;
+                                    command.Transaction = transaction;
+                                    hasCommandPrepared = true;
+                                }
+                                command.Parameters.Clear();
+                                parameters.Select(p => p.Value).ToList().ForEach(p => command.Parameters.Add(p));
+                                command.ExecuteNonQuery();
+                            }
+                        }
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
         }
 
         #region Database Dialect Overrides
@@ -65,7 +99,9 @@ namespace Apworks.EventStore.AdoNet
 
         #endregion
 
-        private static IDbDataParameter CreateParameter(IDbCommand command, string parameterName, object parameterValue)
+        protected AdoNetEventStoreConfiguration Configuration { get => config; }
+
+        protected static IDbDataParameter CreateParameter(IDbCommand command, string parameterName, object parameterValue)
         {
             var parameter = command.CreateParameter();
             parameter.ParameterName = parameterName;
@@ -73,7 +109,7 @@ namespace Apworks.EventStore.AdoNet
             return parameter;
         }
 
-        private EventDescriptor CreateFromReader(IDataReader reader)
+        protected EventDescriptor CreateFromReader(IDataReader reader)
         {
             return new EventDescriptor
             {
@@ -88,20 +124,40 @@ namespace Apworks.EventStore.AdoNet
             };
         }
 
-        private string GetEscapedFieldNames(params Expression<Func<EventDescriptor, object>>[] propertyExpressions)
+        protected string GetEscapedFieldNames(bool includeKeyField = true, params Expression<Func<EventDescriptor, object>>[] propertyExpressions)
         {
             if (propertyExpressions?.Length > 0)
             {
-                return string.Join(", ", propertyExpressions.Select(p => $"{BeginLiteralEscapeChar}{this.config.GetFieldName(p)}{EndLiteralEscapeChar}"));
+                return string.Join(", ", propertyExpressions
+                    .Where(p => includeKeyField || this.config.HasKeyGenerator ? true : Utils.GetPropertyNameFromExpression(p).ToUpper() != "ID")
+                    .Select(p => $"{BeginLiteralEscapeChar}{this.config.GetFieldName(p)}{EndLiteralEscapeChar}"));
             }
 
             return string.Join(", ", typeof(EventDescriptor)
                 .GetTypeInfo()
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                .Where(p => p.CanRead && (p.PropertyType.IsSimpleType() || p.PropertyType == typeof(object)))
+                .Where(p => p.CanRead && (p.PropertyType.IsSimpleType() || p.PropertyType == typeof(object)) &&
+                    (includeKeyField || this.config.HasKeyGenerator ? true : p.Name.ToUpper() != "ID"))
                 .Select(p => $"{BeginLiteralEscapeChar}{this.config.GetFieldName(p.Name)}{EndLiteralEscapeChar}"));
         }
 
-        private string GetEscapedTableName() => $"{BeginLiteralEscapeChar}{this.config.TableName}{EndLiteralEscapeChar}";
+        protected string GetEscapedTableName() => $"{BeginLiteralEscapeChar}{this.config.TableName}{EndLiteralEscapeChar}";
+
+        protected IEnumerable<KeyValuePair<string, IDbDataParameter>> GenerateInsertParameters(IDbCommand command, EventDescriptor eventDescriptor, bool includeKeyField = true)
+        {
+            return typeof(EventDescriptor)
+                .GetTypeInfo()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                .Where(p => p.CanRead && (p.PropertyType.IsSimpleType() || p.PropertyType == typeof(object)) &&
+                    (includeKeyField || this.config.HasKeyGenerator ? true : p.Name.ToUpper() != "ID"))
+                .Select(p =>
+                {
+                    var parameterName = $"{this.ParameterChar}P_{p.Name}";
+                    var parameter = command.CreateParameter();
+                    parameter.ParameterName = parameterName;
+                    parameter.Value = p.GetValue(eventDescriptor);
+                    return new KeyValuePair<string, IDbDataParameter>(parameterName, parameter);
+                });
+        }
     }
 }
