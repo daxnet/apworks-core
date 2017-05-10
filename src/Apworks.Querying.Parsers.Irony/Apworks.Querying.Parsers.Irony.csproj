@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>The messaging infrastructure for Apworks that is implemented with basic data structures provided by .NET This can only be used for testing and demonstration purposes.</Description>
+    <Description>The query condition parser implemented with Irony framework.</Description>
     <Copyright>Copyright (C) 2009-2017 by daxnet (Sunny Chen).</Copyright>
     <VersionPrefix>0.999.0</VersionPrefix>
     <Authors>Sunny Chen (daxnet)</Authors>
     <TargetFrameworks>net461;netstandard1.6</TargetFrameworks>
-    <AssemblyName>Apworks.Messaging.Simple</AssemblyName>
+    <AssemblyName>Apworks.Querying.Parsers.Irony</AssemblyName>
     <AssemblyOriginatorKeyFile>../../tools/Apworks.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-    <PackageId>Apworks.Messaging.Simple</PackageId>
-    <PackageTags>apworks; messaging; event-bus</PackageTags>
+    <PackageId>Apworks.Querying.Parsers.Irony</PackageId>
+    <PackageTags>apworks; querying; parsers</PackageTags>
     <PackageLicenseUrl>https://github.com/daxnet/apworks-core/blob/master/LICENSE</PackageLicenseUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/daxnet/apworks-core</RepositoryUrl>
@@ -24,15 +24,19 @@
     <FileVersion>0.999.0</FileVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Apworks\Apworks.csproj" />
-  </ItemGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Irony.Interpreter" Version="1.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Apworks\Apworks.csproj" />
+  </ItemGroup>
+  
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
     <DefineConstants>$(DefineConstants);_NET461_</DefineConstants>
   </PropertyGroup>
@@ -40,5 +44,5 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <DefineConstants>$(DefineConstants);_NETCORE_</DefineConstants>
   </PropertyGroup>
-
+  
 </Project>

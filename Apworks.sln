@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.3
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks", "src\Apworks\Apworks.csproj", "{9D0B1FC5-57E6-4A60-8AFD-CDCAEC271A3A}"
 EndProject
@@ -37,6 +37,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.EventStore.PostgreSQL", "src\Apworks.EventStore.PostgreSQL\Apworks.EventStore.PostgreSQL.csproj", "{D3AF7FDA-B050-4EB2-8C10-50D5D40F93D4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Serialization.Json", "src\Apworks.Serialization.Json\Apworks.Serialization.Json.csproj", "{E871B1E6-24D7-4765-B564-E10F19FE6801}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Querying.Parsers.Irony", "src\Apworks.Querying.Parsers.Irony\Apworks.Querying.Parsers.Irony.csproj", "{558BF7B3-71E9-40B5-87D1-D82DA22454B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,6 +94,10 @@ Global
 		{E871B1E6-24D7-4765-B564-E10F19FE6801}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E871B1E6-24D7-4765-B564-E10F19FE6801}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E871B1E6-24D7-4765-B564-E10F19FE6801}.Release|Any CPU.Build.0 = Release|Any CPU
+		{558BF7B3-71E9-40B5-87D1-D82DA22454B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{558BF7B3-71E9-40B5-87D1-D82DA22454B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{558BF7B3-71E9-40B5-87D1-D82DA22454B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{558BF7B3-71E9-40B5-87D1-D82DA22454B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,5 +115,6 @@ Global
 		{1092FFAD-106A-4125-94CB-666669E1E838} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 		{D3AF7FDA-B050-4EB2-8C10-50D5D40F93D4} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 		{E871B1E6-24D7-4765-B564-E10F19FE6801} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
+		{558BF7B3-71E9-40B5-87D1-D82DA22454B5} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 	EndGlobalSection
 EndGlobal
