@@ -4,9 +4,16 @@ using System;
 
 namespace Apworks.Querying.Parsers.Irony
 {
+    /// <summary>
+    /// Represents the language grammar for the query condition expression.
+    /// </summary>
+    /// <seealso cref="Irony.Parsing.Grammar" />
     [Language("Apworks Query Condition Language", "1.0", "The language for a query condition in the Apworks framework.")]
     internal sealed class QueryConditionGrammar : Grammar
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QueryConditionGrammar"/> class.
+        /// </summary>
         public QueryConditionGrammar()
             : base(false)
         {
@@ -41,15 +48,15 @@ namespace Apworks.Querying.Parsers.Irony
             binaryOperator.Name = "binary-operator";
 
             var term = new NonTerminal("term");
-            term.Rule = number | identifier | stringLiteral;
+            term.Rule = number | propertyReference | stringLiteral;
 
             // Expressions
-            var binaryExpression = new NonTerminal("binary-expression", typeof(BinaryOperationNode));
+            // var binaryExpression = new NonTerminal("binary-expression", typeof(BinaryOperationNode));
             var expression = new NonTerminal("expression");
-            var parenthesisExpression = new NonTerminal("parenthesis-expression");
-            binaryExpression.Rule = expression + binaryOperator + expression;
-            parenthesisExpression.Rule = "(" + expression + ")";
-            expression.Rule = term | binaryExpression | parenthesisExpression;
+            // var parenthesisExpression = new NonTerminal("parenthesis-expression");
+            // binaryExpression.Rule = expression + binaryOperator + expression;
+            // parenthesisExpression.Rule = "(" + expression + ")";
+            expression.Rule = term; // | binaryExpression | parenthesisExpression;
 
             // Relational operations
             var singleRelationalOperation = new NonTerminal("relational-operation");
@@ -61,7 +68,7 @@ namespace Apworks.Querying.Parsers.Irony
             var notLogicalOperation = new NonTerminal("not-operation", typeof(UnaryOperationNode));
             var parenthesisOperation = new NonTerminal("parenthesis-operation");
             var condition = new NonTerminal("condition");
-            notLogicalOperation.Rule = notLogicalOperator + "(" + condition + ")";
+            notLogicalOperation.Rule = notLogicalOperator + condition;
             logicalOperation.Rule = condition + logicalOperator + condition;
             parenthesisOperation.Rule = "(" + condition + ")";
             condition.Rule = singleRelationalOperation | notLogicalOperation | logicalOperation | parenthesisOperation;
@@ -74,7 +81,7 @@ namespace Apworks.Querying.Parsers.Irony
 
             MarkPunctuation("(", ")");
             RegisterBracePair("(", ")");
-            MarkTransient(condition, expression, term, parenthesisExpression, parenthesisOperation);
+            MarkTransient(condition, expression, term, /*parenthesisExpression,*/ parenthesisOperation);
 
             this.Root = condition;
         }

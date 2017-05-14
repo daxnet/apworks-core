@@ -25,6 +25,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Apworks.Querying.Parsers.Irony\Apworks.Querying.Parsers.Irony.csproj" />
     <ProjectReference Include="..\Apworks\Apworks.csproj" />
   </ItemGroup>
 

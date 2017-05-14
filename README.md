@@ -59,6 +59,10 @@ The `build.ps1` script accepts the following command line arguments:
 - `-runUnitTests` (optional, boolean, default `false`): Indicates if the unit tests should run
 - `-runIntegrationTests` (optional, boolean, default `false`): Indicates if the integration tests should run
 
+## Examples
+
+Please refer to [Apworks Examples](https://github.com/daxnet/apworks-examples) Github repo for the example applications that make use of Apworks Core framework.
+
 ## Get Started
 1. Add `https://www.myget.org/F/daxnet-apworks/api/v3/index.json` as one of your NuGet package source for the packages in **stable release** versions
 2. Add `https://www.myget.org/F/daxnet-apworks-pre/api/v3/index.json` as one of your NuGet package source for the packages in **preview** or **development** versions
@@ -80,7 +84,11 @@ MongoDB repository implementation | Apworks.Repositories.MongoDB | [![MyGet Badg
 Entity Framework Core repository implementation | Apworks.Repositories.EntityFramework | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Repositories.EntityFramework)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Repositories.EntityFramework) | (n/a)
 Simple repository implementation | Apworks.Repositories.Simple | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Repositories.Simple)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Repositories.Simple) | (n/a)
 Simple event store implementation | Apworks.EventStore.Simple | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.EventStore.Simple)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.EventStore.Simple) | (n/a)
+Common library for Event Store implementation with ADO.NET | Apworks.EventStore.AdoNet | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.EventStore.AdoNet)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.EventStore.AdoNet) | (n/a)
+Event Store implementation on PostgreSQL | Apworks.EventStore.PostgreSQL | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.EventStore.PostgreSQL)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.EventStore.PostgreSQL) | (n/a)
 Simple messaging Infrastructure implementation | Apworks.Messaging.Simple | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Messaging.Simple)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Messaging.Simple) | (n/a)
+Querying parsers implemented with [Irony](https://github.com/daxnet/Irony "Irony") | Apworks.Querying.Parsers.Irony | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Querying.Parsers.Irony)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Querying.Parsers.Irony) | (n/a)
+Json serialization implementation | Apworks.Serialization.Json | [![MyGet Badge](https://buildstats.info/myget/daxnet-apworks-pre/Apworks.Serialization.Json)](https://www.myget.org/feed/daxnet-apworks-pre/package/nuget/Apworks.Serialization.Json) | (n/a)
 
 ## Documentation
 Please find the latest documentation [here](http://apworks-core.readthedocs.io/en/latest/).

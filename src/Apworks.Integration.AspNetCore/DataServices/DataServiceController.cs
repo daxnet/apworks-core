@@ -27,11 +27,13 @@
 using Apworks.Integration.AspNetCore.Hal;
 using Apworks.KeyGeneration;
 using Apworks.Querying;
+using Apworks.Querying.Parsers.Irony;
 using Apworks.Repositories;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Apworks.Integration.AspNetCore.DataServices
@@ -51,17 +53,26 @@ namespace Apworks.Integration.AspNetCore.DataServices
     {
         private readonly IRepositoryContext repositoryContext;
         private readonly IRepository<TKey, TAggregateRoot> repository;
+        private readonly IQueryConditionParser queryConditionParser;
         private readonly IKeyGenerator<TKey, TAggregateRoot> keyGenerator;
 
         #region Ctor
+
+        public DataServiceController(IRepositoryContext repositoryContext)
+            : this(repositoryContext, new NullKeyGenerator<TKey>(), new IronyQueryConditionParser())
+        { }
+
+        public DataServiceController(IRepositoryContext repositoryContext, IKeyGenerator<TKey, TAggregateRoot> keyGenerator)
+            : this(repositoryContext, keyGenerator, new IronyQueryConditionParser())
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataServiceController{TKey, TAggregateRoot}"/> class.
         /// </summary>
         /// <param name="repositoryContext">The repository context that is used by the current
         /// <see cref="DataServiceController{TKey, TAggregateRoot}"/> for managing the object lifecycle.</param>
-        public DataServiceController(IRepositoryContext repositoryContext)
-            : this(repositoryContext, new NullKeyGenerator<TKey>())
+        public DataServiceController(IRepositoryContext repositoryContext, IQueryConditionParser queryConditionParser)
+            : this(repositoryContext, new NullKeyGenerator<TKey>(), queryConditionParser)
         {
 
         }
@@ -73,11 +84,14 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// <see cref="DataServiceController{TKey, TAggregateRoot}"/> for managing the object lifecycle.</param>
         /// <param name="keyGenerator">The <see cref="IKeyGenerator{TKey, TAggregateRoot}"/> instance
         /// which generates the aggregate root key for the specified aggregate root type.</param>
-        public DataServiceController(IRepositoryContext repositoryContext, IKeyGenerator<TKey, TAggregateRoot> keyGenerator)
+        public DataServiceController(IRepositoryContext repositoryContext, 
+            IKeyGenerator<TKey, TAggregateRoot> keyGenerator,
+            IQueryConditionParser queryConditionParser)
         {
             this.repositoryContext = repositoryContext;
             this.repository = repositoryContext.GetRepository<TKey, TAggregateRoot>();
             this.keyGenerator = keyGenerator;
+            this.queryConditionParser = queryConditionParser;
         }
         #endregion
 
@@ -95,9 +109,17 @@ namespace Apworks.Integration.AspNetCore.DataServices
         #endregion
 
         [HttpGet]
-        public virtual async Task<IActionResult> Get([FromQuery] int size = 15, [FromQuery] int page = 1)
+        public virtual async Task<IActionResult> Get([FromQuery] int size = 15, 
+            [FromQuery] int page = 1,
+            [FromQuery] string query = "")
         {
-            var aggregateRoots = await this.repository.FindAllAsync(x => true,
+            Expression<Func<TAggregateRoot, bool>> queryCondition = _ => true;
+            if (!string.IsNullOrEmpty(query))
+            {
+                queryCondition = this.queryConditionParser.Parse<TAggregateRoot>(query);
+            }
+
+            var aggregateRoots = await this.repository.FindAllAsync(queryCondition,
                 new SortSpecification<TKey, TAggregateRoot> { { x => x.Id, SortOrder.Ascending } },
                 page, size);
 

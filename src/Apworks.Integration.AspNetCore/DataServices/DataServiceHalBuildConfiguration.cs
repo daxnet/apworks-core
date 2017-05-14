@@ -30,7 +30,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// </summary>
         protected virtual void RegisterHalBuilderFactoryForGetAll()
         {
-            this.RegisterHalBuilderFactory("*.Get(int, int)", context =>
+            this.RegisterHalBuilderFactory("*.Get(int, int, *)", context =>
                 {
                     var state = (IPagedResult)context.State;
                     var pageSize = state.PageSize;

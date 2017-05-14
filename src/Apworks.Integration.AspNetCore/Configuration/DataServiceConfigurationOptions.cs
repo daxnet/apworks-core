@@ -27,6 +27,7 @@
 using Apworks.Integration.AspNetCore.DataServices;
 using Apworks.Integration.AspNetCore.Hal;
 using Apworks.KeyGeneration;
+using Apworks.Querying;
 using Apworks.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -176,6 +177,14 @@ namespace Apworks.Integration.AspNetCore.Configuration
         public DataServiceConfigurationOptions RegisterKeyGenerator<TKey, TAggregateRoot>(IKeyGenerator<TKey, TAggregateRoot> keyGenerator)
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRoot<TKey> => this.RegisterService(keyGenerator, ServiceLifetime.Singleton);
+
+        /// <summary>
+        /// Registers the query condition parser to the service registration.
+        /// </summary>
+        /// <param name="queryConditionParserFactory">The query condition parser factory.</param>
+        /// <returns></returns>
+        public DataServiceConfigurationOptions RegisterQueryConditionParser(Func<IServiceProvider, IQueryConditionParser> queryConditionParserFactory)
+            => this.RegisterServiceFactory<IQueryConditionParser>(queryConditionParserFactory, ServiceLifetime.Singleton);
 
         #endregion
     }
