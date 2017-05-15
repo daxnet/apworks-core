@@ -43,6 +43,9 @@ namespace Apworks.Querying.Parsers.Irony
             var relationOperator = ToTerm("EQ") | "NE" | "GE" | "GT" | "LT" | "LE";
             relationOperator.Name = "relation-operator";
 
+            var stringFunction = ToTerm("SW") | "EW" | "CT";
+            stringFunction.Name = "string-function";
+
             // Defines the binary operators like + - * /
             var binaryOperator = ToTerm("+") | "-" | "*" | "/";
             binaryOperator.Name = "binary-operator";
@@ -60,8 +63,11 @@ namespace Apworks.Querying.Parsers.Irony
 
             // Relational operations
             var singleRelationalOperation = new NonTerminal("relational-operation");
-            var parenthesisRelationOperation = new NonTerminal("parenthesis-relational-operation");
             singleRelationalOperation.Rule = expression + relationOperator + expression;
+
+            // String operations
+            var stringOperation = new NonTerminal("string-operation");
+            stringOperation.Rule = propertyReference + stringFunction + stringLiteral;
 
             // Logical operations and condition
             var logicalOperation = new NonTerminal("logical-operation", typeof(BinaryOperationNode));
@@ -71,7 +77,7 @@ namespace Apworks.Querying.Parsers.Irony
             notLogicalOperation.Rule = notLogicalOperator + condition;
             logicalOperation.Rule = condition + logicalOperator + condition;
             parenthesisOperation.Rule = "(" + condition + ")";
-            condition.Rule = singleRelationalOperation | notLogicalOperation | logicalOperation | parenthesisOperation;
+            condition.Rule = singleRelationalOperation | notLogicalOperation | logicalOperation | stringOperation | parenthesisOperation;
 
             RegisterOperators(10, "+", "-");
             RegisterOperators(20, "*", "/");

@@ -109,5 +109,41 @@ namespace Apworks.Tests
             var result = Customers.Where(expression.Compile());
             Assert.Equal(4, result.Count());
         }
+
+        [Fact]
+        public void StringStartsWithTest()
+        {
+            var parser = new IronyQueryConditionParser();
+            var expression = parser.Parse<Customer>("email sw \"fr\"");
+            var result = Customers.Where(expression.Compile());
+            Assert.Equal(1, result.Count());
+        }
+
+        [Fact]
+        public void StringEndsWithTest()
+        {
+            var parser = new IronyQueryConditionParser();
+            var expression = parser.Parse<Customer>("name ew \"er\"");
+            var result = Customers.Where(expression.Compile());
+            Assert.Equal(2, result.Count());
+        }
+
+        [Fact]
+        public void StringStartsEndsWithCombinedTest()
+        {
+            var parser = new IronyQueryConditionParser();
+            var expression = parser.Parse<Customer>("name ew \"er\" and email sw \"w\"");
+            var result = Customers.Where(expression.Compile());
+            Assert.Equal(1, result.Count());
+        }
+
+        [Fact]
+        public void StringContainsTest()
+        {
+            var parser = new IronyQueryConditionParser();
+            var expression = parser.Parse<Customer>("name ct \"ul\"");
+            var result = Customers.Where(expression.Compile());
+            Assert.Equal(2, result.Count());
+        }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Apworks.Querying.Parsers.Irony
 {
@@ -43,6 +44,7 @@ namespace Apworks.Querying.Parsers.Irony
                             return Expression.OrElse(ParseExpression<T>(leftLogicalOperandNode, parameterExpression), ParseExpression<T>(rightLogicalOprandNode, parameterExpression));
                     }
                     break;
+
                 case "relational-operation":
                     var leftRelationalOperandNode = node.ChildNodes[0];
                     var relationalOperatorNode = node.ChildNodes[1];
@@ -74,16 +76,44 @@ namespace Apworks.Querying.Parsers.Irony
                     break;
                 case "not-operation":
                     return Expression.Not(ParseExpression<T>(node.ChildNodes[1], parameterExpression));
+
+                case "string-operation":
+                    var leftStringFunctionOperandNode = node.ChildNodes[0];
+                    var stringFunctionNode = node.ChildNodes[1];
+                    var rightStringFunctionOperandNode = node.ChildNodes[2];
+
+                    var leftStringFunctionExpression = ParseExpression<T>(leftStringFunctionOperandNode, parameterExpression);
+                    var rightStringFunctionExpression = ParseExpression<T>(rightStringFunctionOperandNode, parameterExpression);
+                    switch (stringFunctionNode.ChildNodes[0].Term.Name)
+                    {
+                        case "SW":
+                            return Expression.Call(leftStringFunctionExpression, typeof(string).GetMethod("StartsWith", new[] { typeof(string) }), rightStringFunctionExpression);
+                        case "EW":
+                            return Expression.Call(leftStringFunctionExpression, typeof(string).GetMethod("EndsWith", new[] { typeof(string) }), rightStringFunctionExpression);
+                        case "CT":
+                            return Expression.Call(leftStringFunctionExpression, typeof(string).GetMethod("Contains"), rightStringFunctionExpression);
+                    }
+                    break;
                 case "property":
-                    return Expression.Property(parameterExpression, node.ChildNodes[0].Token.ValueString);
+                    var propertyName = InferPropertyName<T>(node.ChildNodes[0].Token.ValueString);
+                    if (!string.IsNullOrEmpty(propertyName))
+                    {
+                        return Expression.Property(parameterExpression, node.ChildNodes[0].Token.ValueString);
+                    }
+                    throw new ParsingException("Expression parsed failed.", new[] { $"The property that has the name similar to {node.ChildNodes[0].Token.ValueString} does not exist." });
+
                 case "string":
                     return Expression.Constant(node.Token.Value);
+
                 case "number":
                     var expr = Expression.Constant(node.Token.Value);
                     return expr;
             }
             return null;
         }
+
+        private static string InferPropertyName<T>(string reference) => 
+            typeof(T).GetTypeInfo().GetProperties().Where(p => p.Name.ToLower().Equals(reference.ToLower())).FirstOrDefault()?.Name;
 
         private static void FixExpressionType(ref Expression left, ref Expression right)
         {

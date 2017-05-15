@@ -113,17 +113,25 @@ namespace Apworks.Integration.AspNetCore.DataServices
             [FromQuery] int page = 1,
             [FromQuery] string query = "")
         {
-            Expression<Func<TAggregateRoot, bool>> queryCondition = _ => true;
-            if (!string.IsNullOrEmpty(query))
+            try
             {
-                queryCondition = this.queryConditionParser.Parse<TAggregateRoot>(query);
+                Expression<Func<TAggregateRoot, bool>> queryCondition = _ => true;
+                if (!string.IsNullOrEmpty(query))
+                {
+                    queryCondition = this.queryConditionParser.Parse<TAggregateRoot>(query);
+                }
+
+                var aggregateRoots = await this.repository.FindAllAsync(queryCondition,
+                    new SortSpecification<TKey, TAggregateRoot> { { x => x.Id, SortOrder.Ascending } },
+                    page, size);
+
+                return Ok(aggregateRoots);
             }
-
-            var aggregateRoots = await this.repository.FindAllAsync(queryCondition,
-                new SortSpecification<TKey, TAggregateRoot> { { x => x.Id, SortOrder.Ascending } },
-                page, size);
-
-            return Ok(aggregateRoots);
+            catch (ParsingException pe)
+            {
+                var parsingErrors = string.Join(Environment.NewLine, pe.ParseErrors);
+                throw new InvalidArgumentException($"The specified query or sort is invalid. Details: {Environment.NewLine}{parsingErrors}", pe);
+            }
         }
 
         [HttpGet("{id}")]
