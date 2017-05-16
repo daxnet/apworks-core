@@ -95,7 +95,7 @@ namespace Apworks.Querying.Parsers.Irony
                     }
                     break;
                 case "property":
-                    var propertyName = InferPropertyName<T>(node.ChildNodes[0].Token.ValueString);
+                    var propertyName = ParsingUtils.InferPropertyName<T>(node.ChildNodes[0].Token.ValueString);
                     if (!string.IsNullOrEmpty(propertyName))
                     {
                         return Expression.Property(parameterExpression, node.ChildNodes[0].Token.ValueString);
@@ -111,9 +111,6 @@ namespace Apworks.Querying.Parsers.Irony
             }
             return null;
         }
-
-        private static string InferPropertyName<T>(string reference) => 
-            typeof(T).GetTypeInfo().GetProperties().Where(p => p.Name.ToLower().Equals(reference.ToLower())).FirstOrDefault()?.Name;
 
         private static void FixExpressionType(ref Expression left, ref Expression right)
         {

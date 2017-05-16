@@ -56,6 +56,11 @@ namespace Apworks.Tests.Models
             return this.Id.GetHashCode() ^ this.Name.GetHashCode() ^ this.Email.GetHashCode();
         }
 
+        public override string ToString()
+        {
+            return $"Id: {Id} Name: {Name} Email: {Email}";
+        }
+
         public static Customer CreateOne() => CreateOne(rnd.Next(), $"Customer Name {rnd.Next()}", $"CustomerEmail{rnd.Next()}@domain.com");
 
         public static Customer CreateOne(int id, string name, string email)
