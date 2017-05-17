@@ -38,7 +38,12 @@ namespace Apworks.Querying.Parsers.Irony
                 case "sort-specification":
                     var suggestedPropertyName = node.ChildNodes[0].ChildNodes[0].Token.ValueString;
                     var suggestedSortingOrder = node.ChildNodes[1].ChildNodes[0].Token.ValueString;
-                    var propertyName = ParsingUtils.InferPropertyName<TAggregateRoot>(suggestedPropertyName);
+                    var propertyName = ParsingUtils.InferProperty<TAggregateRoot>(suggestedPropertyName)?.Name;
+                    if (string.IsNullOrEmpty(propertyName))
+                    {
+                        throw new ParsingException("Expression parsed failed.", new[] { $"The property that has the name similar to {suggestedPropertyName} does not exist." });
+                    }
+
                     var sortOrder = suggestedSortingOrder.ToUpper() == "A" ? SortOrder.Ascending : SortOrder.Descending;
                     sortSpecification.Add(propertyName, sortOrder);
                     break;

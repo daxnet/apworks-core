@@ -15,6 +15,8 @@ namespace Apworks.Tests.Models
 
         public string Email { get; set; }
 
+        public DateTime DateRegistered { get; set; }
+
         /// <summary>
         /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
         /// </summary>
@@ -58,7 +60,7 @@ namespace Apworks.Tests.Models
 
         public override string ToString()
         {
-            return $"Id: {Id} Name: {Name} Email: {Email}";
+            return $"Id: {Id} Name: {Name} Email: {Email} DateRegistered: {DateRegistered}";
         }
 
         public static Customer CreateOne() => CreateOne(rnd.Next(), $"Customer Name {rnd.Next()}", $"CustomerEmail{rnd.Next()}@domain.com");

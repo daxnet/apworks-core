@@ -28,6 +28,7 @@ using Apworks.Integration.AspNetCore.DataServices;
 using Apworks.Integration.AspNetCore.Hal;
 using Apworks.KeyGeneration;
 using Apworks.Querying;
+using Apworks.Querying.Parsers.Irony;
 using Apworks.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -60,10 +61,25 @@ namespace Apworks.Integration.AspNetCore.Configuration
         { }
 
         public DataServiceConfigurationOptions(IRepositoryContext repositoryContext,
+            Func<IServiceProvider, IQueryConditionParser> queryConditionParserFactory,
+            Func<IServiceProvider, ISortSpecificationParser> sortSpecificationParserFactory)
+            : this(repositoryContext, ServiceLifetime.Scoped, true, null, queryConditionParserFactory, sortSpecificationParserFactory)
+        { }
+
+        public DataServiceConfigurationOptions(Func<IServiceProvider, IRepositoryContext> repositoryContextFactory,
+            Func<IServiceProvider, IQueryConditionParser> queryConditionParserFactory,
+            Func<IServiceProvider, ISortSpecificationParser> sortSpecificationParserFactory)
+            : this(repositoryContextFactory, ServiceLifetime.Scoped, true, null, queryConditionParserFactory, sortSpecificationParserFactory)
+        { }
+
+        public DataServiceConfigurationOptions(IRepositoryContext repositoryContext,
             ServiceLifetime repositoryContextLifetime = ServiceLifetime.Scoped,
             bool useHalSupport = true,
-            Func<IServiceProvider, IHalBuildConfiguration> halBuildConfigurationFactory = null)
-            : this(_ => repositoryContext, repositoryContextLifetime, useHalSupport, halBuildConfigurationFactory)
+            Func<IServiceProvider, IHalBuildConfiguration> halBuildConfigurationFactory = null,
+            Func<IServiceProvider, IQueryConditionParser> queryConditionParserFactory = null,
+            Func<IServiceProvider, ISortSpecificationParser> sortSpecificationParserFactory = null)
+            : this(_ => repositoryContext, repositoryContextLifetime, useHalSupport, halBuildConfigurationFactory,
+                  queryConditionParserFactory, sortSpecificationParserFactory)
         { }
 
         /// <summary>
@@ -77,12 +93,16 @@ namespace Apworks.Integration.AspNetCore.Configuration
         public DataServiceConfigurationOptions(Func<IServiceProvider, IRepositoryContext> repositoryContextFactory,
             ServiceLifetime repositoryContextLifetime = ServiceLifetime.Scoped,
             bool useHalSupport = true,
-            Func<IServiceProvider, IHalBuildConfiguration> halBuildConfigurationFactory = null)
+            Func<IServiceProvider, IHalBuildConfiguration> halBuildConfigurationFactory = null,
+            Func<IServiceProvider, IQueryConditionParser> queryConditionParserFactory = null,
+            Func<IServiceProvider, ISortSpecificationParser> sortSpecificationParserFactory = null)
         {
             this.RepositoryContextFactory = repositoryContextFactory;
             this.RepositoryContextLifetime = repositoryContextLifetime;
             this.UseHalSupport = useHalSupport;
             this.HalBuildConfigurationFactory = halBuildConfigurationFactory == null ? _ => new DataServiceHalBuildConfiguration() : halBuildConfigurationFactory;
+            this.QueryConditionParserFactory = queryConditionParserFactory == null ? _ => new IronyQueryConditionParser() : queryConditionParserFactory;
+            this.SortSpecificationParserFactory = sortSpecificationParserFactory == null ? _ => new IronySortSpecificationParser() : sortSpecificationParserFactory;
         }
         #endregion
 
@@ -119,6 +139,10 @@ namespace Apworks.Integration.AspNetCore.Configuration
         /// The factory delegate that creates the configuration data which will be used when generating the HAL data structure.
         /// </value>
         internal Func<IServiceProvider, IHalBuildConfiguration> HalBuildConfigurationFactory { get; }
+
+        internal Func<IServiceProvider, IQueryConditionParser> QueryConditionParserFactory { get; }
+
+        internal Func<IServiceProvider, ISortSpecificationParser> SortSpecificationParserFactory { get; }
 
         /// <summary>
         /// Gets the service factory registrations that contains a list of the service factories that are going to be registered
@@ -177,14 +201,6 @@ namespace Apworks.Integration.AspNetCore.Configuration
         public DataServiceConfigurationOptions RegisterKeyGenerator<TKey, TAggregateRoot>(IKeyGenerator<TKey, TAggregateRoot> keyGenerator)
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRoot<TKey> => this.RegisterService(keyGenerator, ServiceLifetime.Singleton);
-
-        /// <summary>
-        /// Registers the query condition parser to the service registration.
-        /// </summary>
-        /// <param name="queryConditionParserFactory">The query condition parser factory.</param>
-        /// <returns></returns>
-        public DataServiceConfigurationOptions RegisterQueryConditionParser(Func<IServiceProvider, IQueryConditionParser> queryConditionParserFactory)
-            => this.RegisterServiceFactory<IQueryConditionParser>(queryConditionParserFactory, ServiceLifetime.Singleton);
 
         #endregion
     }

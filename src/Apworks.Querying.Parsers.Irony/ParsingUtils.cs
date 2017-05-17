@@ -18,7 +18,7 @@ namespace Apworks.Querying.Parsers.Irony
         /// <typeparam name="T">The type of the object from which the property name is inferring.</typeparam>
         /// <param name="suggestion">The suggestion.</param>
         /// <returns>The property name.</returns>
-        public static string InferPropertyName<T>(string suggestion) =>
-            typeof(T).GetTypeInfo().GetProperties().Where(p => p.Name.ToLower().Equals(suggestion.ToLower())).FirstOrDefault()?.Name;
+        public static PropertyInfo InferProperty<T>(string suggestion) =>
+            typeof(T).GetTypeInfo().GetProperties().Where(p => p.Name.ToLower().Equals(suggestion.ToLower())).FirstOrDefault();
     }
 }

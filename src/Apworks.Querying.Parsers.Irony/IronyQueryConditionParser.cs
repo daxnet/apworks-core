@@ -95,12 +95,14 @@ namespace Apworks.Querying.Parsers.Irony
                     }
                     break;
                 case "property":
-                    var propertyName = ParsingUtils.InferPropertyName<T>(node.ChildNodes[0].Token.ValueString);
-                    if (!string.IsNullOrEmpty(propertyName))
+                    var inferredProperty = ParsingUtils.InferProperty<T>(node.ChildNodes[0].Token.ValueString);
+                    if (inferredProperty == null)
                     {
-                        return Expression.Property(parameterExpression, node.ChildNodes[0].Token.ValueString);
+                        throw new ParsingException("Expression parsed failed.", new[] { $"The property that has the name similar to {node.ChildNodes[0].Token.ValueString} does not exist." });
                     }
-                    throw new ParsingException("Expression parsed failed.", new[] { $"The property that has the name similar to {node.ChildNodes[0].Token.ValueString} does not exist." });
+
+                    var propertyName = ParsingUtils.InferProperty<T>(node.ChildNodes[0].Token.ValueString).Name;
+                    return Expression.Property(parameterExpression, node.ChildNodes[0].Token.ValueString);
 
                 case "string":
                     return Expression.Constant(node.Token.Value);
@@ -118,12 +120,33 @@ namespace Apworks.Querying.Parsers.Irony
             var rightTypeCode = Type.GetTypeCode(right.Type);
 
             if (leftTypeCode == rightTypeCode)
+            {
                 return;
+            }
 
             if (leftTypeCode > rightTypeCode)
+            {
                 right = Expression.Convert(right, left.Type);
-            else
-                left = Expression.Convert(left, right.Type);
+                return;
+            }
+
+            if (leftTypeCode == TypeCode.DateTime &&
+                rightTypeCode == TypeCode.String &&
+                left.NodeType == ExpressionType.MemberAccess &&
+                right.NodeType == ExpressionType.Constant)
+            {
+                var constRight = (ConstantExpression)right;
+                if (DateTime.TryParse(constRight.Value.ToString(), out DateTime dt))
+                {
+                    right = Expression.Constant(dt);
+                }
+                else
+                {
+                    throw new ParsingException($"Cannot evaluate the expression for {left.ToString()}.", new[] { $"'{constRight.Value.ToString()}' cannot be converted to a DateTime value." });
+                }
+            }
+
+            left = Expression.Convert(left, right.Type);
         }
     }
 }

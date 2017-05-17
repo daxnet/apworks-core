@@ -40,8 +40,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Serialization.Json"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Querying.Parsers.Irony", "src\Apworks.Querying.Parsers.Irony\Apworks.Querying.Parsers.Irony.csproj", "{558BF7B3-71E9-40B5-87D1-D82DA22454B5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication1", "src\WebApplication1\WebApplication1.csproj", "{DDC9ABDA-93FF-4F93-BF0E-F048F78807F3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,10 +98,6 @@ Global
 		{558BF7B3-71E9-40B5-87D1-D82DA22454B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{558BF7B3-71E9-40B5-87D1-D82DA22454B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{558BF7B3-71E9-40B5-87D1-D82DA22454B5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DDC9ABDA-93FF-4F93-BF0E-F048F78807F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DDC9ABDA-93FF-4F93-BF0E-F048F78807F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DDC9ABDA-93FF-4F93-BF0E-F048F78807F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DDC9ABDA-93FF-4F93-BF0E-F048F78807F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -82,21 +82,24 @@ namespace Apworks.Integration.AspNetCore.Configuration
             switch(this.options.RepositoryContextLifetime)
             {
                 case ServiceLifetime.Scoped:
-                    context.AddScoped<IRepositoryContext>(this.options.RepositoryContextFactory);
+                    context.AddScoped(this.options.RepositoryContextFactory);
                     break;
                 case ServiceLifetime.Singleton:
-                    context.AddSingleton<IRepositoryContext>(this.options.RepositoryContextFactory);
+                    context.AddSingleton(this.options.RepositoryContextFactory);
                     break;
                 case ServiceLifetime.Transient:
-                    context.AddTransient<IRepositoryContext>(this.options.RepositoryContextFactory);
+                    context.AddTransient(this.options.RepositoryContextFactory);
                     break;
             }
 
             // Registers the HAL build configuration component, if the UseHalSupport property evaluates true.
             if (this.options.UseHalSupport)
             {
-                context.AddScoped<IHalBuildConfiguration>(this.options.HalBuildConfigurationFactory);
+                context.AddSingleton(this.options.HalBuildConfigurationFactory);
             }
+
+            context.AddSingleton(this.options.QueryConditionParserFactory);
+            context.AddSingleton(this.options.SortSpecificationParserFactory);
 
             // Registers additional services, this can also be done from the IServiceCollection interface in the Startup
             // method of ASP.NET Core.

@@ -54,16 +54,17 @@ namespace Apworks.Integration.AspNetCore.DataServices
         private readonly IRepositoryContext repositoryContext;
         private readonly IRepository<TKey, TAggregateRoot> repository;
         private readonly IQueryConditionParser queryConditionParser;
+        private readonly ISortSpecificationParser sortSpecificationParser;
         private readonly IKeyGenerator<TKey, TAggregateRoot> keyGenerator;
 
         #region Ctor
 
         public DataServiceController(IRepositoryContext repositoryContext)
-            : this(repositoryContext, new NullKeyGenerator<TKey>(), new IronyQueryConditionParser())
+            : this(repositoryContext, new NullKeyGenerator<TKey>(), new IronyQueryConditionParser(), new IronySortSpecificationParser())
         { }
 
         public DataServiceController(IRepositoryContext repositoryContext, IKeyGenerator<TKey, TAggregateRoot> keyGenerator)
-            : this(repositoryContext, keyGenerator, new IronyQueryConditionParser())
+            : this(repositoryContext, keyGenerator, new IronyQueryConditionParser(), new IronySortSpecificationParser())
         { }
 
         /// <summary>
@@ -71,11 +72,9 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// </summary>
         /// <param name="repositoryContext">The repository context that is used by the current
         /// <see cref="DataServiceController{TKey, TAggregateRoot}"/> for managing the object lifecycle.</param>
-        public DataServiceController(IRepositoryContext repositoryContext, IQueryConditionParser queryConditionParser)
-            : this(repositoryContext, new NullKeyGenerator<TKey>(), queryConditionParser)
-        {
-
-        }
+        public DataServiceController(IRepositoryContext repositoryContext, IQueryConditionParser queryConditionParser, ISortSpecificationParser sortSpecificationParser)
+            : this(repositoryContext, new NullKeyGenerator<TKey>(), queryConditionParser, sortSpecificationParser)
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DataServiceController{TKey, TAggregateRoot}"/> class.
@@ -86,12 +85,14 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// which generates the aggregate root key for the specified aggregate root type.</param>
         public DataServiceController(IRepositoryContext repositoryContext, 
             IKeyGenerator<TKey, TAggregateRoot> keyGenerator,
-            IQueryConditionParser queryConditionParser)
+            IQueryConditionParser queryConditionParser,
+            ISortSpecificationParser sortSpecificationParser)
         {
             this.repositoryContext = repositoryContext;
             this.repository = repositoryContext.GetRepository<TKey, TAggregateRoot>();
             this.keyGenerator = keyGenerator;
             this.queryConditionParser = queryConditionParser;
+            this.sortSpecificationParser = sortSpecificationParser;
         }
         #endregion
 
@@ -106,12 +107,18 @@ namespace Apworks.Integration.AspNetCore.DataServices
         protected IRepository<TKey, TAggregateRoot> Repository => this.repository;
 
         protected IKeyGenerator<TKey, TAggregateRoot> KeyGenerator => this.keyGenerator;
+
+        protected IQueryConditionParser QueryConditionParser => this.queryConditionParser;
+
+        protected ISortSpecificationParser SortSpecificationParser => this.sortSpecificationParser;
+
         #endregion
 
         [HttpGet]
         public virtual async Task<IActionResult> Get([FromQuery] int size = 15, 
             [FromQuery] int page = 1,
-            [FromQuery] string query = "")
+            [FromQuery] string query = "",
+            [FromQuery] string sort = "")
         {
             try
             {
@@ -121,9 +128,13 @@ namespace Apworks.Integration.AspNetCore.DataServices
                     queryCondition = this.queryConditionParser.Parse<TAggregateRoot>(query);
                 }
 
-                var aggregateRoots = await this.repository.FindAllAsync(queryCondition,
-                    new SortSpecification<TKey, TAggregateRoot> { { x => x.Id, SortOrder.Ascending } },
-                    page, size);
+                SortSpecification<TKey, TAggregateRoot> sortSpecification = new SortSpecification<TKey, TAggregateRoot> { { x => x.Id, SortOrder.Ascending } };
+                if (!string.IsNullOrEmpty(sort))
+                {
+                    sortSpecification = this.sortSpecificationParser.Parse<TKey, TAggregateRoot>(sort);
+                }
+
+                var aggregateRoots = await this.repository.FindAllAsync(queryCondition, sortSpecification, page, size);
 
                 return Ok(aggregateRoots);
             }

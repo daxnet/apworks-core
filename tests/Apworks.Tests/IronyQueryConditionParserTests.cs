@@ -3,30 +3,32 @@ using System.Linq;
 using System.Collections.Generic;
 using Xunit;
 using Apworks.Tests.Models;
+using System;
 
 namespace Apworks.Tests
 {
     public class IronyQueryConditionParserTests
     {
         private readonly List<Customer> Customers = new List<Customer>();
+        private static readonly DateTime CurrentDate = new DateTime(2017, 5, 17);
 
         public IronyQueryConditionParserTests()
         {
-            Customers.Add(new Customer { Id = 1, Email = "jim@example.com", Name = "jim" });
-            Customers.Add(new Customer { Id = 2, Email = "tom@example.com", Name = "tom" });
-            Customers.Add(new Customer { Id = 3, Email = "alex@example.com", Name = "alex" });
-            Customers.Add(new Customer { Id = 4, Email = "carol@example.com", Name = "carol" });
-            Customers.Add(new Customer { Id = 5, Email = "david@example.com", Name = "david" });
-            Customers.Add(new Customer { Id = 6, Email = "frank@example.com", Name = "frank" });
-            Customers.Add(new Customer { Id = 7, Email = "peter@example.com", Name = "peter" });
-            Customers.Add(new Customer { Id = 8, Email = "paul@example.com", Name = "paul" });
-            Customers.Add(new Customer { Id = 9, Email = "winter@example.com", Name = "winter" });
-            Customers.Add(new Customer { Id = 10, Email = "julie@example.com", Name = "julie" });
-            Customers.Add(new Customer { Id = 11, Email = "jim@example.com", Name = "jim" });
-            Customers.Add(new Customer { Id = 12, Email = "brian@example.com", Name = "brian" });
-            Customers.Add(new Customer { Id = 13, Email = "david@example.com", Name = "david" });
-            Customers.Add(new Customer { Id = 14, Email = "daniel@example.com", Name = "daniel" });
-            Customers.Add(new Customer { Id = 15, Email = "jill@example.com", Name = "jill" });
+            Customers.Add(new Customer { Id = 1, Email = "jim@example.com", Name = "jim", DateRegistered = DateTime.Now.AddDays(-1) });
+            Customers.Add(new Customer { Id = 2, Email = "tom@example.com", Name = "tom", DateRegistered = DateTime.Now.AddDays(-2) });
+            Customers.Add(new Customer { Id = 3, Email = "alex@example.com", Name = "alex", DateRegistered = DateTime.Now.AddDays(-3) });
+            Customers.Add(new Customer { Id = 4, Email = "carol@example.com", Name = "carol", DateRegistered = DateTime.Now.AddDays(-4) });
+            Customers.Add(new Customer { Id = 5, Email = "david@example.com", Name = "david", DateRegistered = DateTime.Now.AddDays(-5) });
+            Customers.Add(new Customer { Id = 6, Email = "frank@example.com", Name = "frank", DateRegistered = DateTime.Now.AddDays(-6) });
+            Customers.Add(new Customer { Id = 7, Email = "peter@example.com", Name = "peter", DateRegistered = DateTime.Now.AddDays(-7) });
+            Customers.Add(new Customer { Id = 8, Email = "paul@example.com", Name = "paul", DateRegistered = DateTime.Now.AddDays(1) });
+            Customers.Add(new Customer { Id = 9, Email = "winter@example.com", Name = "winter", DateRegistered = DateTime.Now.AddDays(2) });
+            Customers.Add(new Customer { Id = 10, Email = "julie@example.com", Name = "julie", DateRegistered = DateTime.Now.AddDays(3) });
+            Customers.Add(new Customer { Id = 11, Email = "jim@example.com", Name = "jim", DateRegistered = DateTime.Now.AddDays(4) });
+            Customers.Add(new Customer { Id = 12, Email = "brian@example.com", Name = "brian", DateRegistered = DateTime.Now.AddDays(5) });
+            Customers.Add(new Customer { Id = 13, Email = "david@example.com", Name = "david", DateRegistered = DateTime.Now.AddDays(6) });
+            Customers.Add(new Customer { Id = 14, Email = "daniel@example.com", Name = "daniel", DateRegistered = DateTime.Now.AddDays(7) });
+            Customers.Add(new Customer { Id = 15, Email = "jill@example.com", Name = "jill", DateRegistered = DateTime.Now.AddDays(8) });
         }
 
         [Fact]
@@ -144,6 +146,26 @@ namespace Apworks.Tests
             var expression = parser.Parse<Customer>("name ct \"ul\"");
             var result = Customers.Where(expression.Compile());
             Assert.Equal(2, result.Count());
+        }
+
+        [Fact]
+        public void DatePropertyLessThanTest()
+        {
+            var today = DateTime.Now.ToString("MM/dd/yyyy");
+            var parser = new IronyQueryConditionParser();
+            var expression = parser.Parse<Customer>($"dateRegistered lt \"{today}\"");
+            var result = Customers.Where(expression.Compile());
+            Assert.Equal(7, result.Count());
+        }
+
+        [Fact]
+        public void DatePropertyGreatThanTest()
+        {
+            var today = DateTime.Now.ToString("MM/dd/yyyy");
+            var parser = new IronyQueryConditionParser();
+            var expression = parser.Parse<Customer>($"dateRegistered gt \"{today}\"");
+            var result = Customers.Where(expression.Compile());
+            Assert.Equal(8, result.Count());
         }
     }
 }
