@@ -1,0 +1,4 @@
+site_name: Apworks Documentation
+pages:
+  - Home: index.md
+  - About: about.md
