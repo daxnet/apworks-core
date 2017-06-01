@@ -213,6 +213,8 @@ namespace Apworks.Integration.AspNetCore.Hal
                     return typeof(decimal);
                 case "datetime":
                     return typeof(DateTime);
+                case "guid":
+                    return typeof(Guid);
                 case "bool":
                 case "boolean":
                     return typeof(bool);
@@ -233,6 +235,8 @@ namespace Apworks.Integration.AspNetCore.Hal
                     return typeof(decimal?);
                 case "datetime?":
                     return typeof(DateTime?);
+                case "guid?":
+                    return typeof(Guid?);
                 case "bool?":
                 case "boolean?":
                     return typeof(bool?);

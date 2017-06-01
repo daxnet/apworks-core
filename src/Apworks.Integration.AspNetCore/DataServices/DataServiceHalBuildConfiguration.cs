@@ -1,10 +1,10 @@
 ﻿using Apworks.Integration.AspNetCore.Hal;
-using Hal.Builders;
-using Microsoft.AspNetCore.Http.Extensions;
 using Apworks.Querying;
+using Hal.Builders;
 using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Apworks.Integration.AspNetCore.DataServices
@@ -30,47 +30,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// </summary>
         protected virtual void RegisterHalBuilderFactoryForGetAll()
         {
-            this.RegisterHalBuilderFactory("*.Get(int, int, *, *)", context =>
-                {
-                    var state = (IPagedResult)context.State;
-                    var pageSize = state.PageSize;
-                    var pageNumber = state.PageNumber;
-                    var totalRecords = state.TotalRecords;
-                    var totalPages = state.TotalPages;
-                    var selfLinkItem = context.HttpContext.Request.GetEncodedUrl();
-
-                    string prevLinkItem = null;
-                    if (pageNumber > 1 && pageNumber <= totalPages)
-                    {
-                        prevLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { "page", (pageNumber - 1).ToString() } });
-                    }
-
-                    string nextLinkItem = null;
-                    if (pageNumber < totalPages)
-                    {
-                        nextLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { "page", (pageNumber + 1).ToString() } });
-                    }
-
-                    var linkItemBuilder = new ResourceBuilder()
-                        .WithState(new { pageNumber, pageSize, totalRecords, totalPages })
-                        .AddSelfLink().WithLinkItem(selfLinkItem);
-
-                    if (!string.IsNullOrEmpty(prevLinkItem))
-                    {
-                        linkItemBuilder = linkItemBuilder.AddLink("prev").WithLinkItem(prevLinkItem);
-                    }
-
-                    if (!string.IsNullOrEmpty(nextLinkItem))
-                    {
-                        linkItemBuilder = linkItemBuilder.AddLink("next").WithLinkItem(nextLinkItem);
-                    }
-
-                    var resourceBuilder = linkItemBuilder.AddEmbedded(context.ControllerAction.ControllerName.ToLower())
-                        .Resource(new ResourceBuilder().WithState(context.State));
-
-                    return resourceBuilder;
-                }
-            );
+            this.RegisterHalBuilderFactory("*.Get(int, int, *, *)", this.GetPagedResultHalBuildFactory);
         }
 
         /// <summary>
@@ -87,6 +47,53 @@ namespace Apworks.Integration.AspNetCore.DataServices
                     .AddEmbedded(context.State.GetType().Name.ToLower())
                     .Resource(new ResourceBuilder().WithState(context.State));
             });
+        }
+
+        protected IBuilder GetPagedResultHalBuildFactory(HalBuildContext context)
+        {
+            var state = (IPagedResult)context.State;
+            var pageSize = state.PageSize;
+            var pageNumber = state.PageNumber;
+            var totalRecords = state.TotalRecords;
+            var totalPages = state.TotalPages;
+            var selfLinkItem = context.HttpContext.Request.GetEncodedUrl();
+
+            string prevLinkItem = null;
+            if (pageNumber > 1 && pageNumber <= totalPages)
+            {
+                prevLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { "page", (pageNumber - 1).ToString() } });
+            }
+
+            string nextLinkItem = null;
+            if (pageNumber < totalPages)
+            {
+                nextLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { "page", (pageNumber + 1).ToString() } });
+            }
+
+            var linkItemBuilder = new ResourceBuilder()
+                .WithState(new { pageNumber, pageSize, totalRecords, totalPages })
+                .AddSelfLink().WithLinkItem(selfLinkItem);
+
+            if (!string.IsNullOrEmpty(prevLinkItem))
+            {
+                linkItemBuilder = linkItemBuilder.AddLink("prev").WithLinkItem(prevLinkItem);
+            }
+
+            if (!string.IsNullOrEmpty(nextLinkItem))
+            {
+                linkItemBuilder = linkItemBuilder.AddLink("next").WithLinkItem(nextLinkItem);
+            }
+
+            var embeddedResourceName = context.ControllerAction.ControllerName.ToLower();
+            var attribute = context.ControllerAction.MethodInfo.CustomAttributes.FirstOrDefault(c => c.AttributeType == typeof(HalEmbeddedResourceAttribute));
+            if (attribute != null)
+            {
+                embeddedResourceName = (string)attribute.ConstructorArguments.FirstOrDefault(x => x.ArgumentType == typeof(string)).Value;
+            }
+            var resourceBuilder = linkItemBuilder.AddEmbedded(embeddedResourceName)
+                .Resource(new ResourceBuilder().WithState(context.State));
+
+            return resourceBuilder;
         }
 
         /// <summary>
