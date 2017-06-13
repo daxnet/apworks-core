@@ -4,6 +4,7 @@ using Hal.Builders;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Primitives;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,6 +23,19 @@ namespace Apworks.Integration.AspNetCore.DataServices
         {
             this.RegisterHalBuilderFactoryForGet();
             this.RegisterHalBuilderFactoryForGetAll();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataServiceHalBuildConfiguration"/> class.
+        /// </summary>
+        /// <param name="halBuilderFactories">The hal builder factories.</param>
+        public DataServiceHalBuildConfiguration(IEnumerable<KeyValuePair<ControllerActionSignature, Func<HalBuildContext, IBuilder>>> halBuilderFactories)
+            : this()
+        {
+            foreach(var factory in halBuilderFactories)
+            {
+                this.RegisterHalBuilderFactory(factory.Key, factory.Value);
+            }
         }
 
         /// <summary>

@@ -96,8 +96,5 @@ namespace Apworks.EventStore.AdoNet
                 this.tableFieldRegistrations.Add(p.Name, p.Name.ToUpper());
             }
         }
-
-        
-
     }
 }

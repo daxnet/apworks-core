@@ -27,12 +27,18 @@ namespace Apworks.Events
         /// <returns></returns>
         Task SaveAsync(IEnumerable<IEvent> eventDescriptors, CancellationToken cancellationToken = default(CancellationToken));
 
-        IEnumerable<TEvent> Load<TKey, TEvent>(string originatorClrType, TKey originatorId)
-            where TKey : IEquatable<TKey>
-            where TEvent : IEvent;
+        /// <summary>
+        /// Loads the specified originator color type.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TEvent">The type of the event.</typeparam>
+        /// <param name="originatorClrType">Type of the originator color.</param>
+        /// <param name="originatorId">The originator identifier.</param>
+        /// <returns></returns>
+        IEnumerable<IEvent> Load<TKey>(string originatorClrType, TKey originatorId)
+            where TKey : IEquatable<TKey>;
 
-        Task<IEnumerable<TEvent>> LoadAsync<TKey, TEvent>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
-            where TKey : IEquatable<TKey>
-            where TEvent : IEvent;
+        Task<IEnumerable<IEvent>> LoadAsync<TKey>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
+            where TKey : IEquatable<TKey>;
     }
 }

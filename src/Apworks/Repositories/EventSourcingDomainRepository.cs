@@ -19,7 +19,7 @@ namespace Apworks.Repositories
 
         public override TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id)
         {
-            var events = this.eventStore.Load<TKey, IDomainEvent>(typeof(TAggregateRoot).AssemblyQualifiedName, id);
+            var events = this.eventStore.Load<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName, id) as IEnumerable<IDomainEvent>;
             var aggregateRoot = new TAggregateRoot();
             aggregateRoot.Replay(events);
             return aggregateRoot;
@@ -27,7 +27,7 @@ namespace Apworks.Repositories
 
         public override async Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, CancellationToken cancellationToken)
         {
-            var events = await this.eventStore.LoadAsync<TKey, IDomainEvent>(typeof(TAggregateRoot).AssemblyQualifiedName, id);
+            var events = await this.eventStore.LoadAsync<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName, id) as IEnumerable<IDomainEvent>;
             var aggregateRoot = new TAggregateRoot();
             aggregateRoot.Replay(events);
             return aggregateRoot;

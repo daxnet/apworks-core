@@ -20,34 +20,32 @@ namespace Apworks.Events
 
         public virtual void Dispose() { }
 
-        public IEnumerable<TEvent> Load<TKey, TEvent>(string originatorClrType, TKey originatorId) 
+        public IEnumerable<IEvent> Load<TKey>(string originatorClrType, TKey originatorId) 
             where TKey : IEquatable<TKey>
-            where TEvent : IEvent
         {
             var descriptors = this.LoadDescriptors<TKey>(originatorClrType, originatorId);
             foreach(var descriptor in descriptors)
             {
                 if (descriptor.EventPayload != null &&
-                    descriptor.EventPayload is TEvent)
+                    descriptor.EventPayload is IEvent)
                 {
-                    yield return (TEvent)descriptor.EventPayload;
+                    yield return (IEvent)descriptor.EventPayload;
                 }
             }
             yield break;
         }
 
-        public async Task<IEnumerable<TEvent>> LoadAsync<TKey, TEvent>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IEnumerable<IEvent>> LoadAsync<TKey>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
             where TKey : IEquatable<TKey>
-            where TEvent : IEvent
         {
             var descriptors = await this.LoadDescriptorsAsync<TKey>(originatorClrType, originatorId, cancellationToken);
-            List<TEvent> events = new List<TEvent>();
+            List<IEvent> events = new List<IEvent>();
             foreach(var descriptor in descriptors)
             {
                 if (descriptor.EventPayload != null &&
-                    descriptor.EventPayload is TEvent)
+                    descriptor.EventPayload is IEvent)
                 {
-                    events.Add((TEvent)descriptor.EventPayload);
+                    events.Add((IEvent)descriptor.EventPayload);
                 }
             }
             return events;

@@ -100,9 +100,9 @@ namespace Apworks.Integration.AspNetCore.Configuration
             this.RepositoryContextFactory = repositoryContextFactory;
             this.RepositoryContextLifetime = repositoryContextLifetime;
             this.UseHalSupport = useHalSupport;
-            this.HalBuildConfigurationFactory = halBuildConfigurationFactory == null ? _ => new DataServiceHalBuildConfiguration() : halBuildConfigurationFactory;
-            this.QueryConditionParserFactory = queryConditionParserFactory == null ? _ => new IronyQueryConditionParser() : queryConditionParserFactory;
-            this.SortSpecificationParserFactory = sortSpecificationParserFactory == null ? _ => new IronySortSpecificationParser() : sortSpecificationParserFactory;
+            this.HalBuildConfigurationFactory = halBuildConfigurationFactory ?? (_ => new DataServiceHalBuildConfiguration());
+            this.QueryConditionParserFactory = queryConditionParserFactory ?? (_ => new IronyQueryConditionParser());
+            this.SortSpecificationParserFactory = sortSpecificationParserFactory ?? (_ => new IronySortSpecificationParser());
         }
         #endregion
 

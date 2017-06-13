@@ -167,5 +167,16 @@ namespace Apworks.Tests
             var result = Customers.Where(expression.Compile());
             Assert.Equal(8, result.Count());
         }
+
+        [Fact]
+        public void CombinedQueryTest()
+        {
+            var today = DateTime.Now.ToString("MM/dd/yyyy");
+            var parser = new IronyQueryConditionParser();
+            var queryString = $"(Name EQ \"jim\" or Name SW \"da\") AND NOT DateRegistered LT \"{today}\"";
+            var expression = parser.Parse<Customer>(queryString);
+            var result = Customers.Where(expression.Compile());
+            Assert.Equal(3, result.Count());
+        }
     }
 }

@@ -33,7 +33,7 @@ namespace Apworks.Tests
                 event3
             });
 
-            var events = store.Load<Guid, IDomainEvent>(typeof(Employee).AssemblyQualifiedName, aggregateRootId);
+            var events = store.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId);
             Assert.Equal(3, events.Count());
             Assert.NotEqual(Guid.Empty, event1.Id);
             Assert.NotEqual(Guid.Empty, event2.Id);
