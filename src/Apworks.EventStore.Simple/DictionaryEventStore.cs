@@ -44,7 +44,17 @@ namespace Apworks.EventStore.Simple
             throw new NotImplementedException();
         }
 
+        public override object Deserialize(byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
         public override byte[] Serialize(Type objType, object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override byte[] Serialize(object @object)
         {
             throw new NotImplementedException();
         }

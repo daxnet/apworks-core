@@ -19,6 +19,11 @@ namespace Apworks
         public virtual Task<object> DeserializeAsync(Type objType, byte[] data, CancellationToken cancellationToken = default(CancellationToken))
             => Task.FromResult(Deserialize(objType, data));
 
+        public abstract object Deserialize(byte[] data);
+
+        public virtual Task<object> DeserializeAsync(byte[] data, CancellationToken cancellationToken = default(CancellationToken))
+            => Task.FromResult(Deserialize(data));
+
         public virtual byte[] Serialize<TObject>(TObject obj) => this.Serialize(typeof(TObject), obj);
 
         public abstract byte[] Serialize(Type objType, object obj);
@@ -28,5 +33,10 @@ namespace Apworks
 
         public virtual Task<byte[]> SerializeAsync(Type objType, object obj, CancellationToken cancellationToken = default(CancellationToken))
             => Task.FromResult(Serialize(objType, obj));
+
+        public abstract byte[] Serialize(object @object);
+
+        public virtual Task<byte[]> SerializeAsync(object @object, CancellationToken cancellationToken = default(CancellationToken))
+            => Task.FromResult(Serialize(@object));
     }
 }

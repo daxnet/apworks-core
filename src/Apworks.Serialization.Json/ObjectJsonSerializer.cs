@@ -21,9 +21,21 @@ namespace Apworks.Serialization.Json
             return JsonConvert.DeserializeObject(json, objType, settings);
         }
 
+        public override object Deserialize(byte[] data)
+        {
+            var json = this.encoding.GetString(data);
+            return JsonConvert.DeserializeObject(json, this.settings);
+        }
+
         public override byte[] Serialize(Type objType, object obj)
         {
             var json = JsonConvert.SerializeObject(obj, objType, this.settings);
+            return this.encoding.GetBytes(json);
+        }
+
+        public override byte[] Serialize(object @object)
+        {
+            var json = JsonConvert.SerializeObject(@object, Formatting.Indented, this.settings);
             return this.encoding.GetBytes(json);
         }
     }

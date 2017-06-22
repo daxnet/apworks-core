@@ -17,6 +17,10 @@ namespace Apworks
 
         Task<byte[]> SerializeAsync(Type objType, object obj, CancellationToken cancellationToken = default(CancellationToken));
 
+        byte[] Serialize(object @object);
+
+        Task<byte[]> SerializeAsync(object @object, CancellationToken cancellationToken = default(CancellationToken));
+
         TObject Deserialize<TObject>(byte[] data);
 
         Task<TObject> DeserializeAsync<TObject>(byte[] data, CancellationToken cancellationToken = default(CancellationToken));
@@ -24,5 +28,9 @@ namespace Apworks
         object Deserialize(Type objType, byte[] data);
 
         Task<object> DeserializeAsync(Type objType, byte[] data, CancellationToken cancellationToken = default(CancellationToken));
+
+        object Deserialize(byte[] data);
+
+        Task<object> DeserializeAsync(byte[] data, CancellationToken cancellationToken = default(CancellationToken));
     }
 }
