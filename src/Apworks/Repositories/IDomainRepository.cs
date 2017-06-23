@@ -20,10 +20,23 @@ namespace Apworks.Repositories
         /// </summary>
         Guid Id { get; }
 
+        /// <summary>
+        /// Gets the aggregate root by using the aggregate root key.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TAggregateRoot">The type of the aggregate root.</typeparam>
+        /// <param name="id">The aggregate root key.</param>
+        /// <returns>The aggregate root.</returns>
         TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id)
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
 
+        /// <summary>
+        /// Saves the specified aggregate root.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the aggregate root key.</typeparam>
+        /// <typeparam name="TAggregateRoot">The type of the aggregate root.</typeparam>
+        /// <param name="aggregateRoot">The aggregate root to be saved.</param>
         void Save<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot)
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();

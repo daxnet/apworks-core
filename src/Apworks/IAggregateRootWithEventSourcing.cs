@@ -26,5 +26,13 @@ namespace Apworks
         /// </summary>
         /// <param name="domainEvents">The domain events to be replayed on the current aggregate.</param>
         void Replay(IEnumerable<IDomainEvent> domainEvents);
+
+        /// <summary>
+        /// Gets the version of current aggregate root.
+        /// </summary>
+        /// <value>
+        /// The version.
+        /// </value>
+        long Version { get; }
     }
 }

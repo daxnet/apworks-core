@@ -31,9 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Snapshots\**" />
-    <EmbeddedResource Remove="Snapshots\**" />
-    <None Remove="Snapshots\**" />
+    <Folder Include="Snapshots\" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">

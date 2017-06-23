@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Apworks.Commands
 {
     /// <summary>
-    /// 
+    /// Represents that the implemented classes are command handlers.
     /// </summary>
     /// <typeparam name="TCommand">The type of the command.</typeparam>
     /// <seealso cref="Apworks.Messaging.IMessageHandler{TCommand}" />

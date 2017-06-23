@@ -31,6 +31,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 namespace Apworks
 {
@@ -42,8 +43,10 @@ namespace Apworks
     public abstract class AggregateRootWithEventSourcing<TKey> : IAggregateRootWithEventSourcing<TKey>
         where TKey : IEquatable<TKey>
     {
+        private static readonly object lockObj = new object();
         private readonly Queue<IDomainEvent> uncommittedEvents = new Queue<IDomainEvent>();
         private readonly Lazy<ConcurrentDictionary<string, IEnumerable<MethodInfo>>> eventHandlerRegistrations = new Lazy<ConcurrentDictionary<string, IEnumerable<MethodInfo>>>();
+        private long persistedVersion;
 
         /// <summary>
         /// Gets or sets the identifier.
@@ -187,7 +190,11 @@ namespace Apworks
             ((IPurgeable)this).Purge();
             domainEvents.OrderBy(e => e.Timestamp)
                 .ToList()
-                .ForEach(de => this.HandleEvent(de));
+                .ForEach(de =>
+                {
+                    this.HandleEvent(de);
+                    Interlocked.Increment(ref this.persistedVersion);
+                });
         }
 
         /// <summary>
@@ -229,6 +236,8 @@ namespace Apworks
             return Utils.GetHashCode(this.Id.GetHashCode());
         }
 
+        public long Version { get => this.persistedVersion + this.uncommittedEvents.Count; }
+
         /// <summary>
         /// Removes all the uncommitted events, if any, from the list.
         /// </summary>
@@ -236,6 +245,11 @@ namespace Apworks
         {
             if (this.uncommittedEvents.Count > 0)
             {
+                lock(lockObj)
+                {
+                    this.persistedVersion += this.uncommittedEvents.Count;
+                }
+
                 this.uncommittedEvents.Clear();
             }
         }
