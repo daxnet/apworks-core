@@ -64,7 +64,8 @@ namespace Apworks.EventStore.PostgreSQL
                         using (var command = connection.CreateCommand())
                         {
                             var hasCommandPrepared = false;
-                            foreach (var descriptor in descriptors)
+                            var sortedDescriptors = descriptors.OrderBy(desc => desc.EventTimestamp);
+                            foreach (var descriptor in sortedDescriptors)
                             {
                                 var parameters = this.GenerateInsertParameters(command, descriptor, false);
                                 if (!hasCommandPrepared)

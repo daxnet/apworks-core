@@ -31,6 +31,10 @@ namespace Apworks.Repositories
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
 
+        //TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id, long version)
+        //    where TKey : IEquatable<TKey>
+        //    where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
+
         /// <summary>
         /// Saves the specified aggregate root.
         /// </summary>

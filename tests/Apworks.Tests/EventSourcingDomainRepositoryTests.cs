@@ -5,6 +5,7 @@ using Apworks.Repositories;
 using Apworks.Tests.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -46,6 +47,21 @@ namespace Apworks.Tests
             Assert.Equal("daxnet", employee2.Name);
             Assert.Equal("Sr. developer", employee2.Title);
             Assert.Equal(2, employee2.Version);
+        }
+
+        [Fact]
+        public void EventSequenceAfterSaveTest()
+        {
+            var aggregateRootId = Guid.NewGuid();
+            var employee = new Employee { Id = aggregateRootId };
+            employee.ChangeName("daxnet");
+            employee.ChangeTitle("developer");
+            this.repository.Save<Guid, Employee>(employee);
+
+            var events = this.eventStore.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId).ToList();
+            Assert.Equal(2, events.Count);
+            Assert.Equal(1, (events[0] as IDomainEvent).Sequence);
+            Assert.Equal(2, (events[1] as IDomainEvent).Sequence);
         }
     }
 }

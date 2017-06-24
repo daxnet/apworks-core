@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Apworks.Events;
 using System.Data;
 using System.Linq.Expressions;
@@ -63,7 +61,8 @@ namespace Apworks.EventStore.AdoNet
                         using (var command = connection.CreateCommand())
                         {
                             var hasCommandPrepared = false;
-                            foreach (var descriptor in descriptors)
+                            var sortedDescriptors = descriptors.OrderBy(desc => desc.EventTimestamp);
+                            foreach (var descriptor in sortedDescriptors)
                             {
                                 var parameters = this.GenerateInsertParameters(command, descriptor, false);
                                 if (!hasCommandPrepared)
@@ -114,15 +113,6 @@ namespace Apworks.EventStore.AdoNet
         {
             var eventClrType = (string)reader[this.config.GetFieldName(x => x.EventClrType)];
             var eventType = Type.GetType(eventClrType);
-
-            var id = (Guid)reader[this.config.GetFieldName(x => x.Id)];
-            var EventClrType = eventClrType;
-            var EventId = (Guid)reader[this.config.GetFieldName(x => x.EventId)];
-            var EventIntent = (string)reader[this.config.GetFieldName(x => x.EventIntent)];
-            var EventPayload = this.PayloadSerializer.Deserialize(eventType, (byte[])reader[this.config.GetFieldName(x => x.EventPayload)]);
-            var EventTimestamp = (DateTime)reader[this.config.GetFieldName(x => x.EventTimestamp)];
-            var OriginatorClrType = (string)reader[this.config.GetFieldName(x => x.OriginatorClrType)];
-            var OriginatorId = (string)reader[this.config.GetFieldName(x => x.OriginatorId)];
 
             return new EventDescriptor
             {

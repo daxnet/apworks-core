@@ -26,10 +26,11 @@ namespace Apworks.EventStore.Simple
             var query = from p in eventDescriptors
                         where !string.IsNullOrEmpty(p.OriginatorClrType) &&
                                 !string.IsNullOrEmpty(p.OriginatorId)
+                        orderby p.EventTimestamp ascending
                         group p by new { p.OriginatorClrType, p.OriginatorId } into g
                         select new { Key = g.Key, Values = g.ToList() };
 
-            foreach(var item in query)
+            foreach (var item in query)
             {
                 this.bank.AddOrUpdate($"{item.Key.OriginatorClrType}_{item.Key.OriginatorId}",
                     item.Values, (k, origin) => { origin.AddRange(item.Values); return origin; });

@@ -143,7 +143,11 @@ namespace Apworks
         /// <typeparam name="TEvent">The type of the event to be raised.</typeparam>
         /// <param name="event">The object which contains the event data.</param>
         protected void Raise<TEvent>(TEvent @event)
-            where TEvent : class, IDomainEvent => this.uncommittedEvents.Enqueue(@event);
+            where TEvent : class, IDomainEvent
+        {
+            @event.Sequence = this.Version + 1;
+            this.uncommittedEvents.Enqueue(@event);
+        }
 
         /// <summary>
         /// Applies the specified domain event. This will cause the event to be handled

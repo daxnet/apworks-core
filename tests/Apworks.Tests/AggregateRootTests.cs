@@ -46,6 +46,20 @@ namespace Apworks.Tests
         }
 
         [Fact]
+        public void EventSequenceTest()
+        {
+            var employee = new Employee();
+            employee.ChangeName("Sunny");
+            employee.ChangeTitle("Software Engineer");
+            employee.Register();
+
+            var events = employee.UncommittedEvents.ToList();
+            Assert.Equal(1, events[0].Sequence);
+            Assert.Equal(2, events[1].Sequence);
+            Assert.Equal(3, events[2].Sequence);
+        }
+
+        [Fact]
         public void ReplayEventsTest()
         {
             var events = new List<IDomainEvent>

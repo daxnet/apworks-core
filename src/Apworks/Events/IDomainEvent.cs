@@ -15,5 +15,11 @@ namespace Apworks.Events
         /// <param name="aggregateRoot">The aggregate root to which the current event will be attached.</param>
         void AttachTo<TKey>(IAggregateRoot<TKey> aggregateRoot)
             where TKey : IEquatable<TKey>;
+
+        /// <summary>
+        /// Gets or sets the sequence of the current domain event. The sequence
+        /// should be equal to the current version of the attached aggregate root.
+        /// </summary>
+        long Sequence { get; set; }
     }
 }

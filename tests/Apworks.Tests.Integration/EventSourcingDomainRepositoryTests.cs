@@ -10,6 +10,7 @@ using Apworks.Tests.Integration.Models;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System;
+using System.Linq;
 using Xunit;
 
 namespace Apworks.Tests.Integration
@@ -77,6 +78,21 @@ namespace Apworks.Tests.Integration
             this.repository.Save<Guid, Employee>(employee);
             while (ackCnt < 2) ;
             Assert.Equal(2, eventsReceived);
+        }
+
+        [Fact]
+        public void EventSequenceAfterSaveTest()
+        {
+            var aggregateRootId = Guid.NewGuid();
+            var employee = new Employee { Id = aggregateRootId };
+            employee.ChangeName("daxnet");
+            employee.ChangeTitle("developer");
+            this.repository.Save<Guid, Employee>(employee);
+
+            var events = this.eventStore.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId).ToList();
+            Assert.Equal(2, events.Count);
+            Assert.Equal(1, (events[0] as IDomainEvent).Sequence);
+            Assert.Equal(2, (events[1] as IDomainEvent).Sequence);
         }
 
         protected override void Dispose(bool disposing)
