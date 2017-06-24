@@ -132,7 +132,16 @@ namespace Apworks.Utilities
 
         public static string GetPropertyNameFromExpression<T>(Expression<Func<T, object>> expr)
         {
-            var memberExpression = expr.Body as MemberExpression;
+            MemberExpression memberExpression = null;
+            if (expr.Body.NodeType == ExpressionType.Convert)
+            {
+                memberExpression = ((UnaryExpression)expr.Body).Operand as MemberExpression;
+            }
+            else
+            {
+                memberExpression = expr.Body as MemberExpression;
+            }
+
             return memberExpression?.Member?.Name;
         }
     }

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Apworks.Events;
+using System.Linq;
 
 namespace Apworks.Repositories
 {
@@ -16,9 +17,9 @@ namespace Apworks.Repositories
 
         public override TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id)
         {
-            var events = this.eventStore.Load<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName, id) as IEnumerable<IDomainEvent>;
+            var events = this.eventStore.Load<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName, id);
             var aggregateRoot = new TAggregateRoot();
-            aggregateRoot.Replay(events);
+            aggregateRoot.Replay(events.Select(e => e as IDomainEvent));
             return aggregateRoot;
         }
 

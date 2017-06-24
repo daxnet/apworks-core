@@ -35,7 +35,7 @@ namespace Apworks.EventStore.AdoNet
                     command.CommandText = sql;
                     command.Parameters.Clear();
                     command.Parameters.Add(CreateParameter(command, originatorClrTypeParameterName, originatorClrType));
-                    command.Parameters.Add(CreateParameter(command, originatorIdParameterName, originatorId));
+                    command.Parameters.Add(CreateParameter(command, originatorIdParameterName, originatorId.ToString())); // Converts the originator Id to string so that database can store.
                     using (var reader = command.ExecuteReader())
                     {
                         while(reader.Read())
@@ -114,6 +114,16 @@ namespace Apworks.EventStore.AdoNet
         {
             var eventClrType = (string)reader[this.config.GetFieldName(x => x.EventClrType)];
             var eventType = Type.GetType(eventClrType);
+
+            var id = (Guid)reader[this.config.GetFieldName(x => x.Id)];
+            var EventClrType = eventClrType;
+            var EventId = (Guid)reader[this.config.GetFieldName(x => x.EventId)];
+            var EventIntent = (string)reader[this.config.GetFieldName(x => x.EventIntent)];
+            var EventPayload = this.PayloadSerializer.Deserialize(eventType, (byte[])reader[this.config.GetFieldName(x => x.EventPayload)]);
+            var EventTimestamp = (DateTime)reader[this.config.GetFieldName(x => x.EventTimestamp)];
+            var OriginatorClrType = (string)reader[this.config.GetFieldName(x => x.OriginatorClrType)];
+            var OriginatorId = (string)reader[this.config.GetFieldName(x => x.OriginatorId)];
+
             return new EventDescriptor
             {
                 Id = (Guid)reader[this.config.GetFieldName(x => x.Id)],

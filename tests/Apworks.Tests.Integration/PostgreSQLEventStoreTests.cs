@@ -7,6 +7,7 @@ using Apworks.Tests.Integration.Fixtures;
 using Apworks.Tests.Integration.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Xunit;
 
@@ -49,6 +50,34 @@ namespace Apworks.Tests.Integration
                 event2,
                 event3
             });
+        }
+
+        [Fact]
+        public void LoadEventsTest()
+        {
+            var aggregateRootId = Guid.NewGuid();
+            var employee = new Employee { Id = aggregateRootId };
+
+            var event1 = new NameChangedEvent("daxnet");
+            var event2 = new TitleChangedEvent("title");
+            var event3 = new RegisteredEvent();
+
+            event1.AttachTo(employee);
+            event2.AttachTo(employee);
+            event3.AttachTo(employee);
+
+            var storeConfig = new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator());
+            var payloadSerializer = new ObjectJsonSerializer();
+            var store = new PostgreSqlEventStore(storeConfig, payloadSerializer);
+            store.Save(new List<DomainEvent>
+            {
+                event1,
+                event2,
+                event3
+            });
+
+            var events = store.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId);
+            Assert.Equal(3, events.Count());
         }
     }
 }

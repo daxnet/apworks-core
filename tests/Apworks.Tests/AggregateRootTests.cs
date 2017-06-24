@@ -102,6 +102,22 @@ namespace Apworks.Tests
             Assert.Equal(nameChangedEvent.Name, deserialized.Name);
             Assert.Equal(nameChangedEvent.Timestamp, deserialized.Timestamp);
         }
+
+        [Fact]
+        public void ReplayEventsVersionTest()
+        {
+            var events = new List<IDomainEvent>
+            {
+                new NameChangedEvent("daxnet"),
+                new TitleChangedEvent("racer"),
+                new RegisteredEvent()
+            };
+
+            var employee = new Employee();
+            employee.Replay(events);
+
+            Assert.Equal(3, employee.Version);
+        }
     }
 
     #region Test Data

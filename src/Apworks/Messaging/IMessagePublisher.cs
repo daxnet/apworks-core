@@ -38,43 +38,43 @@ namespace Apworks.Messaging
     public interface IMessagePublisher : IDisposable
     {
         /// <summary>
-        /// Publishes the specified message.
+        /// Publishes the specified message to the message bus.
         /// </summary>
         /// <typeparam name="TMessage">The type of the message to be published.</typeparam>
         /// <param name="message">The message that is going to be published.</param>
-        /// <param name="route">The routing for the publishing message. In some of the message publisher implementation,
-        /// the routing can be ignored.</param>
+        /// <param name="route">The routing of the message publication. In some of the message publisher implementation,
+        /// this parameter can be ignored.</param>
         void Publish<TMessage>(TMessage message, string route = null)
             where TMessage : IMessage;
 
         /// <summary>
-        /// Publishes the messages.
+        /// Publishes all the messages to the message bus.
         /// </summary>
-        /// <param name="messages">The messages to be published.</param>
-        /// <param name="route">The routing for the publishing message. In some of the message publisher implementation,
-        /// the routing can be ignored.</param>
+        /// <param name="messages">The messages that is going to be published.</param>
+        /// <param name="route">The routing of the message publication. In some of the message publisher implementation,
+        /// this parameter can be ignored.</param>
         void PublishAll(IEnumerable<IMessage> messages, string route = null);
 
         /// <summary>
-        /// publishes the specified message asynchronously.
+        /// Publishes the specified message to the message bus asynchronously.
         /// </summary>
         /// <typeparam name="TMessage">The type of the message to be published.</typeparam>
         /// <param name="message">The message that is going to be published.</param>
-        /// <param name="route">The routing for the publishing message. In some of the message publisher implementation,
-        /// the routing can be ignored.</param>
+        /// <param name="route">The routing of the message publication. In some of the message publisher implementation,
+        /// this parameter can be ignored.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> instance that propagates notification that operations should be canceled.</param>
-        /// <returns></returns>
+        /// <returns>The <see cref="Task"/> that executes the message publication.</returns>
         Task PublishAsync<TMessage>(TMessage message, string route = null, CancellationToken cancellationToken = default(CancellationToken))
             where TMessage : IMessage;
 
         /// <summary>
-        /// Publishes the messages asynchronously.
+        /// Publishes all the messages to the message bus asynchronously.
         /// </summary>
-        /// <param name="messages">A series of messages to be published.</param>
-        /// <param name="route">The routing for the publishing message. In some of the message publisher implementation,
-        /// the routing can be ignored.</param>
+        /// <param name="messages">The messages that is going to be published.</param>
+        /// <param name="route">The routing of the message publication. In some of the message publisher implementation,
+        /// this parameter can be ignored.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> which propagates notification that operations should be canceled.</param>
-        /// <returns></returns>
+        /// <returns>The <see cref="Task"/> that executes the message publication.</returns>
         Task PublishAllAsync(IEnumerable<IMessage> messages, string route = null, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
