@@ -25,6 +25,7 @@
 // ==================================================================================================================
 
 using Apworks.Events;
+using Apworks.Snapshots;
 using Apworks.Utilities;
 using System;
 using System.Collections.Concurrent;
@@ -40,7 +41,7 @@ namespace Apworks
     /// both standard event-driven and CQRS-based applications.
     /// </summary>
     /// <typeparam name="TKey">The type of the aggregate root key.</typeparam>
-    public abstract class AggregateRootWithEventSourcing<TKey> : IAggregateRootWithEventSourcing<TKey>
+    public abstract class AggregateRootWithEventSourcing<TKey> : IAggregateRootWithEventSourcing<TKey>, ISnapshotOriginator
         where TKey : IEquatable<TKey>
     {
         private static readonly object lockObj = new object();
@@ -255,6 +256,34 @@ namespace Apworks
                 }
 
                 this.uncommittedEvents.Clear();
+            }
+        }
+
+        public virtual ISnapshot TakeSnapshot()
+        {
+            var snapshot = new Snapshot();
+            snapshot.Version = this.Version;
+            snapshot.Timestamp = DateTime.UtcNow;
+            var properties = from p in this.GetType().GetTypeInfo().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                             where p.PropertyType.IsSimpleType() &&
+                                p.CanRead && p.CanWrite
+                             select p;
+            foreach(var property in properties)
+            {
+                snapshot.AddState(property.Name, property.GetValue(this));
+            }
+
+            return snapshot;
+        }
+
+        public virtual void RestoreSnapshot(ISnapshot snapshot)
+        {
+            this.persistedVersion = snapshot.Version;
+            var thisType = this.GetType().GetTypeInfo();
+            foreach (var kvp in snapshot.States)
+            {
+                var prop = thisType.GetProperty(kvp.Key, BindingFlags.Public | BindingFlags.Instance);
+                prop?.SetValue(this, kvp.Value);
             }
         }
 
