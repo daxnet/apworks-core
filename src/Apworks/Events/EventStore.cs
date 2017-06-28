@@ -9,6 +9,9 @@ namespace Apworks.Events
 {
     public abstract class EventStore : IEventStore
     {
+        public const long MinimalSequence = -1L;
+        public const long MaximumSequence = long.MaxValue;
+
         private readonly IObjectSerializer payloadSerializer;
 
         protected EventStore(IObjectSerializer payloadSerializer)
@@ -20,10 +23,10 @@ namespace Apworks.Events
 
         public virtual void Dispose() { }
 
-        public IEnumerable<IEvent> Load<TKey>(string originatorClrType, TKey originatorId) 
+        public IEnumerable<IEvent> Load<TKey>(string originatorClrType, TKey originatorId, long sequenceMin = EventStore.MinimalSequence, long sequenceMax = EventStore.MaximumSequence) 
             where TKey : IEquatable<TKey>
         {
-            var descriptors = this.LoadDescriptors<TKey>(originatorClrType, originatorId);
+            var descriptors = this.LoadDescriptors<TKey>(originatorClrType, originatorId, sequenceMin, sequenceMax);
             foreach(var descriptor in descriptors)
             {
                 if (descriptor.EventPayload != null &&
@@ -35,10 +38,10 @@ namespace Apworks.Events
             yield break;
         }
 
-        public async Task<IEnumerable<IEvent>> LoadAsync<TKey>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<IEnumerable<IEvent>> LoadAsync<TKey>(string originatorClrType, TKey originatorId, long sequenceMin = EventStore.MinimalSequence, long sequenceMax = EventStore.MaximumSequence, CancellationToken cancellationToken = default(CancellationToken))
             where TKey : IEquatable<TKey>
         {
-            var descriptors = await this.LoadDescriptorsAsync<TKey>(originatorClrType, originatorId, cancellationToken);
+            var descriptors = await this.LoadDescriptorsAsync<TKey>(originatorClrType, originatorId, sequenceMin, sequenceMax, cancellationToken);
             List<IEvent> events = new List<IEvent>();
             foreach(var descriptor in descriptors)
             {
@@ -65,11 +68,11 @@ namespace Apworks.Events
             await this.SaveDescriptorsAsync(descriptors, cancellationToken);
         }
 
-        protected abstract IEnumerable<EventDescriptor> LoadDescriptors<TKey>(string originatorClrType, TKey originatorId)
+        protected abstract IEnumerable<EventDescriptor> LoadDescriptors<TKey>(string originatorClrType, TKey originatorId, long sequenceMin, long sequenceMax)
             where TKey : IEquatable<TKey>;
 
-        protected virtual Task<IEnumerable<EventDescriptor>> LoadDescriptorsAsync<TKey>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
-            where TKey : IEquatable<TKey> => Task.FromResult(LoadDescriptors(originatorClrType, originatorId));
+        protected virtual Task<IEnumerable<EventDescriptor>> LoadDescriptorsAsync<TKey>(string originatorClrType, TKey originatorId, long sequenceMin, long sequenceMax, CancellationToken cancellationToken = default(CancellationToken))
+            where TKey : IEquatable<TKey> => Task.FromResult(LoadDescriptors(originatorClrType, originatorId, sequenceMin, sequenceMax));
 
         protected abstract void SaveDescriptors(IEnumerable<EventDescriptor> descriptors);
 

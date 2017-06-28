@@ -35,10 +35,10 @@ namespace Apworks.Events
         /// <param name="originatorClrType">Type of the originator color.</param>
         /// <param name="originatorId">The originator identifier.</param>
         /// <returns></returns>
-        IEnumerable<IEvent> Load<TKey>(string originatorClrType, TKey originatorId)
+        IEnumerable<IEvent> Load<TKey>(string originatorClrType, TKey originatorId, long sequenceMin = EventStore.MinimalSequence, long sequenceMax = EventStore.MaximumSequence)
             where TKey : IEquatable<TKey>;
 
-        Task<IEnumerable<IEvent>> LoadAsync<TKey>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
+        Task<IEnumerable<IEvent>> LoadAsync<TKey>(string originatorClrType, TKey originatorId, long sequenceMin = EventStore.MinimalSequence, long sequenceMax = EventStore.MaximumSequence, CancellationToken cancellationToken = default(CancellationToken))
             where TKey : IEquatable<TKey>;
     }
 }

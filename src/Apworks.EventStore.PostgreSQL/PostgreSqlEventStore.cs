@@ -23,7 +23,7 @@ namespace Apworks.EventStore.PostgreSQL
             return new NpgsqlConnection(connectionString);
         }
 
-        protected override async Task<IEnumerable<EventDescriptor>> LoadDescriptorsAsync<TKey>(string originatorClrType, TKey originatorId, CancellationToken cancellationToken = default(CancellationToken))
+        protected override async Task<IEnumerable<EventDescriptor>> LoadDescriptorsAsync<TKey>(string originatorClrType, TKey originatorId, long sequenceMin, long sequenceMax, CancellationToken cancellationToken = default(CancellationToken))
         {
             var originatorClrTypeParameterName = $"{ParameterChar}{nameof(originatorClrType)}";
             var originatorIdParameterName = $"{ParameterChar}{nameof(originatorId)}";

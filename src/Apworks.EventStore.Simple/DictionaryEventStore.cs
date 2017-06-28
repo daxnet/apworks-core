@@ -14,7 +14,7 @@ namespace Apworks.EventStore.Simple
             : base(new DummySerializer())
         { }
 
-        protected override IEnumerable<EventDescriptor> LoadDescriptors<TKey>(string originatorClrType, TKey originatorId)
+        protected override IEnumerable<EventDescriptor> LoadDescriptors<TKey>(string originatorClrType, TKey originatorId, long sequenceMin, long sequenceMax)
         {
             var key = $"{originatorClrType}_{originatorId.ToString()}";
             bank.TryGetValue(key, out List<EventDescriptor> descriptors);

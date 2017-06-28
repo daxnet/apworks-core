@@ -19,7 +19,7 @@ namespace Apworks.EventStore.AdoNet
             this.config = config;
         }
 
-        protected override IEnumerable<EventDescriptor> LoadDescriptors<TKey>(string originatorClrType, TKey originatorId)
+        protected override IEnumerable<EventDescriptor> LoadDescriptors<TKey>(string originatorClrType, TKey originatorId, long sequenceMin, long sequenceMax)
         {
             var originatorClrTypeParameterName = $"{ParameterChar}{nameof(originatorClrType)}";
             var originatorIdParameterName = $"{ParameterChar}{nameof(originatorId)}";
