@@ -6,6 +6,7 @@ using System.Data;
 using System.Linq.Expressions;
 using System.Reflection;
 using Apworks.Utilities;
+using System.Text;
 
 namespace Apworks.EventStore.AdoNet
 {
@@ -19,21 +20,53 @@ namespace Apworks.EventStore.AdoNet
             this.config = config;
         }
 
-        protected override IEnumerable<EventDescriptor> LoadDescriptors<TKey>(string originatorClrType, TKey originatorId, long sequenceMin, long sequenceMax)
+        private (string, IEnumerable<IDbDataParameter>) PrepareLoadCommand<TKey>(IDbCommand command, string originatorClrType, TKey originatorId, long sequenceMin, long sequenceMax)
         {
+            // Prepare the SQL statement
             var originatorClrTypeParameterName = $"{ParameterChar}{nameof(originatorClrType)}";
             var originatorIdParameterName = $"{ParameterChar}{nameof(originatorId)}";
-            var sql = $"SELECT {this.GetEscapedFieldNames()} FROM {this.GetEscapedTableName()} WHERE {this.GetEscapedFieldNames(propertyExpressions: x => x.OriginatorClrType)}={originatorClrTypeParameterName} AND {this.GetEscapedFieldNames(propertyExpressions: x => x.OriginatorId)}={originatorIdParameterName}";
+            var baseSql = $"SELECT {this.GetEscapedFieldNames()} FROM {this.GetEscapedTableName()} WHERE {this.GetEscapedFieldNames(propertyExpressions: x => x.OriginatorClrType)}={originatorClrTypeParameterName} AND {this.GetEscapedFieldNames(propertyExpressions: x => x.OriginatorId)}={originatorIdParameterName}";
+
+            // Prepare the ADO.NET DbCommand parameter list
+            var parameters = new List<IDbDataParameter>();
+            parameters.Add(CreateParameter(command, originatorClrTypeParameterName, originatorClrType));
+            parameters.Add(CreateParameter(command, originatorIdParameterName, originatorId.ToString())); // Converts the originator Id to string so that database can store.
+
+            // Adding the sequence parameters
+            var sqlBuilder = new StringBuilder(baseSql);
+            if (sequenceMin > MinimalSequence)
+            {
+                var sequenceMinParameterName = $"{ParameterChar}{nameof(sequenceMin)}";
+                sqlBuilder.Append($" AND {this.GetEscapedFieldNames(propertyExpressions: x => x.EventSequence)}>={sequenceMinParameterName}");
+                parameters.Add(CreateParameter(command, sequenceMinParameterName, sequenceMin));
+            }
+
+            if (sequenceMax < MaximumSequence)
+            {
+                var sequenceMaxParameterName = $"{ParameterChar}{nameof(sequenceMax)}";
+                sqlBuilder.Append($" AND {this.GetEscapedFieldNames(propertyExpressions: x => x.EventSequence)}<={sequenceMaxParameterName}");
+                parameters.Add(CreateParameter(command, sequenceMaxParameterName, sequenceMax));
+            }
+
+            return (sqlBuilder.ToString(), parameters);
+        }
+
+        protected override IEnumerable<EventDescriptor> LoadDescriptors<TKey>(string originatorClrType, TKey originatorId, long sequenceMin, long sequenceMax)
+        {
             var results = new List<EventDescriptor>();
             using (var connection = this.CreateDatabaseConnection(this.config.ConnectionString))
             {
                 connection.Open();
                 using (var command = connection.CreateCommand())
                 {
+                    (string sql, IEnumerable<IDbDataParameter> parameters) = this.PrepareLoadCommand<TKey>(command, originatorClrType, originatorId, sequenceMin, sequenceMax);
                     command.CommandText = sql;
                     command.Parameters.Clear();
-                    command.Parameters.Add(CreateParameter(command, originatorClrTypeParameterName, originatorClrType));
-                    command.Parameters.Add(CreateParameter(command, originatorIdParameterName, originatorId.ToString())); // Converts the originator Id to string so that database can store.
+                    foreach(var parameter in parameters)
+                    {
+                        command.Parameters.Add(parameter);
+                    }
+
                     using (var reader = command.ExecuteReader())
                     {
                         while(reader.Read())

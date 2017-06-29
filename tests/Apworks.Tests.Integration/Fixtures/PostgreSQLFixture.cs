@@ -113,6 +113,7 @@ CREATE TABLE public.""EVENTS""
     ""ORIGINATORCLRTYPE"" text COLLATE pg_catalog.""default"" NOT NULL,
     ""ORIGINATORID"" text COLLATE pg_catalog.""default"" NOT NULL,
     ""EVENTPAYLOAD"" bytea NOT NULL,
+    ""EVENTSEQUENCE"" bigint NOT NULL,
     CONSTRAINT ""EVENTS_pkey"" PRIMARY KEY(""ID"")
 );
 

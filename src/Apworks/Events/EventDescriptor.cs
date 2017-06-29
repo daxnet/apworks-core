@@ -35,6 +35,8 @@ namespace Apworks.Events
 
         public object EventPayload { get; set; }
 
+        public long EventSequence { get; set; }
+
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>

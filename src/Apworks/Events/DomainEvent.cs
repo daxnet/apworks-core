@@ -25,5 +25,12 @@ namespace Apworks.Events
             this.Metadata[EventOriginatorClrTypeMetadataKey] = aggregateRoot.GetType().AssemblyQualifiedName;
             this.Metadata[EventOriginatorIdentifierMetadataKey] = aggregateRoot.Id.ToString();
         }
+
+        public override EventDescriptor ToDescriptor()
+        {
+            var descriptor = base.ToDescriptor();
+            descriptor.EventSequence = this.Sequence;
+            return descriptor;
+        }
     }
 }

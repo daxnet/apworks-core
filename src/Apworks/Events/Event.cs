@@ -36,7 +36,7 @@ namespace Apworks.Events
 
         public string GetOriginatorIdentifier() => this.Metadata[EventOriginatorIdentifierMetadataKey]?.ToString();
 
-        public EventDescriptor ToDescriptor()
+        public virtual EventDescriptor ToDescriptor()
         {
             return new EventDescriptor
             {
