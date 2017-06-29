@@ -15,6 +15,7 @@ using Xunit;
 
 namespace Apworks.Tests.Integration
 {
+    
     public class EventSourcingDomainRepositoryTests : DisposableObject, IClassFixture<PostgreSQLFixture>
     {
         private static readonly IObjectSerializer serializer =
@@ -22,77 +23,91 @@ namespace Apworks.Tests.Integration
         private static readonly IConnectionFactory connectionFactory = new ConnectionFactory { HostName = "localhost" };
 
         private readonly PostgreSQLFixture fixture;
-        private readonly IEventPublisher eventPublisher;
-        private readonly IEventStore eventStore;
-        private readonly IDomainRepository repository;
 
         public EventSourcingDomainRepositoryTests(PostgreSQLFixture fixture)
         {
             this.fixture = fixture;
-            this.eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name);
-            this.eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer);
-            this.repository = new EventSourcingDomainRepository(this.eventStore, this.eventPublisher);
         }
 
         [Fact]
         public void SaveAggregateRootTest()
         {
-            var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
-            employee.ChangeName("daxnet");
-            employee.ChangeTitle("developer");
-            Assert.Equal(2, employee.Version);
-            this.repository.Save<Guid, Employee>(employee);
-            Assert.Equal(2, employee.Version);
+            using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
+            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
+            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher))
+            {
+                var aggregateRootId = Guid.NewGuid();
+                var employee = new Employee { Id = aggregateRootId };
+                employee.ChangeName("daxnet");
+                employee.ChangeTitle("developer");
+                Assert.Equal(2, employee.Version);
+                repository.Save<Guid, Employee>(employee);
+                Assert.Equal(2, employee.Version);
+            }
         }
 
         [Fact]
         public void LoadAggregateRootTest()
         {
-            var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
-            employee.ChangeName("daxnet");
-            employee.ChangeTitle("developer");
-            this.repository.Save<Guid, Employee>(employee);
+            using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
+            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
+            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher))
+            {
+                var aggregateRootId = Guid.NewGuid();
+                var employee = new Employee { Id = aggregateRootId };
+                employee.ChangeName("daxnet");
+                employee.ChangeTitle("developer");
+                repository.Save<Guid, Employee>(employee);
 
-            var employee2 = this.repository.GetById<Guid, Employee>(aggregateRootId);
-            Assert.Equal("daxnet", employee2.Name);
-            Assert.Equal("Sr. developer", employee2.Title);
-            Assert.Equal(2, employee2.Version);
+                var employee2 = repository.GetById<Guid, Employee>(aggregateRootId);
+                Assert.Equal("daxnet", employee2.Name);
+                Assert.Equal("Sr. developer", employee2.Title);
+                Assert.Equal(2, employee2.Version);
+            }
         }
 
         [Fact]
         public void SaveAggregateRootAndSubscribeEventTest()
         {
-            int eventsReceived = 0;
-            var ackCnt = 0;
-            var subscriber = (IEventSubscriber)this.eventPublisher;
-            subscriber.MessageReceived += (a, b) => eventsReceived++;
-            subscriber.MessageAcknowledged += (x, y) => ackCnt++;
-            subscriber.Subscribe();
+            using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
+            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
+            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher))
+            {
+                int eventsReceived = 0;
+                var ackCnt = 0;
+                var subscriber = (IEventSubscriber)eventPublisher;
+                subscriber.MessageReceived += (a, b) => eventsReceived++;
+                subscriber.MessageAcknowledged += (x, y) => ackCnt++;
+                subscriber.Subscribe();
 
-            var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
-            employee.ChangeName("daxnet");
-            employee.ChangeTitle("developer");
-            this.repository.Save<Guid, Employee>(employee);
-            while (ackCnt < 2) ;
-            Assert.Equal(2, eventsReceived);
+                var aggregateRootId = Guid.NewGuid();
+                var employee = new Employee { Id = aggregateRootId };
+                employee.ChangeName("daxnet");
+                employee.ChangeTitle("developer");
+                repository.Save<Guid, Employee>(employee);
+                while (ackCnt < 2) ;
+                Assert.Equal(2, eventsReceived);
+            }
         }
 
         [Fact]
         public void EventSequenceAfterSaveTest()
         {
-            var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
-            employee.ChangeName("daxnet");
-            employee.ChangeTitle("developer");
-            this.repository.Save<Guid, Employee>(employee);
+            using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
+            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
+            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher))
+            {
+                var aggregateRootId = Guid.NewGuid();
+                var employee = new Employee { Id = aggregateRootId };
+                employee.ChangeName("daxnet");
+                employee.ChangeTitle("developer");
+                repository.Save<Guid, Employee>(employee);
 
-            var events = this.eventStore.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId).ToList();
-            Assert.Equal(2, events.Count);
-            Assert.Equal(1, (events[0] as IDomainEvent).Sequence);
-            Assert.Equal(2, (events[1] as IDomainEvent).Sequence);
+                var events = eventStore.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId).ToList();
+                Assert.Equal(2, events.Count);
+                Assert.Equal(1, (events[0] as IDomainEvent).Sequence);
+                Assert.Equal(2, (events[1] as IDomainEvent).Sequence);
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -100,7 +115,6 @@ namespace Apworks.Tests.Integration
             if (disposing)
             {
                 this.fixture.ClearTable();
-                this.repository.Dispose();
             }
         }
     }

@@ -23,76 +23,38 @@ namespace Apworks.EventStore.PostgreSQL
             return new NpgsqlConnection(connectionString);
         }
 
-        protected override async Task<IEnumerable<EventDescriptor>> LoadDescriptorsAsync<TKey>(string originatorClrType, TKey originatorId, long sequenceMin, long sequenceMax, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var originatorClrTypeParameterName = $"{ParameterChar}{nameof(originatorClrType)}";
-            var originatorIdParameterName = $"{ParameterChar}{nameof(originatorId)}";
-            var sql = $"SELECT {this.GetEscapedFieldNames()} FROM {this.GetEscapedTableName()} WHERE {this.GetEscapedFieldNames(propertyExpressions: x => x.OriginatorClrType)}={originatorClrTypeParameterName} AND {this.GetEscapedFieldNames(propertyExpressions: x => x.OriginatorId)}={originatorIdParameterName}";
-            var results = new List<EventDescriptor>();
-            using (var connection = (NpgsqlConnection)this.CreateDatabaseConnection(this.Configuration.ConnectionString))
-            {
-                await connection.OpenAsync(cancellationToken);
-                using (var command = connection.CreateCommand())
-                {
-                    command.CommandText = sql;
-                    command.Parameters.Clear();
-                    command.Parameters.Add(CreateParameter(command, originatorClrTypeParameterName, originatorClrType));
-                    command.Parameters.Add(CreateParameter(command, originatorIdParameterName, originatorId));
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            results.Add(this.CreateFromReader(reader));
-                        }
-                    }
-                }
-            }
-
-            return results;
-        }
-
-        protected override async Task SaveDescriptorsAsync(IEnumerable<EventDescriptor> descriptors, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            var sql = $"INSERT INTO {this.GetEscapedTableName()} ({this.GetEscapedFieldNames(false)}) VALUES ";
-            using (var connection = (NpgsqlConnection)this.CreateDatabaseConnection(this.Configuration.ConnectionString))
-            {
-                await connection.OpenAsync();
-                using (var transaction = connection.BeginTransaction())
-                {
-                    try
-                    {
-                        using (var command = connection.CreateCommand())
-                        {
-                            var hasCommandPrepared = false;
-                            var sortedDescriptors = descriptors.OrderBy(desc => desc.EventTimestamp);
-                            foreach (var descriptor in sortedDescriptors)
-                            {
-                                var parameters = this.GenerateInsertParameters(command, descriptor, false);
-                                if (!hasCommandPrepared)
-                                {
-                                    sql = $"{sql} ({string.Join(", ", parameters.Select(x => x.Key))})";
-                                    command.CommandText = sql;
-                                    command.Transaction = transaction;
-                                    hasCommandPrepared = true;
-                                }
-                                command.Parameters.Clear();
-                                parameters.Select(p => p.Value).ToList().ForEach(p => command.Parameters.Add(p));
-                                await command.ExecuteNonQueryAsync();
-                            }
-                        }
-                        await transaction.CommitAsync();
-                    }
-                    catch
-                    {
-                        await transaction.RollbackAsync();
-                        throw;
-                    }
-                }
-            }
-        }
-
         protected override string BeginLiteralEscapeChar => "\"";
 
         protected override string EndLiteralEscapeChar => "\"";
+
+        protected override async Task CommitAsync(IDbTransaction transaction, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            await (transaction as NpgsqlTransaction)?.CommitAsync();
+        }
+
+        protected override async Task RollbackAsync(IDbTransaction transaction, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            await (transaction as NpgsqlTransaction)?.RollbackAsync();
+        }
+
+        protected override async Task OpenAsync(IDbConnection connection, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            await (connection as NpgsqlConnection)?.OpenAsync();
+        }
+
+        protected override async Task<IDataReader> ExecuteReaderAsync(IDbCommand command, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await (command as NpgsqlCommand)?.ExecuteReaderAsync();
+        }
+
+        protected override async Task<int> ExecuteNonQueryAsync(IDbCommand command, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await (command as NpgsqlCommand)?.ExecuteNonQueryAsync();
+        }
+
+        protected override async Task<bool> ReadAsync(IDataReader reader, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await (reader as NpgsqlDataReader)?.ReadAsync();
+        }
     }
 }

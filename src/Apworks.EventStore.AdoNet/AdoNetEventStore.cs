@@ -7,6 +7,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Apworks.Utilities;
 using System.Text;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Apworks.EventStore.AdoNet
 {
@@ -62,17 +64,48 @@ namespace Apworks.EventStore.AdoNet
                     (string sql, IEnumerable<IDbDataParameter> parameters) = this.PrepareLoadCommand<TKey>(command, originatorClrType, originatorId, sequenceMin, sequenceMax);
                     command.CommandText = sql;
                     command.Parameters.Clear();
-                    foreach(var parameter in parameters)
+                    foreach (var parameter in parameters)
                     {
                         command.Parameters.Add(parameter);
                     }
 
                     using (var reader = command.ExecuteReader())
                     {
-                        while(reader.Read())
+                        while (reader.Read())
                         {
                             results.Add(this.CreateFromReader(reader));
                         }
+                        reader.Close();
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        protected override async Task<IEnumerable<EventDescriptor>> LoadDescriptorsAsync<TKey>(string originatorClrType, TKey originatorId, long sequenceMin, long sequenceMax, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var results = new List<EventDescriptor>();
+            using (var connection = this.CreateDatabaseConnection(this.config.ConnectionString))
+            {
+                await this.OpenAsync(connection, cancellationToken);
+                using (var command = connection.CreateCommand())
+                {
+                    (string sql, IEnumerable<IDbDataParameter> parameters) = this.PrepareLoadCommand<TKey>(command, originatorClrType, originatorId, sequenceMin, sequenceMax);
+                    command.CommandText = sql;
+                    command.Parameters.Clear();
+                    foreach (var parameter in parameters)
+                    {
+                        command.Parameters.Add(parameter);
+                    }
+
+                    using (var reader = await ExecuteReaderAsync(command))
+                    {
+                        while (await ReadAsync(reader))
+                        {
+                            results.Add(this.CreateFromReader(reader));
+                        }
+
                         reader.Close();
                     }
                 }
@@ -121,6 +154,46 @@ namespace Apworks.EventStore.AdoNet
             }
         }
 
+        protected override async Task SaveDescriptorsAsync(IEnumerable<EventDescriptor> descriptors, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var sql = $"INSERT INTO {this.GetEscapedTableName()} ({this.GetEscapedFieldNames(false)}) VALUES ";
+            using (var connection = this.CreateDatabaseConnection(this.config.ConnectionString))
+            {
+                await OpenAsync(connection);
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        using (var command = connection.CreateCommand())
+                        {
+                            var hasCommandPrepared = false;
+                            var sortedDescriptors = descriptors.OrderBy(desc => desc.EventTimestamp);
+                            foreach (var descriptor in sortedDescriptors)
+                            {
+                                var parameters = this.GenerateInsertParameters(command, descriptor, false);
+                                if (!hasCommandPrepared)
+                                {
+                                    sql = $"{sql} ({string.Join(", ", parameters.Select(x => x.Key))})";
+                                    command.CommandText = sql;
+                                    command.Transaction = transaction;
+                                    hasCommandPrepared = true;
+                                }
+                                command.Parameters.Clear();
+                                parameters.Select(p => p.Value).ToList().ForEach(p => command.Parameters.Add(p));
+                                await ExecuteNonQueryAsync(command);
+                            }
+                        }
+                        await CommitAsync(transaction);
+                    }
+                    catch
+                    {
+                        await RollbackAsync(transaction);
+                        throw;
+                    }
+                }
+            }
+        }
+
         #region Database Dialect Overrides
         protected abstract IDbConnection CreateDatabaseConnection(string connectionString);
 
@@ -129,6 +202,24 @@ namespace Apworks.EventStore.AdoNet
         protected virtual string BeginLiteralEscapeChar { get => "["; }
 
         protected virtual string EndLiteralEscapeChar { get => "]"; }
+
+        protected virtual Task OpenAsync(IDbConnection connection, CancellationToken cancellationToken = default(CancellationToken))
+            => Task.Factory.StartNew(_ => connection.Open(), cancellationToken);
+
+        protected virtual Task<IDataReader> ExecuteReaderAsync(IDbCommand command, CancellationToken cancellationToken = default(CancellationToken))
+            => Task.FromResult(command.ExecuteReader());
+
+        protected virtual Task<bool> ReadAsync(IDataReader reader, CancellationToken cancellationToken = default(CancellationToken))
+            => Task.FromResult(reader.Read());
+
+        protected virtual Task<int> ExecuteNonQueryAsync(IDbCommand command, CancellationToken cancellationToken = default(CancellationToken))
+            => Task.FromResult(command.ExecuteNonQuery());
+
+        protected virtual Task CommitAsync(IDbTransaction transaction, CancellationToken cancellationToken = default(CancellationToken))
+            => Task.Factory.StartNew(_ => transaction.Commit(), cancellationToken);
+
+        protected virtual Task RollbackAsync(IDbTransaction transaction, CancellationToken cancellationToken = default(CancellationToken))
+            => Task.Factory.StartNew(_ => transaction.Rollback(), cancellationToken);
 
         #endregion
 
@@ -156,7 +247,8 @@ namespace Apworks.EventStore.AdoNet
                 EventPayload = this.PayloadSerializer.Deserialize(eventType, (byte[])reader[this.config.GetFieldName(x => x.EventPayload)]),
                 EventTimestamp = (DateTime)reader[this.config.GetFieldName(x => x.EventTimestamp)],
                 OriginatorClrType = (string)reader[this.config.GetFieldName(x => x.OriginatorClrType)],
-                OriginatorId = (string)reader[this.config.GetFieldName(x => x.OriginatorId)]
+                OriginatorId = (string)reader[this.config.GetFieldName(x => x.OriginatorId)],
+                EventSequence = (long)reader[this.config.GetFieldName(x => x.EventSequence)]
             };
         }
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Threading;
 
 namespace Apworks.Tests.Integration.Fixtures
 {
@@ -137,7 +138,7 @@ ALTER TABLE public.""EVENTS""
                 }
             }
             catch (PostgresException)
-            { }
+            {  }
         }
     }
 }

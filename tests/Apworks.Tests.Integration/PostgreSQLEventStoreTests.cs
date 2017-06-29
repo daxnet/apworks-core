@@ -79,5 +79,96 @@ namespace Apworks.Tests.Integration
             var events = store.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId);
             Assert.Equal(3, events.Count());
         }
+
+        [Fact]
+        public void LoadMinimalSequenceEventsTest()
+        {
+            var aggregateRootId = Guid.NewGuid();
+            var employee = new Employee { Id = aggregateRootId };
+
+            var event1 = new NameChangedEvent("daxnet") { Sequence = 1 };
+            var event2 = new TitleChangedEvent("title") { Sequence = 2 };
+            var event3 = new RegisteredEvent() { Sequence = 3 };
+
+            event1.AttachTo(employee);
+            event2.AttachTo(employee);
+            event3.AttachTo(employee);
+
+            var storeConfig = new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator());
+            var payloadSerializer = new ObjectJsonSerializer();
+            var store = new PostgreSqlEventStore(storeConfig, payloadSerializer);
+            store.Save(new List<DomainEvent>
+            {
+                event1,
+                event2,
+                event3
+            });
+
+            var events = store.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId, 2).ToList();
+            Assert.Equal(2, events.Count);
+            Assert.IsType(typeof(TitleChangedEvent), events[0]);
+            Assert.IsType(typeof(RegisteredEvent), events[1]);
+        }
+
+        [Fact]
+        public void LoadMaximumSequenceEventsTest()
+        {
+            var aggregateRootId = Guid.NewGuid();
+            var employee = new Employee { Id = aggregateRootId };
+
+            var event1 = new NameChangedEvent("daxnet") { Sequence = 1 };
+            var event2 = new TitleChangedEvent("title") { Sequence = 2 };
+            var event3 = new RegisteredEvent() { Sequence = 3 };
+
+            event1.AttachTo(employee);
+            event2.AttachTo(employee);
+            event3.AttachTo(employee);
+
+            var storeConfig = new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator());
+            var payloadSerializer = new ObjectJsonSerializer();
+            var store = new PostgreSqlEventStore(storeConfig, payloadSerializer);
+            store.Save(new List<DomainEvent>
+            {
+                event1,
+                event2,
+                event3
+            });
+
+            var events = store.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId, sequenceMax: 2).ToList();
+            Assert.Equal(2, events.Count);
+            Assert.IsType(typeof(NameChangedEvent), events[0]);
+            Assert.IsType(typeof(TitleChangedEvent), events[1]);
+        }
+
+        [Fact]
+        public void LoadEventsWithMinMaxSequenceTest()
+        {
+            var aggregateRootId = Guid.NewGuid();
+            var employee = new Employee { Id = aggregateRootId };
+
+            var event1 = new NameChangedEvent("daxnet") { Sequence = 1 };
+            var event2 = new TitleChangedEvent("title") { Sequence = 2 };
+            var event3 = new RegisteredEvent() { Sequence = 3 };
+
+            event1.AttachTo(employee);
+            event2.AttachTo(employee);
+            event3.AttachTo(employee);
+
+            var storeConfig = new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator());
+            var payloadSerializer = new ObjectJsonSerializer();
+            var store = new PostgreSqlEventStore(storeConfig, payloadSerializer);
+            store.Save(new List<DomainEvent>
+            {
+                event1,
+                event2,
+                event3
+            });
+
+            var events = store.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId, 1, 3).ToList();
+            Assert.Equal(3, events.Count);
+            Assert.IsType(typeof(NameChangedEvent), events[0]);
+            Assert.IsType(typeof(TitleChangedEvent), events[1]);
+            Assert.IsType(typeof(RegisteredEvent), events[2]);
+        }
     }
 }
