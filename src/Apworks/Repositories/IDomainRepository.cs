@@ -31,9 +31,42 @@ namespace Apworks.Repositories
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
 
-        //TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id, long version)
-        //    where TKey : IEquatable<TKey>
-        //    where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
+        /// <summary>
+        /// Gets the aggregate root by using the aggregate root key and specified version.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TAggregateRoot">The type of the aggregate root.</typeparam>
+        /// <param name="id">The aggregate root id.</param>
+        /// <param name="version">The version number of the aggregate.</param>
+        /// <returns>The aggregate root object.</returns>
+        TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id, long version)
+            where TKey : IEquatable<TKey>
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
+
+        /// <summary>
+        /// Gets the aggregate root by using the aggregate root key asynchronously.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TAggregateRoot">The type of the aggregate root.</typeparam>
+        /// <param name="id">The aggregate root key.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> object that propagates notification that operations should be canceled.</param>
+        /// <returns></returns>
+        Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, CancellationToken cancellationToken = default(CancellationToken))
+            where TKey : IEquatable<TKey>
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
+
+        /// <summary>
+        /// Gets the aggregate root by using the aggregate root key asynchronously.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TAggregateRoot">The type of the aggregate root.</typeparam>
+        /// <param name="id">The aggregate root key.</param>
+        /// <param name="version">The version number of the aggregate.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> object that propagates notification that operations should be canceled.</param>
+        /// <returns></returns>
+        Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, long version, CancellationToken cancellationToken = default(CancellationToken))
+            where TKey : IEquatable<TKey>
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
 
         /// <summary>
         /// Saves the specified aggregate root.
@@ -45,10 +78,14 @@ namespace Apworks.Repositories
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
 
-        Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, CancellationToken cancellationToken = default(CancellationToken))
-            where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
-
+        /// <summary>
+        /// Saves the specified aggregate root asynchronously.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TAggregateRoot">The type of the aggregate root.</typeparam>
+        /// <param name="aggregateRoot">The aggregate root to be saved.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> object that propagates notification that operations should be canceled.</param>
+        /// <returns></returns>
         Task SaveAsync<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken))
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();

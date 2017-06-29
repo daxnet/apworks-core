@@ -44,10 +44,17 @@ namespace Apworks
     public abstract class AggregateRootWithEventSourcing<TKey> : IAggregateRootWithEventSourcing<TKey>, ISnapshotOriginator
         where TKey : IEquatable<TKey>
     {
+        /// <summary>
+        /// Represents the maximum version number that an aggregate can have.
+        /// </summary>
+        public const long MaxVersion = long.MaxValue;
+
+        #region Private Fields
         private static readonly object lockObj = new object();
         private readonly Queue<IDomainEvent> uncommittedEvents = new Queue<IDomainEvent>();
         private readonly Lazy<ConcurrentDictionary<string, IEnumerable<MethodInfo>>> eventHandlerRegistrations = new Lazy<ConcurrentDictionary<string, IEnumerable<MethodInfo>>>();
         private long persistedVersion;
+        #endregion
 
         /// <summary>
         /// Gets or sets the identifier.

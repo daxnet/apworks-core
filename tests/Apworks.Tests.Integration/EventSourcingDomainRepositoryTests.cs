@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System;
 using System.Linq;
+using System.Threading;
 using Xunit;
 
 namespace Apworks.Tests.Integration
@@ -26,6 +27,7 @@ namespace Apworks.Tests.Integration
 
         public EventSourcingDomainRepositoryTests(PostgreSQLFixture fixture)
         {
+            Thread.Sleep(1000);
             this.fixture = fixture;
         }
 
@@ -110,12 +112,55 @@ namespace Apworks.Tests.Integration
             }
         }
 
+        [Fact]
+        public void GetByVersionTest1()
+        {
+            using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
+            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
+            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher))
+            {
+                var aggregateRootId = Guid.NewGuid();
+                var employee = new Employee { Id = aggregateRootId };
+                employee.ChangeName("daxnet");
+                employee.ChangeTitle("developer");
+                employee.Register();
+                repository.Save<Guid, Employee>(employee);
+
+                var employee2 = repository.GetById<Guid, Employee>(aggregateRootId, 1);
+                Assert.Equal(employee.Name, employee2.Name);
+                Assert.Null(employee2.Title);
+                Assert.Equal(DateTime.MinValue, employee2.DateRegistered);
+            }
+        }
+
+        [Fact]
+        public void GetByVersionTest2()
+        {
+            using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
+            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
+            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher))
+            {
+                var aggregateRootId = Guid.NewGuid();
+                var employee = new Employee { Id = aggregateRootId };
+                employee.ChangeName("daxnet");
+                employee.ChangeTitle("developer");
+                employee.Register();
+                repository.Save<Guid, Employee>(employee);
+
+                var employee2 = repository.GetById<Guid, Employee>(aggregateRootId, 2);
+                Assert.Equal(employee.Name, employee2.Name);
+                Assert.Equal(employee.Title, employee2.Title);
+                Assert.Equal(DateTime.MinValue, employee2.DateRegistered);
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 this.fixture.ClearTable();
             }
+            Thread.Sleep(1000);
         }
     }
 }

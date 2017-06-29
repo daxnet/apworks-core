@@ -16,16 +16,26 @@ namespace Apworks.Repositories
         }
 
         public override TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id)
+            => this.GetById<TKey, TAggregateRoot>(id, AggregateRootWithEventSourcing<TKey>.MaxVersion);
+
+        public override TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id, long version)
         {
-            var events = this.eventStore.Load<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName, id);
+            var events = this.eventStore.Load<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName, id, sequenceMax: version);
             var aggregateRoot = new TAggregateRoot();
             aggregateRoot.Replay(events.Select(e => e as IDomainEvent));
             return aggregateRoot;
         }
 
         public override async Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, CancellationToken cancellationToken)
+            => await this.GetByIdAsync<TKey, TAggregateRoot>(id, AggregateRootWithEventSourcing<TKey>.MaxVersion, cancellationToken);
+
+        public override async Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, long version, CancellationToken cancellationToken)
         {
-            var events = await this.eventStore.LoadAsync<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName, id) as IEnumerable<IDomainEvent>;
+            var events = await this.eventStore.LoadAsync<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName, 
+                id, 
+                sequenceMax: version, 
+                cancellationToken: cancellationToken) as IEnumerable<IDomainEvent>;
+
             var aggregateRoot = new TAggregateRoot();
             aggregateRoot.Replay(events);
             return aggregateRoot;

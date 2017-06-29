@@ -3,12 +3,10 @@ using Apworks.Repositories.EntityFramework;
 using Apworks.Tests.Integration.Fixtures;
 using Apworks.Tests.Integration.Models;
 using Microsoft.EntityFrameworkCore;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using Xunit;
 
 namespace Apworks.Tests.Integration
@@ -19,6 +17,7 @@ namespace Apworks.Tests.Integration
 
         public EntityFrameworkRepositoryTests(PostgreSQLFixture fixture)
         {
+            Thread.Sleep(1000);
             this.fixture = fixture;
         }
 
@@ -265,6 +264,7 @@ namespace Apworks.Tests.Integration
         public void Dispose()
         {
             this.fixture.ClearTable();
+            Thread.Sleep(1000);
         }
     }
 

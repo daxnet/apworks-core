@@ -17,9 +17,17 @@ namespace Apworks.Repositories
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
 
+        public abstract TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id, long version)
+            where TKey : IEquatable<TKey>
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
+
         public virtual Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, CancellationToken cancellationToken)
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new() => Task.FromResult(this.GetById<TKey, TAggregateRoot>(id));
+
+        public virtual Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, long version, CancellationToken cancellationToken)
+            where TKey : IEquatable<TKey>
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new() => Task.FromResult(this.GetById<TKey, TAggregateRoot>(id, version));
 
         public abstract void Save<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot)
             where TKey : IEquatable<TKey>
