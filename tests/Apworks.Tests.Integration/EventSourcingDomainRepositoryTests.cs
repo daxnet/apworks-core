@@ -5,6 +5,7 @@ using Apworks.KeyGeneration;
 using Apworks.Messaging.RabbitMQ;
 using Apworks.Repositories;
 using Apworks.Serialization.Json;
+using Apworks.Snapshots;
 using Apworks.Tests.Integration.Fixtures;
 using Apworks.Tests.Integration.Models;
 using Newtonsoft.Json;
@@ -24,6 +25,7 @@ namespace Apworks.Tests.Integration
         private static readonly IConnectionFactory connectionFactory = new ConnectionFactory { HostName = "localhost" };
 
         private readonly PostgreSQLFixture fixture;
+        private readonly ISnapshotProvider snapshotProvider = new SuppressedSnapshotProvider();
 
         public EventSourcingDomainRepositoryTests(PostgreSQLFixture fixture)
         {
@@ -36,7 +38,7 @@ namespace Apworks.Tests.Integration
         {
             using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
-            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher))
+            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
                 var employee = new Employee { Id = aggregateRootId };
@@ -53,7 +55,7 @@ namespace Apworks.Tests.Integration
         {
             using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
-            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher))
+            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
                 var employee = new Employee { Id = aggregateRootId };
@@ -73,7 +75,7 @@ namespace Apworks.Tests.Integration
         {
             using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
-            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher))
+            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 int eventsReceived = 0;
                 var ackCnt = 0;
@@ -97,7 +99,7 @@ namespace Apworks.Tests.Integration
         {
             using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
-            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher))
+            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
                 var employee = new Employee { Id = aggregateRootId };
@@ -117,7 +119,7 @@ namespace Apworks.Tests.Integration
         {
             using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
-            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher))
+            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
                 var employee = new Employee { Id = aggregateRootId };
@@ -138,7 +140,7 @@ namespace Apworks.Tests.Integration
         {
             using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
-            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher))
+            using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
                 var employee = new Employee { Id = aggregateRootId };

@@ -1,4 +1,5 @@
 ﻿using Apworks.Events;
+using Apworks.Snapshots;
 using System;
 using System.Collections.Generic;
 
@@ -10,7 +11,7 @@ namespace Apworks
     /// </summary>
     /// <typeparam name="TKey">The type of the aggregate root key.</typeparam>
     /// <seealso cref="Apworks.IAggregateRoot{TKey}" />
-    public interface IAggregateRootWithEventSourcing<TKey> : IAggregateRoot<TKey>, IPurgeable
+    public interface IAggregateRootWithEventSourcing<TKey> : IAggregateRoot<TKey>, ISnapshotOriginator, IPurgeable
         where TKey : IEquatable<TKey>
     {
         /// <summary>

@@ -3,16 +3,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using Apworks.Events;
 using System.Linq;
+using Apworks.Snapshots;
 
 namespace Apworks.Repositories
 {
     public sealed class EventSourcingDomainRepository : EventPublishingDomainRepository
     {
         private readonly IEventStore eventStore;
+        private readonly ISnapshotProvider snapshotProvider;
 
-        public EventSourcingDomainRepository(IEventStore eventStore, IEventPublisher publisher) : base(publisher)
+        public EventSourcingDomainRepository(IEventStore eventStore, 
+            IEventPublisher publisher,
+            ISnapshotProvider snapshotProvider) : base(publisher)
         {
             this.eventStore = eventStore;
+            this.snapshotProvider = snapshotProvider;
         }
 
         public override TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id)
@@ -20,7 +25,18 @@ namespace Apworks.Repositories
 
         public override TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id, long version)
         {
-            var events = this.eventStore.Load<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName, id, sequenceMax: version);
+            var sequenceMin = EventStore.MinimalSequence;
+
+            if (this.snapshotProvider.Enabled)
+            {
+                var snapshot = this.snapshotProvider.GetLatestSnapshot<TKey, TAggregateRoot>(version);
+                if (snapshot != null)
+                {
+                    sequenceMin = snapshot.Version + 1;
+                }
+            }
+
+            var events = this.eventStore.Load<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName, id, sequenceMin, version);
             var aggregateRoot = new TAggregateRoot();
             aggregateRoot.Replay(events.Select(e => e as IDomainEvent));
             return aggregateRoot;
@@ -31,13 +47,25 @@ namespace Apworks.Repositories
 
         public override async Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, long version, CancellationToken cancellationToken)
         {
-            var events = await this.eventStore.LoadAsync<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName, 
-                id, 
-                sequenceMax: version, 
-                cancellationToken: cancellationToken) as IEnumerable<IDomainEvent>;
+            var sequenceMin = EventStore.MinimalSequence;
+
+            if (this.snapshotProvider.Enabled)
+            {
+                var snapshot = await this.snapshotProvider.GetLatestSnapshotAsync<TKey, TAggregateRoot>(version);
+                if (snapshot != null)
+                {
+                    sequenceMin = snapshot.Version + 1;
+                }
+            }
+
+            var events = await this.eventStore.LoadAsync<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName,
+                id,
+                sequenceMin,
+                version,
+                cancellationToken: cancellationToken);
 
             var aggregateRoot = new TAggregateRoot();
-            aggregateRoot.Replay(events);
+            aggregateRoot.Replay(events.Select(e => e as IDomainEvent));
             return aggregateRoot;
         }
 
@@ -52,6 +80,13 @@ namespace Apworks.Repositories
 
             // Purges the uncommitted events.
             ((IPurgeable)aggregateRoot).Purge();
+
+            // Checks and saves the snapshot.
+            if (this.snapshotProvider.Enabled && this.snapshotProvider.ShouldSaveSnapshot<TKey, TAggregateRoot>(aggregateRoot))
+            {
+                var snapshot = aggregateRoot.TakeSnapshot();
+                this.snapshotProvider.SaveSnapshot(snapshot);
+            }
         }
 
         public override async Task SaveAsync<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot, CancellationToken cancellationToken)
@@ -65,6 +100,13 @@ namespace Apworks.Repositories
 
             // Purges the uncommitted events.
             ((IPurgeable)aggregateRoot).Purge();
+
+            // Checks and saves the snapshot.
+            if (this.snapshotProvider.Enabled && this.snapshotProvider.ShouldSaveSnapshot<TKey, TAggregateRoot>(aggregateRoot))
+            {
+                var snapshot = aggregateRoot.TakeSnapshot();
+                await this.snapshotProvider.SaveSnapshotAsync(snapshot, cancellationToken);
+            }
         }
     }
 }

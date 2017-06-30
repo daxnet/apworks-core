@@ -41,7 +41,7 @@ namespace Apworks
     /// both standard event-driven and CQRS-based applications.
     /// </summary>
     /// <typeparam name="TKey">The type of the aggregate root key.</typeparam>
-    public abstract class AggregateRootWithEventSourcing<TKey> : IAggregateRootWithEventSourcing<TKey>, ISnapshotOriginator
+    public abstract class AggregateRootWithEventSourcing<TKey> : IAggregateRootWithEventSourcing<TKey>
         where TKey : IEquatable<TKey>
     {
         /// <summary>

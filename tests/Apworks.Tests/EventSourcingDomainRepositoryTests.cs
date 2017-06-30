@@ -2,6 +2,7 @@
 using Apworks.EventStore.Simple;
 using Apworks.Messaging.Simple;
 using Apworks.Repositories;
+using Apworks.Snapshots;
 using Apworks.Tests.Models;
 using System;
 using System.Collections.Generic;
@@ -16,10 +17,11 @@ namespace Apworks.Tests
         private readonly IEventPublisher eventPublisher = new EventBus();
         private readonly IEventStore eventStore = new DictionaryEventStore();
         private readonly IDomainRepository repository;
+        private readonly ISnapshotProvider snapshotProvider = new SuppressedSnapshotProvider();
 
         public EventSourcingDomainRepositoryTests()
         {
-            this.repository = new EventSourcingDomainRepository(eventStore, eventPublisher);
+            this.repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider);
         }
 
         [Fact]

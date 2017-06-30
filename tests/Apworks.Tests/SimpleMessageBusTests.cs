@@ -8,6 +8,7 @@ using System.Text;
 using Xunit;
 using Apworks.EventStore.Simple;
 using Apworks.Repositories;
+using Apworks.Snapshots;
 
 namespace Apworks.Tests
 {
@@ -52,6 +53,7 @@ namespace Apworks.Tests
             var changedName = string.Empty;
             var eventStore = new DictionaryEventStore();
             var eventBus = new EventBus();
+            var snapshotProvider = new SuppressedSnapshotProvider();
             eventBus.MessageReceived += (s, e) =>
             {
                 if (e.Message is NameChangedEvent)
@@ -60,7 +62,7 @@ namespace Apworks.Tests
                 }
             };
             eventBus.Subscribe();
-            var domainRepository = new EventSourcingDomainRepository(eventStore, eventBus);
+            var domainRepository = new EventSourcingDomainRepository(eventStore, eventBus, snapshotProvider);
 
             var id = Guid.NewGuid();
             var model = new Employee { Id = id };
