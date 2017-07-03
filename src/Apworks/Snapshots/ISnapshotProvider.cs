@@ -16,20 +16,24 @@ namespace Apworks.Snapshots
     {
         bool Enabled { get; }
 
-        bool ShouldSaveSnapshot<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot)
-            where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+        //bool ShouldSaveSnapshot<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot)
+        //    where TKey : IEquatable<TKey>
+        //    where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
 
         void SaveSnapshot(ISnapshot snapshot);
 
         Task SaveSnapshotAsync(ISnapshot snapshot, CancellationToken cancellationToken = default(CancellationToken));
 
-        ISnapshot GetLatestSnapshot<TKey, TAggregateRoot>(long version)
-            where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+        (bool, ISnapshot) CheckSnapshot<TKey, TAggregateRoot>(TKey key, long version);
 
-        Task<ISnapshot> GetLatestSnapshotAsync<TKey, TAggregateRoot>(long version, CancellationToken cancellationToken = default(CancellationToken))
-            where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+        Task<(bool, ISnapshot)> CheckSnapshotAsync<TKey, TAggregateRoot>(TKey key, long version, CancellationToken cancellationToken = default(CancellationToken));
+
+        //ISnapshot GetLatestSnapshot<TKey, TAggregateRoot>(TKey id, long version)
+        //    where TKey : IEquatable<TKey>
+        //    where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
+
+        //Task<ISnapshot> GetLatestSnapshotAsync<TKey, TAggregateRoot>(TKey id, long version, CancellationToken cancellationToken = default(CancellationToken))
+        //    where TKey : IEquatable<TKey>
+        //    where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
     }
 }

@@ -3,6 +3,7 @@ using Apworks.EventStore.Simple;
 using Apworks.Messaging.Simple;
 using Apworks.Repositories;
 using Apworks.Snapshots;
+using Apworks.Tests.Helpers;
 using Apworks.Tests.Models;
 using System;
 using System.Collections.Generic;
@@ -64,6 +65,106 @@ namespace Apworks.Tests
             Assert.Equal(2, events.Count);
             Assert.Equal(1, (events[0] as IDomainEvent).Sequence);
             Assert.Equal(2, (events[1] as IDomainEvent).Sequence);
+        }
+
+        [Fact]
+        public void SaveSnapshotCountTest1()
+        {
+            var aggregateRootId = Guid.NewGuid();
+            var employee = new Employee { Id = aggregateRootId };
+            var localSnapshotProvider = new InMemorySnapshotProvider();
+            var localRepository = new EventSourcingDomainRepository(eventStore, eventPublisher, localSnapshotProvider);
+            for (var i = 0; i < 31; i++)
+            {
+                employee.ChangeName($"daxnet_{i}");
+            }
+            localRepository.Save<Guid, Employee>(employee);
+            Assert.Equal(1, localSnapshotProvider.snapshots.Count);
+        }
+
+        [Fact]
+        public void SaveSnapshotCountTest2()
+        {
+            var aggregateRootId = Guid.NewGuid();
+            var employee = new Employee { Id = aggregateRootId };
+            var localSnapshotProvider = new InMemorySnapshotProvider();
+            var localRepository = new EventSourcingDomainRepository(eventStore, eventPublisher, localSnapshotProvider);
+            for (var i = 0; i < 31; i++)
+            {
+                employee.ChangeName($"daxnet_{i}");
+            }
+            localRepository.Save<Guid, Employee>(employee);
+
+            for (var i = 0; i < 31; i++)
+            {
+                employee.ChangeTitle($"Developer_{i}");
+            }
+            localRepository.Save<Guid, Employee>(employee);
+
+            Assert.Equal(2, localSnapshotProvider.snapshots.Count);
+        }
+
+        [Fact]
+        public void SaveSnapshotCountTest3()
+        {
+            var aggregateRootId = Guid.NewGuid();
+            var employee = new Employee { Id = aggregateRootId };
+            var localSnapshotProvider = new InMemorySnapshotProvider();
+            var localRepository = new EventSourcingDomainRepository(eventStore, eventPublisher, localSnapshotProvider);
+            for (var i = 0; i < 31; i++)
+            {
+                employee.ChangeName($"daxnet_{i}");
+            }
+            localRepository.Save<Guid, Employee>(employee);
+
+            for (var i = 0; i < 15; i++)
+            {
+                employee.ChangeTitle($"Developer_{i}");
+            }
+            localRepository.Save<Guid, Employee>(employee);
+
+            Assert.Equal(1, localSnapshotProvider.snapshots.Count);
+        }
+
+        [Fact]
+        public void LoadFromSnapshotTest1()
+        {
+            var aggregateRootId = Guid.NewGuid();
+            var employee = new Employee { Id = aggregateRootId };
+            var localSnapshotProvider = new InMemorySnapshotProvider();
+            var localRepository = new EventSourcingDomainRepository(eventStore, eventPublisher, localSnapshotProvider);
+            for (var i = 0; i < 31; i++)
+            {
+                employee.ChangeName($"daxnet_{i}");
+            }
+            localRepository.Save<Guid, Employee>(employee);
+
+            var employee2 = localRepository.GetById<Guid, Employee>(aggregateRootId);
+            Assert.Equal(employee.Name, employee2.Name);
+        }
+
+        [Fact]
+        public void LoadFromSnapshotTest2()
+        {
+            var aggregateRootId = Guid.NewGuid();
+            var employee = new Employee { Id = aggregateRootId };
+            var localSnapshotProvider = new InMemorySnapshotProvider();
+            var localRepository = new EventSourcingDomainRepository(eventStore, eventPublisher, localSnapshotProvider);
+            for (var i = 0; i < 31; i++)
+            {
+                employee.ChangeName($"daxnet_{i}");
+            }
+            localRepository.Save<Guid, Employee>(employee);
+
+            for (var i = 0; i < 4; i++)
+            {
+                employee.ChangeTitle($"Software Developer_{i}");
+            }
+            localRepository.Save<Guid, Employee>(employee);
+
+            var employee2 = localRepository.GetById<Guid, Employee>(aggregateRootId);
+            Assert.Equal(employee.Name, employee2.Name);
+            Assert.Equal(employee.Title, employee2.Title);
         }
     }
 }

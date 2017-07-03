@@ -18,7 +18,7 @@ namespace Apworks.EventStore.Simple
         {
             var key = $"{originatorClrType}_{originatorId.ToString()}";
             bank.TryGetValue(key, out List<EventDescriptor> descriptors);
-            return descriptors;
+            return descriptors.OrderBy(d => d.EventSequence).Where(d => d.EventSequence >= sequenceMin && d.EventSequence <= sequenceMax);
         }
 
         protected override void SaveDescriptors(IEnumerable<EventDescriptor> eventDescriptors)

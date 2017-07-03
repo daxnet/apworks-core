@@ -15,6 +15,11 @@ namespace Apworks.Snapshots
     {
         public bool Enabled => false;
 
+        public (bool, ISnapshot) CheckSnapshot<TKey, TAggregateRoot>(TKey key, long version) => (false, null);
+
+        public Task<(bool, ISnapshot)> CheckSnapshotAsync<TKey, TAggregateRoot>(TKey key, long version, CancellationToken cancellationToken = default(CancellationToken))
+            => Task.FromResult(CheckSnapshot<TKey, TAggregateRoot>(key, version));
+
         public void SaveSnapshot(ISnapshot snapshot) { }
 
         public Task SaveSnapshotAsync(ISnapshot snapshot, CancellationToken cancellationToken = default(CancellationToken))
@@ -22,21 +27,21 @@ namespace Apworks.Snapshots
             return Task.CompletedTask;
         }
 
-        public bool ShouldSaveSnapshot<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot)
-            where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>
-        {
-            return false;
-        }
+        //public bool ShouldSaveSnapshot<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot)
+        //    where TKey : IEquatable<TKey>
+        //    where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>
+        //{
+        //    return false;
+        //}
 
-        public ISnapshot GetLatestSnapshot<TKey, TAggregateRoot>(long version)
-            where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>
-                => null;
+        //public ISnapshot GetLatestSnapshot<TKey, TAggregateRoot>(TKey id, long version)
+        //    where TKey : IEquatable<TKey>
+        //    where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>
+        //        => null;
 
-        public Task<ISnapshot> GetLatestSnapshotAsync<TKey, TAggregateRoot>(long version, CancellationToken cancellationToken)
-            where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>
-                => Task.FromResult<ISnapshot>(null);
+        //public Task<ISnapshot> GetLatestSnapshotAsync<TKey, TAggregateRoot>(TKey id, long version, CancellationToken cancellationToken)
+        //    where TKey : IEquatable<TKey>
+        //    where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>
+        //        => Task.FromResult<ISnapshot>(null);
     }
 }

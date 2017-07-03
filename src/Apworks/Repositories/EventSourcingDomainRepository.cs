@@ -26,18 +26,20 @@ namespace Apworks.Repositories
         public override TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id, long version)
         {
             var sequenceMin = EventStore.MinimalSequence;
+            var aggregateRoot = new TAggregateRoot();
 
             if (this.snapshotProvider.Enabled)
             {
-                var snapshot = this.snapshotProvider.GetLatestSnapshot<TKey, TAggregateRoot>(version);
+                (var shouldCreate, var snapshot) = this.snapshotProvider.CheckSnapshot<TKey, TAggregateRoot>(id, version);
                 if (snapshot != null)
                 {
+                    aggregateRoot.RestoreSnapshot(snapshot);
                     sequenceMin = snapshot.Version + 1;
                 }
             }
 
             var events = this.eventStore.Load<TKey>(typeof(TAggregateRoot).AssemblyQualifiedName, id, sequenceMin, version);
-            var aggregateRoot = new TAggregateRoot();
+            
             aggregateRoot.Replay(events.Select(e => e as IDomainEvent));
             return aggregateRoot;
         }
@@ -48,12 +50,14 @@ namespace Apworks.Repositories
         public override async Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, long version, CancellationToken cancellationToken)
         {
             var sequenceMin = EventStore.MinimalSequence;
+            var aggregateRoot = new TAggregateRoot();
 
             if (this.snapshotProvider.Enabled)
             {
-                var snapshot = await this.snapshotProvider.GetLatestSnapshotAsync<TKey, TAggregateRoot>(version);
+                (var shouldCreate, var snapshot) = await this.snapshotProvider.CheckSnapshotAsync<TKey, TAggregateRoot>(id, version);
                 if (snapshot != null)
                 {
+                    aggregateRoot.RestoreSnapshot(snapshot);
                     sequenceMin = snapshot.Version + 1;
                 }
             }
@@ -63,8 +67,7 @@ namespace Apworks.Repositories
                 sequenceMin,
                 version,
                 cancellationToken: cancellationToken);
-
-            var aggregateRoot = new TAggregateRoot();
+           
             aggregateRoot.Replay(events.Select(e => e as IDomainEvent));
             return aggregateRoot;
         }
@@ -82,10 +85,14 @@ namespace Apworks.Repositories
             ((IPurgeable)aggregateRoot).Purge();
 
             // Checks and saves the snapshot.
-            if (this.snapshotProvider.Enabled && this.snapshotProvider.ShouldSaveSnapshot<TKey, TAggregateRoot>(aggregateRoot))
+            if (this.snapshotProvider.Enabled)
             {
-                var snapshot = aggregateRoot.TakeSnapshot();
-                this.snapshotProvider.SaveSnapshot(snapshot);
+                (var shouldCreate, var ss) = this.snapshotProvider.CheckSnapshot<TKey, TAggregateRoot>(aggregateRoot.Id, aggregateRoot.Version);
+                if (shouldCreate)
+                {
+                    var snapshot = aggregateRoot.TakeSnapshot();
+                    this.snapshotProvider.SaveSnapshot(snapshot);
+                }
             }
         }
 
@@ -102,10 +109,14 @@ namespace Apworks.Repositories
             ((IPurgeable)aggregateRoot).Purge();
 
             // Checks and saves the snapshot.
-            if (this.snapshotProvider.Enabled && this.snapshotProvider.ShouldSaveSnapshot<TKey, TAggregateRoot>(aggregateRoot))
+            if (this.snapshotProvider.Enabled)
             {
-                var snapshot = aggregateRoot.TakeSnapshot();
-                await this.snapshotProvider.SaveSnapshotAsync(snapshot, cancellationToken);
+                (var shouldCreate, var ss) = await this.snapshotProvider.CheckSnapshotAsync<TKey, TAggregateRoot>(aggregateRoot.Id, aggregateRoot.Version, cancellationToken);
+                if (shouldCreate)
+                {
+                    var snapshot = aggregateRoot.TakeSnapshot();
+                    await this.snapshotProvider.SaveSnapshotAsync(snapshot, cancellationToken);
+                }
             }
         }
     }
