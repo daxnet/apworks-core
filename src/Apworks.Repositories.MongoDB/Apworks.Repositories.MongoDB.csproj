@@ -54,4 +54,8 @@
     <DocumentationFile>bin\Release\net461\Apworks.Repositories.MongoDB.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.6|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.6\Apworks.Repositories.MongoDB.xml</DocumentationFile>
+  </PropertyGroup>
+
 </Project>

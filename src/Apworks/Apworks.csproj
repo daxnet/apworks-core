@@ -46,4 +46,8 @@
     <DocumentationFile>bin\Release\net461\Apworks.xml</DocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.6|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.6\Apworks.xml</DocumentationFile>
+  </PropertyGroup>
+
 </Project>
