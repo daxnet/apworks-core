@@ -51,5 +51,11 @@ namespace Apworks.Messaging
         /// metadata information of current message.
         /// </summary>
         MessageMetadata Metadata { get; }
+
+        /// <summary>
+        /// Gets the .NET CLR assembly qualified name of the current message.
+        /// </summary>
+        /// <returns>The assembly qualified name of the current message.</returns>
+        string GetMessageClrType();
     }
 }

@@ -2,6 +2,7 @@
 using Apworks.EventStore.AdoNet;
 using Apworks.EventStore.PostgreSQL;
 using Apworks.KeyGeneration;
+using Apworks.Messaging;
 using Apworks.Messaging.RabbitMQ;
 using Apworks.Repositories;
 using Apworks.Serialization.Json;
@@ -20,8 +21,8 @@ namespace Apworks.Tests.Integration
     
     public class EventSourcingDomainRepositoryTests : DisposableObject, IClassFixture<PostgreSQLFixture>
     {
-        private static readonly IObjectSerializer serializer =
-            new ObjectJsonSerializer(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+        private static readonly IMessageSerializer messageSerializer = new MessageJsonSerializer();
+        private static readonly IObjectSerializer eventStoreSerializer = new ObjectJsonSerializer();
         private static readonly IConnectionFactory connectionFactory = new ConnectionFactory { HostName = "localhost" };
 
         private readonly PostgreSQLFixture fixture;
@@ -36,8 +37,8 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void SaveAggregateRootTest()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
-            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
+            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
@@ -53,8 +54,8 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void LoadAggregateRootTest()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
-            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
+            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
@@ -73,8 +74,8 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void SaveAggregateRootAndSubscribeEventTest()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
-            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
+            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 int eventsReceived = 0;
@@ -97,8 +98,8 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void EventSequenceAfterSaveTest()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
-            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
+            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
@@ -117,8 +118,8 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void GetByVersionTest1()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
-            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
+            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
@@ -138,8 +139,8 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void GetByVersionTest2()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, serializer, this.GetType().Name))
-            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), serializer))
+            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();

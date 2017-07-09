@@ -10,11 +10,11 @@ namespace Apworks.Messaging.RabbitMQ
 {
     public sealed class EventBus : MessageBus, IEventBus
     {
-        public EventBus(string uri, IObjectSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
+        public EventBus(string uri, IMessageSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
             : base(uri, messageSerializer, exchangeName, exchangeType, queueName)
         { }
 
-        public EventBus(IConnectionFactory connectionFactory, IObjectSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
+        public EventBus(IConnectionFactory connectionFactory, IMessageSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
             : base(connectionFactory, messageSerializer, exchangeName, exchangeType, queueName)
         { }
     }

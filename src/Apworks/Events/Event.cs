@@ -14,7 +14,6 @@ namespace Apworks.Events
     /// <seealso cref="Apworks.Events.IEvent" />
     public abstract class Event : Message, IEvent
     {
-        protected const string EventClrTypeMetadataKey = "$apworks:event.clrtype";
         protected const string EventIntentMetadataKey = "$apworks:event.intent";
         protected const string EventOriginatorClrTypeMetadataKey = "$apworks:event.originatorClrtype";
         protected const string EventOriginatorIdentifierMetadataKey = "$apworks:event.originatrId";
@@ -24,11 +23,8 @@ namespace Apworks.Events
         /// </summary>
         protected Event()
         {
-            Metadata[EventClrTypeMetadataKey] = this.GetType().AssemblyQualifiedName;
             Metadata[EventIntentMetadataKey] = this.GetType().Name;
         }
-
-        public string GetEventClrType() => this.Metadata[EventClrTypeMetadataKey]?.ToString();
 
         public string GetEventIntent() => this.Metadata[EventIntentMetadataKey]?.ToString();
 
@@ -41,7 +37,7 @@ namespace Apworks.Events
             return new EventDescriptor
             {
                 Id = Guid.NewGuid(),
-                EventClrType = this.GetEventClrType(),
+                EventClrType = this.GetMessageClrType(),
                 EventId = this.Id,
                 EventIntent = this.GetEventIntent(),
                 EventTimestamp = this.Timestamp,

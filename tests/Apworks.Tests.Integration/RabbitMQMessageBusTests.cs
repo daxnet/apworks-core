@@ -1,4 +1,5 @@
-﻿using Apworks.Messaging.RabbitMQ;
+﻿using Apworks.Messaging;
+using Apworks.Messaging.RabbitMQ;
 using Apworks.Serialization.Json;
 using Apworks.Tests.Integration.Models;
 using Newtonsoft.Json;
@@ -9,7 +10,7 @@ namespace Apworks.Tests.Integration
 {
     public class RabbitMQMessageBusTests
     {
-        private readonly IObjectSerializer serializer = new ObjectJsonSerializer(new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All });
+        private readonly IMessageSerializer serializer = new MessageJsonSerializer();
 
         [Fact]
         public void PublishMessageTest()
@@ -19,7 +20,7 @@ namespace Apworks.Tests.Integration
 
             using (var bus = new MessageBus(new ConnectionFactory() { HostName = "localhost" },
                 serializer, 
-                "RabbitMQMessageBusTests.PublishMessageTest"))
+                "RabbitMQMessageBusTests.PublishMessageTest", queueName: "RabbitMQMessageBusTests.PublishMessageTestQueue"))
             {
                 // When any message received, increase the counter
                 bus.MessageReceived += (x, y) => numOfMessagesReceived++;

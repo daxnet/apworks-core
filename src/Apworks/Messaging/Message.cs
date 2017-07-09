@@ -1,9 +1,5 @@
 ﻿using Apworks.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Apworks.Messaging
 {
@@ -13,11 +9,18 @@ namespace Apworks.Messaging
     /// <seealso cref="Apworks.Messaging.IMessage" />
     public abstract class Message : IMessage
     {
+        public const string MessageClrTypeMetadataKey = "$apworks:message.clrtype";
+
         private readonly MessageMetadata metadata = new MessageMetadata();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Message"/> class.
+        /// </summary>
         protected Message()
         {
             this.Id = Guid.NewGuid();
+            this.Timestamp = DateTime.UtcNow;
+            Metadata[MessageClrTypeMetadataKey] = this.GetType().AssemblyQualifiedName;
         }
 
         /// <summary>
@@ -41,6 +44,14 @@ namespace Apworks.Messaging
         /// metadata information of current message.
         /// </summary>
         public MessageMetadata Metadata => metadata;
+
+        /// <summary>
+        /// Gets the .NET CLR assembly qualified name of the current message.
+        /// </summary>
+        /// <returns>
+        /// The assembly qualified name of the current message.
+        /// </returns>
+        public string GetMessageClrType() => Metadata[MessageClrTypeMetadataKey]?.ToString();
 
         /// <summary>
         /// Returns a <see cref="System.String" /> that represents this instance.
@@ -85,6 +96,5 @@ namespace Apworks.Messaging
         /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
         /// </returns>
         public override int GetHashCode() => Utils.GetHashCode(this.Id.GetHashCode(), this.Timestamp.GetHashCode());
-        
     }
 }

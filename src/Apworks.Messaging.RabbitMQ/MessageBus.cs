@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using RabbitMQ.Client.Events;
+using System.Text;
 
 namespace Apworks.Messaging.RabbitMQ
 {
     public class MessageBus : DisposableObject, IMessageBus
     {
         private readonly IConnectionFactory connectionFactory;
-        private readonly IObjectSerializer messageSerializer;
+        private readonly IMessageSerializer messageSerializer;
         private readonly IConnection connection;
         private readonly IModel channel;
         private readonly string exchangeName;
@@ -21,11 +22,11 @@ namespace Apworks.Messaging.RabbitMQ
 
         private bool disposed;
 
-        public MessageBus(string uri, IObjectSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
+        public MessageBus(string uri, IMessageSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
             : this(new ConnectionFactory { Uri = uri }, messageSerializer, exchangeName, exchangeType, queueName)
         { }
 
-        public MessageBus(IConnectionFactory connectionFactory, IObjectSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
+        public MessageBus(IConnectionFactory connectionFactory, IMessageSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
         {
             // Initializes the local variables
             this.connectionFactory = connectionFactory;
@@ -96,7 +97,7 @@ namespace Apworks.Messaging.RabbitMQ
                 consumer.Received += (model, eventArgument) =>
                   {
                       var messageBody = eventArgument.Body;
-                      var message = (IMessage)this.messageSerializer.Deserialize(messageBody);
+                      var message = this.messageSerializer.Deserialize<IMessage>(messageBody);
                       this.OnMessageReceived(new MessageReceivedEventArgs(message));
                       channel.BasicAck(eventArgument.DeliveryTag, false);
                       this.OnMessageAcknowledged(new MessageProcessedEventArgs(message));
