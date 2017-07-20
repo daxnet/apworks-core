@@ -1,4 +1,30 @@
-﻿using Apworks.Integration.AspNetCore.Hal;
+﻿// ==================================================================================================================                                                                                          
+//        ,::i                                                           BBB                
+//       BBBBBi                                                         EBBB                
+//      MBBNBBU                                                         BBB,                
+//     BBB. BBB     BBB,BBBBM   BBB   UBBB   MBB,  LBBBBBO,   :BBG,BBB :BBB  .BBBU  kBBBBBF 
+//    BBB,  BBB    7BBBBS2BBBO  BBB  iBBBB  YBBJ :BBBMYNBBB:  FBBBBBB: OBB: 5BBB,  BBBi ,M, 
+//   MBBY   BBB.   8BBB   :BBB  BBB .BBUBB  BB1  BBBi   kBBB  BBBM     BBBjBBBr    BBB1     
+//  BBBBBBBBBBBu   BBB    FBBP  MBM BB. BB BBM  7BBB    MBBY .BBB     7BBGkBB1      JBBBBi  
+// PBBBFE0GkBBBB  7BBX   uBBB   MBBMBu .BBOBB   rBBB   kBBB  ZBBq     BBB: BBBJ   .   iBBB  
+//BBBB      iBBB  BBBBBBBBBE    EBBBB  ,BBBB     MBBBBBBBM   BBB,    iBBB  .BBB2 :BBBBBBB7  
+//vr7        777  BBBu8O5:      .77r    Lr7       .7EZk;     L77     .Y7r   irLY  JNMMF:    
+//               LBBj
+//
+// Apworks Application Development Framework
+// Copyright (C) 2009-2017 by daxnet.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//    http://www.apache.org/licenses/LICENSE-2.0
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+// ==================================================================================================================
+
+using Apworks.Integration.AspNetCore.Hal;
 using Apworks.Querying;
 using Hal.Builders;
 using Microsoft.AspNetCore.Http;
@@ -11,11 +37,12 @@ using System.Linq;
 namespace Apworks.Integration.AspNetCore.DataServices
 {
     /// <summary>
-    /// Represents the HAL build configuration which configures the HAL builder
+    /// Represents the HAL build configuration that configures the HAL builder
     /// factory for data services.
     /// </summary>
     public class DataServiceHalBuildConfiguration : HalBuildConfiguration
     {
+        #region Ctor
         /// <summary>
         /// Initializes a new instance of the <see cref="DataServiceHalBuildConfiguration"/> class.
         /// </summary>
@@ -37,9 +64,11 @@ namespace Apworks.Integration.AspNetCore.DataServices
                 this.RegisterHalBuilderFactory(factory.Key, factory.Value);
             }
         }
+        #endregion
 
+        #region Protected Methods
         /// <summary>
-        /// Registers the hal builder factory for the default HTTP GET method, which returns a collection
+        /// Registers the HAL builder factory for the default HTTP GET method, which returns a collection
         /// of the aggregates with pagination enabled and a search criteria applied.
         /// </summary>
         protected virtual void RegisterHalBuilderFactoryForGetAll()
@@ -48,8 +77,8 @@ namespace Apworks.Integration.AspNetCore.DataServices
         }
 
         /// <summary>
-        /// Registers the hal builder factory for the HTTP GET method that returns a particular aggregate
-        /// with a given aggregate root Id.
+        /// Registers the HAL builder factory for the HTTP GET method that returns a particular aggregate
+        /// with a given aggregate root key.
         /// </summary>
         protected virtual void RegisterHalBuilderFactoryForGet()
         {
@@ -63,6 +92,13 @@ namespace Apworks.Integration.AspNetCore.DataServices
             });
         }
 
+        /// <summary>
+        /// The helper method which returns the HAL build factory that can build the HAL with the <see cref="IPagedResult"/>
+        /// object.
+        /// </summary>
+        /// <param name="context">The <see cref="HalBuildContext"/> object that carries the information for creating
+        /// the HAL builder.</param>
+        /// <returns>The <see cref="IBuilder"/> object which can build a HAL data structure.</returns>
         protected IBuilder GetPagedResultHalBuildFactory(HalBuildContext context)
         {
             var state = (IPagedResult)context.State;
@@ -109,7 +145,9 @@ namespace Apworks.Integration.AspNetCore.DataServices
 
             return resourceBuilder;
         }
+        #endregion
 
+        #region Private Methods
         /// <summary>
         /// Generates the hyperlink to a resource with the query values being substituted.
         /// </summary>
@@ -141,5 +179,6 @@ namespace Apworks.Integration.AspNetCore.DataServices
             
             return UriHelper.BuildAbsolute(scheme, host, pathBase, path, QueryString.Create(substQuery), default(FragmentString));
         }
+        #endregion
     }
 }

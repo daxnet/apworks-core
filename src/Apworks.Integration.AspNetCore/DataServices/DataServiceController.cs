@@ -51,18 +51,31 @@ namespace Apworks.Integration.AspNetCore.DataServices
         where TAggregateRoot : class, IAggregateRoot<TKey>
         where TKey : IEquatable<TKey>
     {
+        #region Fields
         private readonly IRepositoryContext repositoryContext;
         private readonly IRepository<TKey, TAggregateRoot> repository;
         private readonly IQueryConditionParser queryConditionParser;
         private readonly ISortSpecificationParser sortSpecificationParser;
         private readonly IKeyGenerator<TKey, TAggregateRoot> keyGenerator;
+        #endregion
 
-        #region Ctor
-
+        #region Ctor        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataServiceController{TKey, TAggregateRoot}"/> class.
+        /// </summary>
+        /// <param name="repositoryContext">The repository context that is used for initializing the data service controller.</param>
         public DataServiceController(IRepositoryContext repositoryContext)
             : this(repositoryContext, new NullKeyGenerator<TKey>(), new IronyQueryConditionParser(), new IronySortSpecificationParser())
         { }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataServiceController{TKey, TAggregateRoot}"/> class.
+        /// </summary>
+        /// <param name="repositoryContext">The repository context that is used for initializing the data service controller.</param>
+        /// <param name="keyGenerator">The key generator which is used for generating the aggregate root key.
+        /// If the persistence mechanism will generate the key automatically, for example, in SQL Server databases, an auto increment
+        /// value is used for the key column, the <see cref="NullKeyGenerator{TKey}"/> can be used for this parameter.
+        /// </param>
         public DataServiceController(IRepositoryContext repositoryContext, IKeyGenerator<TKey, TAggregateRoot> keyGenerator)
             : this(repositoryContext, keyGenerator, new IronyQueryConditionParser(), new IronySortSpecificationParser())
         { }
@@ -70,8 +83,10 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// <summary>
         /// Initializes a new instance of the <see cref="DataServiceController{TKey, TAggregateRoot}"/> class.
         /// </summary>
-        /// <param name="repositoryContext">The repository context that is used by the current
-        /// <see cref="DataServiceController{TKey, TAggregateRoot}"/> for managing the object lifecycle.</param>
+        /// <param name="repositoryContext">The repository context that is used for initializing the data service controller.</param>
+        /// <param name="queryConditionParser">The query condition parser which parses a given query string into a lambda expression.</param>
+        /// <param name="sortSpecificationParser">The sort specification parser which parses a given sort specification string
+        /// into a lambda expression.</param>
         public DataServiceController(IRepositoryContext repositoryContext, IQueryConditionParser queryConditionParser, ISortSpecificationParser sortSpecificationParser)
             : this(repositoryContext, new NullKeyGenerator<TKey>(), queryConditionParser, sortSpecificationParser)
         { }
@@ -79,10 +94,13 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// <summary>
         /// Initializes a new instance of the <see cref="DataServiceController{TKey, TAggregateRoot}"/> class.
         /// </summary>
-        /// <param name="repositoryContext">The repository context that is used by the current
-        /// <see cref="DataServiceController{TKey, TAggregateRoot}"/> for managing the object lifecycle.</param>
-        /// <param name="keyGenerator">The <see cref="IKeyGenerator{TKey, TAggregateRoot}"/> instance
-        /// which generates the aggregate root key for the specified aggregate root type.</param>
+        /// <param name="repositoryContext">The repository context that is used for initializing the data service controller.</param>
+        /// <param name="keyGenerator">The key generator which is used for generating the aggregate root key.
+        /// If the persistence mechanism will generate the key automatically, for example, in SQL Server databases, an auto increment
+        /// value is used for the key column, the <see cref="NullKeyGenerator{TKey}"/> can be used for this parameter.</param>
+        /// <param name="queryConditionParser">The query condition parser which parses a given query string into a lambda expression.</param>
+        /// <param name="sortSpecificationParser">The sort specification parser which parses a given sort specification string
+        /// into a lambda expression.</param>
         public DataServiceController(IRepositoryContext repositoryContext, 
             IKeyGenerator<TKey, TAggregateRoot> keyGenerator,
             IQueryConditionParser queryConditionParser,
@@ -99,21 +117,56 @@ namespace Apworks.Integration.AspNetCore.DataServices
         #region Protected Properties
 
         /// <summary>
-        /// Gets the repository context that is used by the current
-        /// <see cref="DataServiceController{TKey, TAggregateRoot}"/> for managing the object lifecycle.
+        /// Gets the repository context instance which orchestrates the data access operations.
         /// </summary>
+        /// <value>
+        /// The repository context.
+        /// </value>
         protected IRepositoryContext RepositoryContext => this.repositoryContext;
 
+        /// <summary>
+        /// Gets the repository which manages aggregates' life cycle.
+        /// </summary>
+        /// <value>
+        /// The repository.
+        /// </value>
         protected IRepository<TKey, TAggregateRoot> Repository => this.repository;
 
+        /// <summary>
+        /// Gets the key generator which is used for generating the aggregate root key.
+        /// </summary>
+        /// <value>
+        /// The key generator.
+        /// </value>
         protected IKeyGenerator<TKey, TAggregateRoot> KeyGenerator => this.keyGenerator;
 
+        /// <summary>
+        /// Gets the query condition parser which parses a given query string into a lambda expression.
+        /// </summary>
+        /// <value>
+        /// The query condition parser.
+        /// </value>
         protected IQueryConditionParser QueryConditionParser => this.queryConditionParser;
 
+        /// <summary>
+        /// Gets the sort specification parser which parses a given sort specification string
+        /// into a lambda expression.
+        /// </summary>
+        /// <value>
+        /// The sort specification parser.
+        /// </value>
         protected ISortSpecificationParser SortSpecificationParser => this.sortSpecificationParser;
 
         #endregion
 
+        /// <summary>
+        /// Returns all the aggregates that match specific query criteria in a specified order, with pagination support.
+        /// </summary>
+        /// <param name="size">The number of aggregates that will be contained in a page (the page size).</param>
+        /// <param name="page">The page number.</param>
+        /// <param name="query">The string which specifies the query criteria.</param>
+        /// <param name="sort">The string which specifies the ordering specification.</param>
+        /// <returns>A list of the aggregates that match specific query criteria in a specified order.</returns>
         [HttpGet]
         public virtual async Task<IActionResult> Get([FromQuery] int size = 15, 
             [FromQuery] int page = 1,
@@ -145,6 +198,11 @@ namespace Apworks.Integration.AspNetCore.DataServices
             }
         }
 
+        /// <summary>
+        /// Gets an aggregate with the specified aggregate root key (the aggregate Id).
+        /// </summary>
+        /// <param name="id">The key of the aggregate root.</param>
+        /// <returns>The aggregate whose Id equals to the specified key.</returns>
         [HttpGet("{id}")]
         public virtual async Task<TAggregateRoot> Get(TKey id)
         {
@@ -163,6 +221,13 @@ namespace Apworks.Integration.AspNetCore.DataServices
             return first;
         }
 
+        /// <summary>
+        /// Adds the aggregate to the repository.
+        /// </summary>
+        /// <param name="aggregateRoot">The aggregate root of the aggregate that is going to be added.</param>
+        /// <returns>HTTP status 201 (Created) with the generated Id and resource URI.</returns>
+        /// <exception cref="InvalidOperationException">The entity that is going to be created has not been specified.</exception>
+        /// <exception cref="EntityAlreadyExistsException">The entity of the given key in the POST body already exists.</exception>
         [HttpPost]
         public virtual async Task<IActionResult> Post([FromBody] TAggregateRoot aggregateRoot)
         {
@@ -189,6 +254,18 @@ namespace Apworks.Integration.AspNetCore.DataServices
             return Created(Url.Action("Get", new { id = aggregateRoot.Id }), aggregateRoot.Id);
         }
 
+        /// <summary>
+        /// Modifies the aggregate that has the specified key, by using the specified data.
+        /// </summary>
+        /// <param name="id">The key of the aggregate root.</param>
+        /// <param name="aggregateRoot">The aggregate root which contains the data for updating an existing aggregate.</param>
+        /// <returns>HTTP 204 (No content), if the update is successful.</returns>
+        /// <exception cref="InvalidArgumentException">
+        /// Entity key has not been specified.
+        /// or
+        /// The entity that is going to be updated has not been specified.
+        /// </exception>
+        /// <exception cref="EntityNotFoundException">Throws when the aggregate with the specified aggregate root key does not exist.</exception>
         [HttpPut("{id}")]
         public virtual async Task<IActionResult> Put(TKey id, [FromBody] TAggregateRoot aggregateRoot)
         {
@@ -213,6 +290,13 @@ namespace Apworks.Integration.AspNetCore.DataServices
             return NoContent();
         }
 
+        /// <summary>
+        /// Deletes the aggregate with the specified key.
+        /// </summary>
+        /// <param name="id">The key of the aggregate root.</param>
+        /// <returns>HTTP 204 (No content) if deletion is successful.</returns>
+        /// <exception cref="InvalidArgumentException">Entity key has not been specified.</exception>
+        /// <exception cref="EntityNotFoundException">Throws when the entity has not been found.</exception>
         [HttpDelete("{id}")]
         public virtual async Task<IActionResult> Delete(TKey id)
         {
@@ -232,6 +316,14 @@ namespace Apworks.Integration.AspNetCore.DataServices
             return NoContent();
         }
 
+        /// <summary>
+        /// Updates the aggregate that has the specified aggregate root key by using the specified aggregate data and update path.
+        /// </summary>
+        /// <param name="id">The key of the aggregate root that is going to be updated.</param>
+        /// <param name="patch">The <see cref="JsonPatchDocument{TModel}"/> instance that defines the update path.</param>
+        /// <returns></returns>
+        /// <exception cref="InvalidArgumentException">Entity key has not been specified.</exception>
+        /// <exception cref="EntityNotFoundException">Throws when the entity has not been found.</exception>
         [HttpPatch("{id}")]
         public virtual async Task<IActionResult> Patch(TKey id, [FromBody] JsonPatchDocument<TAggregateRoot> patch)
         {
