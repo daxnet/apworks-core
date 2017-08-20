@@ -42,12 +42,12 @@ namespace Apworks.Tests.Integration
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
-                var employee = new Employee { Id = aggregateRootId };
+                var employee = new Employee(aggregateRootId);
                 employee.ChangeName("daxnet");
                 employee.ChangeTitle("developer");
-                Assert.Equal(2, employee.Version);
+                Assert.Equal(3, employee.Version);
                 repository.Save<Guid, Employee>(employee);
-                Assert.Equal(2, employee.Version);
+                Assert.Equal(3, employee.Version);
             }
         }
 
@@ -59,7 +59,7 @@ namespace Apworks.Tests.Integration
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
-                var employee = new Employee { Id = aggregateRootId };
+                var employee = new Employee(aggregateRootId);
                 employee.ChangeName("daxnet");
                 employee.ChangeTitle("developer");
                 repository.Save<Guid, Employee>(employee);
@@ -67,7 +67,7 @@ namespace Apworks.Tests.Integration
                 var employee2 = repository.GetById<Guid, Employee>(aggregateRootId);
                 Assert.Equal("daxnet", employee2.Name);
                 Assert.Equal("Sr. developer", employee2.Title);
-                Assert.Equal(2, employee2.Version);
+                Assert.Equal(3, employee2.Version);
             }
         }
 
@@ -86,7 +86,7 @@ namespace Apworks.Tests.Integration
                 subscriber.Subscribe();
 
                 var aggregateRootId = Guid.NewGuid();
-                var employee = new Employee { Id = aggregateRootId };
+                var employee = new Employee(aggregateRootId);
                 employee.ChangeName("daxnet");
                 employee.ChangeTitle("developer");
                 repository.Save<Guid, Employee>(employee);
@@ -103,15 +103,16 @@ namespace Apworks.Tests.Integration
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
-                var employee = new Employee { Id = aggregateRootId };
+                var employee = new Employee(aggregateRootId);
                 employee.ChangeName("daxnet");
                 employee.ChangeTitle("developer");
                 repository.Save<Guid, Employee>(employee);
 
                 var events = eventStore.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId).ToList();
-                Assert.Equal(2, events.Count);
+                Assert.Equal(3, events.Count);
                 Assert.Equal(1, (events[0] as IDomainEvent).Sequence);
                 Assert.Equal(2, (events[1] as IDomainEvent).Sequence);
+                Assert.Equal(3, (events[2] as IDomainEvent).Sequence);
             }
         }
 
@@ -123,13 +124,13 @@ namespace Apworks.Tests.Integration
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
-                var employee = new Employee { Id = aggregateRootId };
+                var employee = new Employee(aggregateRootId);
                 employee.ChangeName("daxnet");
                 employee.ChangeTitle("developer");
                 employee.Register();
                 repository.Save<Guid, Employee>(employee);
 
-                var employee2 = repository.GetById<Guid, Employee>(aggregateRootId, 1);
+                var employee2 = repository.GetById<Guid, Employee>(aggregateRootId, 2);  // Load 2 events as the first one is the aggregate created event.
                 Assert.Equal(employee.Name, employee2.Name);
                 Assert.Null(employee2.Title);
                 Assert.Equal(DateTime.MinValue, employee2.DateRegistered);
@@ -144,13 +145,13 @@ namespace Apworks.Tests.Integration
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
                 var aggregateRootId = Guid.NewGuid();
-                var employee = new Employee { Id = aggregateRootId };
+                var employee = new Employee(aggregateRootId);
                 employee.ChangeName("daxnet");
                 employee.ChangeTitle("developer");
                 employee.Register();
                 repository.Save<Guid, Employee>(employee);
 
-                var employee2 = repository.GetById<Guid, Employee>(aggregateRootId, 2);
+                var employee2 = repository.GetById<Guid, Employee>(aggregateRootId, 3);
                 Assert.Equal(employee.Name, employee2.Name);
                 Assert.Equal(employee.Title, employee2.Title);
                 Assert.Equal(DateTime.MinValue, employee2.DateRegistered);

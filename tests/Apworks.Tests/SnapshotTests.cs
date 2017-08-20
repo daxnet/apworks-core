@@ -12,19 +12,19 @@ namespace Apworks.Tests
         public void SaveSnapshotTest()
         {
             var id = Guid.NewGuid();
-            var employee = new Employee() {  Id = id };
+            var employee = new Employee(id);
             employee.ChangeName("daxnet");
             employee.ChangeTitle("Developer");
             var snapshot = employee.TakeSnapshot();
             Assert.Equal(4, snapshot.States.Count());
-            Assert.Equal(2, snapshot.Version);
+            Assert.Equal(3, snapshot.Version);
         }
 
         [Fact]
         public void SnapshotValueTest()
         {
             var id = Guid.NewGuid();
-            var employee = new Employee() { Id = id };
+            var employee = new Employee(id);
             employee.ChangeName("daxnet");
             employee.ChangeTitle("Developer");
             var snapshot = employee.TakeSnapshot();
@@ -37,12 +37,12 @@ namespace Apworks.Tests
         public void RestoreSnapshotTest()
         {
             var id = Guid.NewGuid();
-            var employee = new Employee() { Id = id };
+            var employee = new Employee(id);
             employee.ChangeName("daxnet");
             employee.ChangeTitle("Developer");
             var snapshot = employee.TakeSnapshot();
 
-            var employee2 = new Employee();
+            var employee2 = new Employee(Guid.Empty);
             employee2.RestoreSnapshot(snapshot);
 
             Assert.Equal(employee.Id, employee2.Id);

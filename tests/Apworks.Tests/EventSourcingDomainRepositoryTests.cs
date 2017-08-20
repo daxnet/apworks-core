@@ -29,49 +29,51 @@ namespace Apworks.Tests
         public void SaveAggregateRootTest()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee (aggregateRootId);
             employee.ChangeName("daxnet");
             employee.ChangeTitle("developer");
-            Assert.Equal(2, employee.Version);
+            Assert.Equal(3, employee.Version);
             this.repository.Save<Guid, Employee>(employee);
-            Assert.Equal(2, employee.Version);
+            Assert.Equal(3, employee.Version);
         }
 
         [Fact]
         public void LoadAggregateRootTest()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee(aggregateRootId);
             employee.ChangeName("daxnet");
             employee.ChangeTitle("developer");
             this.repository.Save<Guid, Employee>(employee);
 
             var employee2 = this.repository.GetById<Guid, Employee>(aggregateRootId);
+            Assert.Equal(aggregateRootId, employee2.Id);
             Assert.Equal("daxnet", employee2.Name);
             Assert.Equal("Sr. developer", employee2.Title);
-            Assert.Equal(2, employee2.Version);
+            Assert.Equal(3, employee2.Version);
         }
 
         [Fact]
         public void EventSequenceAfterSaveTest()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee(aggregateRootId);
             employee.ChangeName("daxnet");
             employee.ChangeTitle("developer");
             this.repository.Save<Guid, Employee>(employee);
 
             var events = this.eventStore.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId).ToList();
-            Assert.Equal(2, events.Count);
+            Assert.Equal(3, events.Count);
             Assert.Equal(1, (events[0] as IDomainEvent).Sequence);
             Assert.Equal(2, (events[1] as IDomainEvent).Sequence);
+            Assert.Equal(3, (events[2] as IDomainEvent).Sequence);
         }
 
         [Fact]
         public void SaveSnapshotCountTest1()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee (aggregateRootId);
             var localSnapshotProvider = new InMemorySnapshotProvider();
             var localRepository = new EventSourcingDomainRepository(eventStore, eventPublisher, localSnapshotProvider);
             for (var i = 0; i < 31; i++)
@@ -86,7 +88,7 @@ namespace Apworks.Tests
         public void SaveSnapshotCountTest2()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee (aggregateRootId);
             var localSnapshotProvider = new InMemorySnapshotProvider();
             var localRepository = new EventSourcingDomainRepository(eventStore, eventPublisher, localSnapshotProvider);
             for (var i = 0; i < 31; i++)
@@ -108,7 +110,7 @@ namespace Apworks.Tests
         public void SaveSnapshotCountTest3()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee (aggregateRootId);
             var localSnapshotProvider = new InMemorySnapshotProvider();
             var localRepository = new EventSourcingDomainRepository(eventStore, eventPublisher, localSnapshotProvider);
             for (var i = 0; i < 31; i++)
@@ -130,7 +132,7 @@ namespace Apworks.Tests
         public void LoadFromSnapshotTest1()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee (aggregateRootId);
             var localSnapshotProvider = new InMemorySnapshotProvider();
             var localRepository = new EventSourcingDomainRepository(eventStore, eventPublisher, localSnapshotProvider);
             for (var i = 0; i < 31; i++)
@@ -147,7 +149,7 @@ namespace Apworks.Tests
         public void LoadFromSnapshotTest2()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee(aggregateRootId);
             var localSnapshotProvider = new InMemorySnapshotProvider();
             var localRepository = new EventSourcingDomainRepository(eventStore, eventPublisher, localSnapshotProvider);
             for (var i = 0; i < 31; i++)

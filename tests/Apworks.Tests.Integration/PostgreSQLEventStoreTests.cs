@@ -31,7 +31,7 @@ namespace Apworks.Tests.Integration
         public void SaveEventsTest()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee(aggregateRootId);
 
             var event1 = new NameChangedEvent("daxnet");
             var event2 = new TitleChangedEvent("title");
@@ -56,7 +56,7 @@ namespace Apworks.Tests.Integration
         public void LoadEventsTest()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee(aggregateRootId);
 
             var event1 = new NameChangedEvent("daxnet");
             var event2 = new TitleChangedEvent("title");
@@ -84,7 +84,7 @@ namespace Apworks.Tests.Integration
         public void LoadMinimalSequenceEventsTest()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee(aggregateRootId);
 
             var event1 = new NameChangedEvent("daxnet") { Sequence = 1 };
             var event2 = new TitleChangedEvent("title") { Sequence = 2 };
@@ -114,7 +114,7 @@ namespace Apworks.Tests.Integration
         public void LoadMaximumSequenceEventsTest()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee(aggregateRootId);
 
             var event1 = new NameChangedEvent("daxnet") { Sequence = 1 };
             var event2 = new TitleChangedEvent("title") { Sequence = 2 };
@@ -144,7 +144,7 @@ namespace Apworks.Tests.Integration
         public void LoadEventsWithMinMaxSequenceTest()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee(aggregateRootId);
 
             var event1 = new NameChangedEvent("daxnet") { Sequence = 1 };
             var event2 = new TitleChangedEvent("title") { Sequence = 2 };

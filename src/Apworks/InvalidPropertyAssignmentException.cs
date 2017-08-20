@@ -24,23 +24,43 @@
 // limitations under the License.
 // ==================================================================================================================
 
-namespace Apworks.Snapshots
+using System;
+
+namespace Apworks
 {
-    /// <summary>
-    /// Represents that the implemented classes are the originators of a snapshot.
-    /// </summary>
-    public interface ISnapshotOriginator
+    public sealed class InvalidPropertyAssignmentException : ApworksException
     {
         /// <summary>
-        /// Takes the snapshot of the current object.
+        /// Initializes a new instance of the <see cref="InvalidPropertyAssignmentException"/> class.
         /// </summary>
-        /// <returns>The snapshot of the current instance.</returns>
-        ISnapshot TakeSnapshot();
+        public InvalidPropertyAssignmentException()
+            : base()
+        { }
 
         /// <summary>
-        /// Restores the state of current object by using the specified snapshot.
+        /// Initializes a new instance of the <see cref="InvalidPropertyAssignmentException"/> class.
         /// </summary>
-        /// <param name="snapshot">The snapshot from which the state of current object is restored.</param>
-        void RestoreSnapshot(ISnapshot snapshot);
+        /// <param name="message">The message that describes the error.</param>
+        public InvalidPropertyAssignmentException(string message)
+            : base(message)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvalidPropertyAssignmentException"/> class.
+        /// </summary>
+        /// <param name="format">The format of the error message.</param>
+        /// <param name="args">The arguments to be used for constructing the error message.</param>
+        public InvalidPropertyAssignmentException(string format, params object[] args)
+            : base(string.Format(format, args))
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InvalidPropertyAssignmentException"/> class.
+        /// </summary>
+        /// <param name="message">The error message that explains the reason for the exception.</param>
+        /// <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        public InvalidPropertyAssignmentException(string message, Exception innerException)
+            : base(message, innerException)
+        { }
     }
 }

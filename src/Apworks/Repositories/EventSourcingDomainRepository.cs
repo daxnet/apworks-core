@@ -26,7 +26,7 @@ namespace Apworks.Repositories
         public override TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id, long version)
         {
             var sequenceMin = EventStore.MinimalSequence;
-            var aggregateRoot = new TAggregateRoot();
+            var aggregateRoot = this.ActivateAggregateRoot<TKey, TAggregateRoot>();
 
             if (this.snapshotProvider.Enabled)
             {
@@ -50,7 +50,7 @@ namespace Apworks.Repositories
         public override async Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, long version, CancellationToken cancellationToken)
         {
             var sequenceMin = EventStore.MinimalSequence;
-            var aggregateRoot = new TAggregateRoot();
+            var aggregateRoot = this.ActivateAggregateRoot<TKey, TAggregateRoot>();
 
             if (this.snapshotProvider.Enabled)
             {

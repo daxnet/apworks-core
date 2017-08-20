@@ -15,7 +15,7 @@ namespace Apworks.Tests
         public void SaveEventsTest1()
         {
             var aggregateRootId = Guid.NewGuid();
-            var employee = new Employee { Id = aggregateRootId };
+            var employee = new Employee (aggregateRootId);
 
             var event1 = new NameChangedEvent("daxnet");
             var event2 = new TitleChangedEvent("title");

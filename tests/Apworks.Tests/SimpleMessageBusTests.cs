@@ -65,7 +65,7 @@ namespace Apworks.Tests
             var domainRepository = new EventSourcingDomainRepository(eventStore, eventBus, snapshotProvider);
 
             var id = Guid.NewGuid();
-            var model = new Employee { Id = id };
+            var model = new Employee(id);
             model.ChangeName("daxnet");
             domainRepository.Save<Guid, Employee>(model);
 

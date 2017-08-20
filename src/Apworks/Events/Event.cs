@@ -16,7 +16,7 @@ namespace Apworks.Events
     {
         protected const string EventIntentMetadataKey = "$apworks:event.intent";
         protected const string EventOriginatorClrTypeMetadataKey = "$apworks:event.originatorClrtype";
-        protected const string EventOriginatorIdentifierMetadataKey = "$apworks:event.originatrId";
+        protected const string EventOriginatorIdentifierMetadataKey = "$apworks:event.originatorId";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Event"/> class.

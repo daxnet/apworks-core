@@ -14,10 +14,10 @@ namespace Apworks.Tests
         [Fact]
         public void ApplyEventTest1()
         {
-            var employee = new Employee();
+            var employee = new Employee(Guid.NewGuid());
             employee.ChangeName("Sunny");
             Assert.Equal("Sunny", employee.Name);
-            Assert.Equal(1, employee.UncommittedEvents.Count());
+            Assert.Equal(2, employee.UncommittedEvents.Count());
             Assert.NotEqual(Guid.Empty, employee.UncommittedEvents.First().Id);
             Assert.NotEqual(DateTime.MinValue, employee.UncommittedEvents.First().Timestamp);
         }
@@ -25,10 +25,10 @@ namespace Apworks.Tests
         [Fact]
         public void ApplyEventTest2()
         {
-            var employee = new Employee();
+            var employee = new Employee(Guid.NewGuid());
             employee.ChangeTitle("Software Engineer");
             Assert.Equal("Sr. Software Engineer", employee.Title);
-            Assert.Equal(1, employee.UncommittedEvents.Count());
+            Assert.Equal(2, employee.UncommittedEvents.Count());
             Assert.NotEqual(Guid.Empty, employee.UncommittedEvents.First().Id);
             Assert.NotEqual(DateTime.MinValue, employee.UncommittedEvents.First().Timestamp);
             Assert.NotNull(employee.UncommittedEvents.First().GetOriginatorClrType());
@@ -38,17 +38,17 @@ namespace Apworks.Tests
         [Fact]
         public void ApplyEventTest3()
         {
-            var employee = new Employee();
+            var employee = new Employee(Guid.NewGuid());
             employee.ChangeName("Sunny");
             employee.ChangeTitle("Software Engineer");
             employee.Register();
-            Assert.Equal(3, employee.UncommittedEvents.Count());
+            Assert.Equal(4, employee.UncommittedEvents.Count());
         }
 
         [Fact]
         public void EventSequenceTest()
         {
-            var employee = new Employee();
+            var employee = new Employee(Guid.NewGuid());
             employee.ChangeName("Sunny");
             employee.ChangeTitle("Software Engineer");
             employee.Register();
@@ -57,6 +57,7 @@ namespace Apworks.Tests
             Assert.Equal(1, events[0].Sequence);
             Assert.Equal(2, events[1].Sequence);
             Assert.Equal(3, events[2].Sequence);
+            Assert.Equal(4, events[3].Sequence);
         }
 
         [Fact]
@@ -69,7 +70,7 @@ namespace Apworks.Tests
                 new RegisteredEvent()
             };
 
-            var employee = new Employee();
+            var employee = new Employee(Guid.NewGuid());
             employee.Replay(events);
 
             Assert.Equal(0, employee.UncommittedEvents.Count());
@@ -127,16 +128,20 @@ namespace Apworks.Tests
                 new RegisteredEvent()
             };
 
-            var employee = new Employee();
+            var employee = new Employee(Guid.NewGuid());
             employee.Replay(events);
 
-            Assert.Equal(3, employee.Version);
+            Assert.Equal(4, employee.Version);
         }
     }
 
     #region Test Data
     class Employee : AggregateRootWithEventSourcing<Guid>
     {
+        public Employee(Guid id)
+            : base(id)
+        { }
+
         public string Name { get; private set; }
 
         public string Title { get; private set; }

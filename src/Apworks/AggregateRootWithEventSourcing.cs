@@ -50,10 +50,22 @@ namespace Apworks
         public const long MaxVersion = long.MaxValue;
 
         #region Private Fields
-        private static readonly object lockObj = new object();
+        private TKey id;
         private readonly Queue<IDomainEvent> uncommittedEvents = new Queue<IDomainEvent>();
         private readonly Lazy<ConcurrentDictionary<string, IEnumerable<MethodInfo>>> eventHandlerRegistrations = new Lazy<ConcurrentDictionary<string, IEnumerable<MethodInfo>>>();
         private long persistedVersion;
+        #endregion
+
+        #region Ctor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AggregateRootWithEventSourcing{TKey}"/> class.
+        /// </summary>
+        /// <param name="id">The identifier of the initialized aggregate root.</param>
+        protected AggregateRootWithEventSourcing(TKey id)
+        {
+            this.Apply<AggregateCreatedEvent<TKey>>(new AggregateCreatedEvent<TKey>(id));
+        }
         #endregion
 
         /// <summary>
@@ -62,12 +74,25 @@ namespace Apworks
         /// <value>
         /// The identifier.
         /// </value>
-        public TKey Id { get; set; }
+        public TKey Id
+        {
+            get => this.id;
+            set
+            {
+                throw new InvalidPropertyAssignmentException("Cannot set the value of Id property of an AggregateRootWithEventSourcing instance, Id should be specified via constructor when the instance is initialized.");
+            }
+        }
 
         /// <summary>
         /// Gets a list of <see cref="IDomainEvent"/> 
         /// </summary>
         public IEnumerable<IDomainEvent> UncommittedEvents => uncommittedEvents;
+
+        [Handles(typeof(AggregateCreatedEvent<>))]
+        protected void CreatedEventHandler(AggregateCreatedEvent<TKey> @event)
+        {
+            this.id = (TKey)@event.Key;
+        }
 
         private void HandleEvent<TEvent>(TEvent @event)
             where TEvent : class, IDomainEvent
@@ -83,21 +108,28 @@ namespace Apworks
                                         method.ReturnType == typeof(void) &&
                                         parameters.Length == 1 &&
                                         typeof(IDomainEvent).GetTypeInfo().IsAssignableFrom(parameters[0].ParameterType) &&
-                                        handlesAttribute.EventType == parameters[0].ParameterType
+                                        (handlesAttribute.EventType == parameters[0].ParameterType ||
+                                         (handlesAttribute.EventType.GetTypeInfo().IsGenericTypeDefinition &&
+                                          parameters[0].ParameterType.GetTypeInfo().IsGenericType &&
+                                          parameters[0].ParameterType.GetGenericTypeDefinition() == handlesAttribute.EventType))
                                     group method by handlesAttribute.EventType.AssemblyQualifiedName into methodGroup
                                     select new { EventTypeName = methodGroup.Key, Methods = methodGroup.ToList() };
 
-                foreach(var registration in registrations)
+                foreach (var registration in registrations)
                 {
                     eventHandlerRegistrations.Value[registration.EventTypeName] = registration.Methods;
                 }
             }
 
             var registrationKey = @event.GetType().AssemblyQualifiedName;
+            if (@event.GetType().GetTypeInfo().IsGenericType)
+            {
+                registrationKey = @event.GetType().GetGenericTypeDefinition().AssemblyQualifiedName;
+            }
             var succeeded = this.eventHandlerRegistrations.Value.TryGetValue(registrationKey, out IEnumerable<MethodInfo> handlers);
             if (succeeded && handlers.Count() > 0)
             {
-                foreach(var handler in handlers)
+                foreach (var handler in handlers)
                 {
                     handler.Invoke(this, new[] { @event });
                 }
@@ -122,13 +154,13 @@ namespace Apworks
             var eventProperties = from p in @event.GetType()
                                       .GetTypeInfo()
                                       .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                  where p.PropertyType.IsSimpleType() && 
-                                        p.CanRead && 
+                                  where p.PropertyType.IsSimpleType() &&
+                                        p.CanRead &&
                                         !p.Name.Equals("Id", StringComparison.CurrentCultureIgnoreCase) &&
                                         !p.Name.Equals("Timestamp", StringComparison.CurrentCultureIgnoreCase)
                                   select p;
 
-            foreach(var eventProperty in eventProperties)
+            foreach (var eventProperty in eventProperties)
             {
                 var curProperty = (from p in this.GetType().GetTypeInfo()
                                       .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -175,9 +207,11 @@ namespace Apworks
 
             @event.Id = Guid.NewGuid();
             @event.Timestamp = DateTime.UtcNow;
-            @event.AttachTo(this);
 
             this.HandleEvent(@event);
+
+            @event.AttachTo(this);
+
             this.Raise(@event);
         }
 
@@ -191,6 +225,17 @@ namespace Apworks
             where TEvent : class, IDomainEvent, new()
         {
             this.Apply(new TEvent());
+        }
+
+        /// <summary>
+        /// Sets the persisted version internally.
+        /// </summary>
+        /// <value>
+        /// The persisted version.
+        /// </value>
+        internal long PersistedVersion
+        {
+            set => Interlocked.Exchange(ref this.persistedVersion, value);
         }
 
         /// <summary>
@@ -257,11 +302,7 @@ namespace Apworks
         {
             if (this.uncommittedEvents.Count > 0)
             {
-                lock(lockObj)
-                {
-                    this.persistedVersion += this.uncommittedEvents.Count;
-                }
-
+                this.PersistedVersion = this.persistedVersion + this.uncommittedEvents.Count;
                 this.uncommittedEvents.Clear();
             }
         }
@@ -275,7 +316,7 @@ namespace Apworks
                              where p.PropertyType.IsSimpleType() &&
                                 p.CanRead && p.CanWrite
                              select p;
-            foreach(var property in properties)
+            foreach (var property in properties)
             {
                 snapshot.AddState(property.Name, property.GetValue(this));
             }
@@ -285,12 +326,24 @@ namespace Apworks
 
         public virtual void RestoreSnapshot(ISnapshot snapshot)
         {
+            ((IPurgeable)this).Purge();
             this.persistedVersion = snapshot.Version;
             var thisType = this.GetType().GetTypeInfo();
             foreach (var kvp in snapshot.States)
             {
                 var prop = thisType.GetProperty(kvp.Key, BindingFlags.Public | BindingFlags.Instance);
-                prop?.SetValue(this, kvp.Value);
+
+                // If the state that is going to be restored is the Id of the aggregate root, set the id field
+                // directly instead of the Id property because the definition of the CQS doesn't allow the direct
+                // set of the Id property.
+                if (kvp.Key.Equals(nameof(this.Id), StringComparison.CurrentCultureIgnoreCase))
+                {
+                    this.id = (TKey)kvp.Value;
+                }
+                else
+                {
+                    prop?.SetValue(this, kvp.Value);
+                }
             }
         }
 

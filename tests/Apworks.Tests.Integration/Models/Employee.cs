@@ -7,6 +7,10 @@ namespace Apworks.Tests.Integration.Models
 {
     public class Employee : AggregateRootWithEventSourcing<Guid>
     {
+        public Employee(Guid id)
+            : base(id)
+        { }
+
         public string Name { get; private set; }
 
         public string Title { get; private set; }

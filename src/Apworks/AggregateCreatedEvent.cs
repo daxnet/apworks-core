@@ -24,23 +24,43 @@
 // limitations under the License.
 // ==================================================================================================================
 
-namespace Apworks.Snapshots
+using System;
+using Apworks.Events;
+
+namespace Apworks
 {
     /// <summary>
-    /// Represents that the implemented classes are the originators of a snapshot.
+    /// Represents the domain event that occurs when an aggregate has been created.
     /// </summary>
-    public interface ISnapshotOriginator
+    /// <seealso cref="Apworks.Events.DomainEvent" />
+    public sealed class AggregateCreatedEvent<TKey> : DomainEvent
+        where TKey : IEquatable<TKey>
     {
+        #region Ctor
         /// <summary>
-        /// Takes the snapshot of the current object.
+        /// Initializes a new instance of the <see cref="AggregateCreatedEvent"/> class.
         /// </summary>
-        /// <returns>The snapshot of the current instance.</returns>
-        ISnapshot TakeSnapshot();
+        public AggregateCreatedEvent()
+        {
+
+        }
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AggregateCreatedEvent"/> class.
+        /// </summary>
+        /// <param name="key">The id of the aggregate root.</param>
+        public AggregateCreatedEvent(TKey key)
+        {
+            this.Key = key;
+        }
+        #endregion
 
         /// <summary>
-        /// Restores the state of current object by using the specified snapshot.
+        /// Gets or sets the id of the aggregate root.
         /// </summary>
-        /// <param name="snapshot">The snapshot from which the state of current object is restored.</param>
-        void RestoreSnapshot(ISnapshot snapshot);
+        /// <value>
+        /// The id of the aggregate root.
+        /// </value>
+        public TKey Key { get; set; }
     }
 }

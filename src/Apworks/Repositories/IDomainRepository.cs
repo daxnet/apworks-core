@@ -29,7 +29,7 @@ namespace Apworks.Repositories
         /// <returns>The aggregate root.</returns>
         TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id)
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
 
         /// <summary>
         /// Gets the aggregate root by using the aggregate root key and specified version.
@@ -41,7 +41,7 @@ namespace Apworks.Repositories
         /// <returns>The aggregate root object.</returns>
         TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id, long version)
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
 
         /// <summary>
         /// Gets the aggregate root by using the aggregate root key asynchronously.
@@ -53,7 +53,7 @@ namespace Apworks.Repositories
         /// <returns></returns>
         Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, CancellationToken cancellationToken = default(CancellationToken))
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
 
         /// <summary>
         /// Gets the aggregate root by using the aggregate root key asynchronously.
@@ -66,7 +66,7 @@ namespace Apworks.Repositories
         /// <returns></returns>
         Task<TAggregateRoot> GetByIdAsync<TKey, TAggregateRoot>(TKey id, long version, CancellationToken cancellationToken = default(CancellationToken))
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
 
         /// <summary>
         /// Saves the specified aggregate root.
@@ -76,7 +76,7 @@ namespace Apworks.Repositories
         /// <param name="aggregateRoot">The aggregate root to be saved.</param>
         void Save<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot)
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
 
         /// <summary>
         /// Saves the specified aggregate root asynchronously.
@@ -88,6 +88,6 @@ namespace Apworks.Repositories
         /// <returns></returns>
         Task SaveAsync<TKey, TAggregateRoot>(TAggregateRoot aggregateRoot, CancellationToken cancellationToken = default(CancellationToken))
             where TKey : IEquatable<TKey>
-            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>, new();
+            where TAggregateRoot : class, IAggregateRootWithEventSourcing<TKey>;
     }
 }
