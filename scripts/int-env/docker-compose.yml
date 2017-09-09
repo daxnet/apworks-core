@@ -1,0 +1,27 @@
+version: "3"
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    container_name: apworks_mongodb
+
+  postgres:
+    image: orchardup/postgresql
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRESQL_USER=test
+      - POSTGRESQL_PASS=oe9jaacZLbR9pN
+      - POSTGRESQL_DB=test
+    container_name: apworks_psql
+
+  rabbit:
+    image: rabbitmq
+    ports:
+      - 5672:5672
+      - 4369:4369
+      - 5671:5671
+      - 25672:25672
+    container_name: apworks_rabbitmq
+
