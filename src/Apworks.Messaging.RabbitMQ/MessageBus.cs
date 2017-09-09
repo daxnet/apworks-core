@@ -23,7 +23,7 @@ namespace Apworks.Messaging.RabbitMQ
         private bool disposed;
 
         public MessageBus(string uri, IMessageSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
-            : this(new ConnectionFactory { Uri = uri }, messageSerializer, exchangeName, exchangeType, queueName)
+            : this(new ConnectionFactory { Uri = new Uri(uri) }, messageSerializer, exchangeName, exchangeType, queueName)
         { }
 
         public MessageBus(IConnectionFactory connectionFactory, IMessageSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
@@ -103,7 +103,7 @@ namespace Apworks.Messaging.RabbitMQ
                       this.OnMessageAcknowledged(new MessageProcessedEventArgs(message));
                   };
 
-                this.channel.BasicConsume(queue, false, consumer);
+                this.channel.BasicConsume(queue, autoAck: true, consumer: consumer);
 
                 this.subscribed = true;
             }
