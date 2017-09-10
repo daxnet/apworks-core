@@ -99,7 +99,7 @@ namespace Apworks.Messaging.RabbitMQ
                       var messageBody = eventArgument.Body;
                       var message = this.messageSerializer.Deserialize<IMessage>(messageBody);
                       this.OnMessageReceived(new MessageReceivedEventArgs(message));
-                      channel.BasicAck(eventArgument.DeliveryTag, false);
+                      // channel.BasicAck(eventArgument.DeliveryTag, false);
                       this.OnMessageAcknowledged(new MessageProcessedEventArgs(message));
                   };
 
