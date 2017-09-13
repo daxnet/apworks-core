@@ -15,13 +15,13 @@ namespace Apworks.Serialization.Json
             this.encoding = encoding ?? Encoding.UTF8;
         }
 
-        public override object Deserialize(Type objType, byte[] data)
+        public override dynamic Deserialize(Type objType, byte[] data)
         {
             var json = this.encoding.GetString(data);
             return JsonConvert.DeserializeObject(json, objType, settings);
         }
 
-        public override object Deserialize(byte[] data)
+        public override dynamic Deserialize(byte[] data)
         {
             if (this.settings != null)
             {

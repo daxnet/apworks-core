@@ -11,17 +11,17 @@ namespace Apworks
     {
         public virtual TObject Deserialize<TObject>(byte[] data) => (TObject)this.Deserialize(typeof(TObject), data);
 
-        public abstract object Deserialize(Type objType, byte[] data);
+        public abstract dynamic Deserialize(Type objType, byte[] data);
 
         public virtual Task<TObject> DeserializeAsync<TObject>(byte[] data, CancellationToken cancellationToken = default(CancellationToken))
             => Task.FromResult(Deserialize<TObject>(data));
 
-        public virtual Task<object> DeserializeAsync(Type objType, byte[] data, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<dynamic> DeserializeAsync(Type objType, byte[] data, CancellationToken cancellationToken = default(CancellationToken))
             => Task.FromResult(Deserialize(objType, data));
 
-        public abstract object Deserialize(byte[] data);
+        public abstract dynamic Deserialize(byte[] data);
 
-        public virtual Task<object> DeserializeAsync(byte[] data, CancellationToken cancellationToken = default(CancellationToken))
+        public virtual Task<dynamic> DeserializeAsync(byte[] data, CancellationToken cancellationToken = default(CancellationToken))
             => Task.FromResult(Deserialize(data));
 
         public virtual byte[] Serialize<TObject>(TObject obj) => this.Serialize(typeof(TObject), obj);

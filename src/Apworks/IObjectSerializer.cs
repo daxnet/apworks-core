@@ -25,12 +25,12 @@ namespace Apworks
 
         Task<TObject> DeserializeAsync<TObject>(byte[] data, CancellationToken cancellationToken = default(CancellationToken));
 
-        object Deserialize(Type objType, byte[] data);
+        dynamic Deserialize(Type objType, byte[] data);
 
-        Task<object> DeserializeAsync(Type objType, byte[] data, CancellationToken cancellationToken = default(CancellationToken));
+        Task<dynamic> DeserializeAsync(Type objType, byte[] data, CancellationToken cancellationToken = default(CancellationToken));
 
-        object Deserialize(byte[] data);
+        dynamic Deserialize(byte[] data);
 
-        Task<object> DeserializeAsync(byte[] data, CancellationToken cancellationToken = default(CancellationToken));
+        Task<dynamic> DeserializeAsync(byte[] data, CancellationToken cancellationToken = default(CancellationToken));
     }
 }

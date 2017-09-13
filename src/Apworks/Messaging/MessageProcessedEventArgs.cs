@@ -12,7 +12,7 @@ namespace Apworks.Messaging
         /// Initializes a new instance of the <see cref="MessageProcessedEventArgs"/> class.
         /// </summary>
         /// <param name="message">The message that has been processed.</param>
-        public MessageProcessedEventArgs(IMessage message)
+        public MessageProcessedEventArgs(object message)
         {
             this.Message = message;
         }
@@ -23,6 +23,6 @@ namespace Apworks.Messaging
         /// <value>
         /// The message.
         /// </value>
-        public IMessage Message { get; }
+        public dynamic Message { get; }
     }
 }

@@ -16,7 +16,7 @@ namespace Apworks.Messaging
         /// Initializes a new instance of the <see cref="MessagePublishedEventArgs"/> class.
         /// </summary>
         /// <param name="message">The message that has been processed.</param>
-        public MessagePublishedEventArgs(IMessage message) : base(message)
+        public MessagePublishedEventArgs(object message) : base(message)
         {
         }
     }

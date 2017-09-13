@@ -4,28 +4,28 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace Apworks.Serialization.Json
 {
     public sealed class MessageJsonSerializer : IMessageSerializer
     {
-        private readonly IObjectSerializer internalSerializer = new ObjectJsonSerializer();
+        private readonly IObjectSerializer internalSerializer;
 
-        public TMessage Deserialize<TMessage>(byte[] value) 
-            where TMessage : IMessage
+        public MessageJsonSerializer()
+            : this(null, null)
+        { }
+
+        public MessageJsonSerializer(JsonSerializerSettings settings, Encoding encoding)
         {
-            var messageClrType = GetMessageClrTypeName<TMessage>(value);
-            var messageType = Type.GetType(messageClrType);
-            return (TMessage)this.internalSerializer.Deserialize(messageType, value);
+            this.internalSerializer = new ObjectJsonSerializer(settings, encoding);
         }
 
-        public async Task<TMessage> DeserializeAsync<TMessage>(byte[] value, CancellationToken cancellationToken = default(CancellationToken))
-            where TMessage : IMessage
-        {
-            var messageClrType = GetMessageClrTypeName<TMessage>(value);
-            var messageType = Type.GetType(messageClrType);
-            return (TMessage)(await this.internalSerializer.DeserializeAsync(messageType, value, cancellationToken));
-        }
+        public dynamic Deserialize(byte[] value)
+            => this.internalSerializer.Deserialize(value);
+
+        public async Task<dynamic> DeserializeAsync(byte[] value, CancellationToken cancellationToken = default(CancellationToken))
+            => await this.internalSerializer.DeserializeAsync(value, cancellationToken);
 
         public byte[] Serialize<TMessage>(TMessage message) 
             where TMessage : IMessage

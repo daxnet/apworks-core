@@ -59,8 +59,7 @@ namespace Apworks.Messaging
         /// <typeparam name="TMessage">The type of the message to be deserialized.</typeparam>
         /// <param name="value">The byte array that contains the serialized data.</param>
         /// <returns>The message that is deserialized.</returns>
-        TMessage Deserialize<TMessage>(byte[] value)
-            where TMessage : IMessage;
+        dynamic Deserialize(byte[] value);
 
         /// <summary>
         /// Deserializes a message from the specified byte array asynchronously.
@@ -69,7 +68,6 @@ namespace Apworks.Messaging
         /// <param name="value">The byte array that contains the serialized data.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> instance that propagates notification that operations should be canceled.</param>
         /// <returns>The <see cref="Task"/> that when finished, returns the deserialized message.</returns>
-        Task<TMessage> DeserializeAsync<TMessage>(byte[] value, CancellationToken cancellationToken = default(CancellationToken))
-            where TMessage : IMessage;
+        Task<dynamic> DeserializeAsync(byte[] value, CancellationToken cancellationToken = default(CancellationToken));
     }
 }
