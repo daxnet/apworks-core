@@ -10,12 +10,22 @@ namespace Apworks.Messaging.RabbitMQ
 {
     public sealed class EventBus : MessageBus, IEventBus
     {
-        public EventBus(string uri, IMessageSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
-            : base(uri, messageSerializer, exchangeName, exchangeType, queueName)
+        public EventBus(string uri, 
+            IMessageSerializer messageSerializer, 
+            string exchangeName, 
+            string exchangeType = ExchangeType.Fanout, 
+            string queueName = null,
+            bool autoAck = false)
+            : base(uri, messageSerializer, exchangeName, exchangeType, queueName, autoAck)
         { }
 
-        public EventBus(IConnectionFactory connectionFactory, IMessageSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
-            : base(connectionFactory, messageSerializer, exchangeName, exchangeType, queueName)
+        public EventBus(IConnectionFactory connectionFactory, 
+            IMessageSerializer messageSerializer, 
+            string exchangeName, 
+            string exchangeType = ExchangeType.Fanout, 
+            string queueName = null,
+            bool autoAck = false)
+            : base(connectionFactory, messageSerializer, exchangeName, exchangeType, queueName, autoAck)
         { }
     }
 }

@@ -51,6 +51,6 @@ namespace Apworks.Messaging
         /// <summary>
         /// Occurs when the message has been acknowledged.
         /// </summary>
-        event EventHandler<MessageProcessedEventArgs> MessageAcknowledged;
+        event EventHandler<MessageAcknowledgedEventArgs> MessageAcknowledged;
     }
 }

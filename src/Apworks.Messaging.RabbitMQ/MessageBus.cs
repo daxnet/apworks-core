@@ -9,8 +9,15 @@ using System.Text;
 
 namespace Apworks.Messaging.RabbitMQ
 {
+    /// <summary>
+    /// Represents the message bus implemented with RabbitMQ.
+    /// </summary>
+    /// <remarks>
+    /// For more information about RabbitMQ, please refer to: https://www.rabbitmq.com.
+    /// </remarks>
     public class MessageBus : DisposableObject, IMessageBus
     {
+        #region Fields
         private readonly IConnectionFactory connectionFactory;
         private readonly IMessageSerializer messageSerializer;
         private readonly IConnection connection;
@@ -18,15 +25,36 @@ namespace Apworks.Messaging.RabbitMQ
         private readonly string exchangeName;
         private readonly string queueName;
         private readonly string exchangeType;
+        private readonly bool autoAck;
+
         private bool subscribed;
-
         private bool disposed;
+        #endregion
 
-        public MessageBus(string uri, IMessageSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
-            : this(new ConnectionFactory { Uri = new Uri(uri) }, messageSerializer, exchangeName, exchangeType, queueName)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessageBus"/> class.
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="messageSerializer"></param>
+        /// <param name="exchangeName"></param>
+        /// <param name="exchangeType"></param>
+        /// <param name="queueName"></param>
+        /// <param name="autoAck"></param>
+        public MessageBus(string uri, 
+            IMessageSerializer messageSerializer, 
+            string exchangeName, 
+            string exchangeType = ExchangeType.Fanout, 
+            string queueName = null,
+            bool autoAck = false)
+            : this(new ConnectionFactory { Uri = new Uri(uri) }, messageSerializer, exchangeName, exchangeType, queueName, autoAck)
         { }
 
-        public MessageBus(IConnectionFactory connectionFactory, IMessageSerializer messageSerializer, string exchangeName, string exchangeType = ExchangeType.Fanout, string queueName = null)
+        public MessageBus(IConnectionFactory connectionFactory, 
+            IMessageSerializer messageSerializer, 
+            string exchangeName, 
+            string exchangeType = ExchangeType.Fanout, 
+            string queueName = null,
+            bool autoAck = false)
         {
             // Initializes the local variables
             this.connectionFactory = connectionFactory;
@@ -36,6 +64,7 @@ namespace Apworks.Messaging.RabbitMQ
             this.exchangeType = exchangeType;
             this.exchangeName = exchangeName;
             this.queueName = queueName;
+            this.autoAck = autoAck;
 
             // Declares the exchanges
             this.channel.ExchangeDeclare(this.exchangeName, this.exchangeType);
@@ -43,7 +72,7 @@ namespace Apworks.Messaging.RabbitMQ
 
         public event EventHandler<MessagePublishedEventArgs> MessagePublished;
         public event EventHandler<MessageReceivedEventArgs> MessageReceived;
-        public event EventHandler<MessageProcessedEventArgs> MessageAcknowledged;
+        public event EventHandler<MessageAcknowledgedEventArgs> MessageAcknowledged;
 
         public void Publish<TMessage>(TMessage message, string route = null) where TMessage : IMessage
         {
@@ -99,11 +128,15 @@ namespace Apworks.Messaging.RabbitMQ
                       var messageBody = eventArgument.Body;
                       var message = this.messageSerializer.Deserialize(messageBody);
                       this.OnMessageReceived(new MessageReceivedEventArgs(message));
-                      // channel.BasicAck(eventArgument.DeliveryTag, false);
-                      this.OnMessageAcknowledged(new MessageProcessedEventArgs(message));
+                      if (!autoAck)
+                      {
+                          channel.BasicAck(eventArgument.DeliveryTag, false);
+                      }
+
+                      this.OnMessageAcknowledged(new MessageAcknowledgedEventArgs(message, this.autoAck));
                   };
 
-                this.channel.BasicConsume(queue, autoAck: true, consumer: consumer);
+                this.channel.BasicConsume(queue, autoAck: this.autoAck, consumer: consumer);
 
                 this.subscribed = true;
             }
@@ -136,7 +169,7 @@ namespace Apworks.Messaging.RabbitMQ
             this.MessageReceived?.Invoke(this, e);
         }
 
-        private void OnMessageAcknowledged(MessageProcessedEventArgs e)
+        private void OnMessageAcknowledged(MessageAcknowledgedEventArgs e)
         {
             this.MessageAcknowledged?.Invoke(this, e);
         }

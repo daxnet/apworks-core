@@ -56,7 +56,7 @@ namespace Apworks.Messaging.Simple
         /// <summary>
         /// Occurs when the message has been acknowledged.
         /// </summary>
-        public event EventHandler<MessageProcessedEventArgs> MessageAcknowledged;
+        public event EventHandler<MessageAcknowledgedEventArgs> MessageAcknowledged;
 
         /// <summary>
         /// Publishes the specified message.
@@ -113,7 +113,7 @@ namespace Apworks.Messaging.Simple
                 {
                     var message = ((MessageQueue)s).PopMessage();
                     this.OnMessageReceived(new MessageReceivedEventArgs(message));
-                    this.OnMessageAcknowledged(new MessageProcessedEventArgs(message));
+                    this.OnMessageAcknowledged(new MessageAcknowledgedEventArgs(message));
                 };
                 subscribed = true;
             }
@@ -135,7 +135,7 @@ namespace Apworks.Messaging.Simple
             this.MessageReceived?.Invoke(this, e);
         }
 
-        private void OnMessageAcknowledged(MessageProcessedEventArgs e)
+        private void OnMessageAcknowledged(MessageAcknowledgedEventArgs e)
         {
             this.MessageAcknowledged?.Invoke(this, e);
         }

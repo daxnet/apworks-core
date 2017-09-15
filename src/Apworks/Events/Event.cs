@@ -14,9 +14,9 @@ namespace Apworks.Events
     /// <seealso cref="Apworks.Events.IEvent" />
     public abstract class Event : Message, IEvent
     {
-        protected const string EventIntentMetadataKey = "$apworks:event.intent";
-        protected const string EventOriginatorClrTypeMetadataKey = "$apworks:event.originatorClrtype";
-        protected const string EventOriginatorIdentifierMetadataKey = "$apworks:event.originatorId";
+        public const string EventIntentMetadataKey = "$apworks:event.intent";
+        public const string EventOriginatorClrTypeMetadataKey = "$apworks:event.originatorClrtype";
+        public const string EventOriginatorIdentifierMetadataKey = "$apworks:event.originatorId";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Event"/> class.
