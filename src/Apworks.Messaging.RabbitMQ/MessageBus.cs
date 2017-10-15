@@ -81,7 +81,7 @@ namespace Apworks.Messaging.RabbitMQ
                 route ?? string.Empty,
                 null,
                 messageBody);
-            this.OnMessagePublished(new MessagePublishedEventArgs(message));
+            this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));
         }
 
         public void PublishAll(IEnumerable<IMessage> messages, string route = null)
@@ -104,7 +104,7 @@ namespace Apworks.Messaging.RabbitMQ
                 route ?? string.Empty,
                 null,
                 messageBody);
-            this.OnMessagePublished(new MessagePublishedEventArgs(message));
+            this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));
         }
 
         public void Subscribe(string route = null)
@@ -127,13 +127,13 @@ namespace Apworks.Messaging.RabbitMQ
                   {
                       var messageBody = eventArgument.Body;
                       var message = this.messageSerializer.Deserialize(messageBody);
-                      this.OnMessageReceived(new MessageReceivedEventArgs(message));
+                      this.OnMessageReceived(new MessageReceivedEventArgs(message, this.messageSerializer));
                       if (!autoAck)
                       {
                           channel.BasicAck(eventArgument.DeliveryTag, false);
                       }
 
-                      this.OnMessageAcknowledged(new MessageAcknowledgedEventArgs(message, this.autoAck));
+                      this.OnMessageAcknowledged(new MessageAcknowledgedEventArgs(message, this.messageSerializer, this.autoAck));
                   };
 
                 this.channel.BasicConsume(queue, autoAck: this.autoAck, consumer: consumer);

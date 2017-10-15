@@ -29,11 +29,18 @@ using System.Threading.Tasks;
 
 namespace Apworks.Messaging
 {
+    public interface IMessageHandler
+    {
+        bool Handle(object message);
+
+        Task<bool> HandleAsync(object message, CancellationToken cancellationToken = default(CancellationToken));
+    }
+
     /// <summary>
     /// Represents that the implemented classes are message handlers.
     /// </summary>
     /// <typeparam name="TMessage">The type of the message to be handled by current handler.</typeparam>
-    public interface IMessageHandler<in TMessage>
+    public interface IMessageHandler<in TMessage> : IMessageHandler
         where TMessage : IMessage
     {
         /// <summary>

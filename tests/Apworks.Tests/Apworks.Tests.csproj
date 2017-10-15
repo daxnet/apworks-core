@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\src\Apworks.Messaging.Simple\Apworks.Messaging.Simple.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Querying.Parsers.Irony\Apworks.Querying.Parsers.Irony.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Repositories.Simple\Apworks.Repositories.Simple.csproj" />
+    <ProjectReference Include="..\..\src\Apworks.Serialization.Json\Apworks.Serialization.Json.csproj" />
     <ProjectReference Include="..\..\src\Apworks\Apworks.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Repositories.MongoDB\Apworks.Repositories.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Integration.AspNetCore\Apworks.Integration.AspNetCore.csproj" />

@@ -12,9 +12,10 @@ namespace Apworks.Messaging
         /// Initializes a new instance of the <see cref="MessageProcessedEventArgs"/> class.
         /// </summary>
         /// <param name="message">The message that has been processed.</param>
-        public MessageProcessedEventArgs(object message)
+        public MessageProcessedEventArgs(object message, IMessageSerializer messageSerializer)
         {
             this.Message = message;
+            this.MessageSerializer = messageSerializer;
         }
 
         /// <summary>
@@ -24,5 +25,11 @@ namespace Apworks.Messaging
         /// The message.
         /// </value>
         public dynamic Message { get; }
+
+        /// <summary>
+        /// Gets the instance of the message serializer that is able to serialize or deserialize
+        /// the message object carried by this event data.
+        /// </summary>
+        public IMessageSerializer MessageSerializer { get; }
     }
 }

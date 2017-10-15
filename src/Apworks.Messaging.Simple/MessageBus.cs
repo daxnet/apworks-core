@@ -40,8 +40,15 @@ namespace Apworks.Messaging.Simple
     /// <seealso cref="Apworks.Messaging.IMessageBus" />
     public class MessageBus : DisposableObject, IMessageBus
     {
-        private readonly MessageQueue messageQueue = new MessageQueue();
+        private readonly MessageQueue messageQueue;
+        private readonly IMessageSerializer messageSerializer;
         private bool subscribed = false;
+
+        public MessageBus(IMessageSerializer messageSerializer)
+        {
+            this.messageSerializer = messageSerializer;
+            this.messageQueue = new MessageQueue(this.messageSerializer);
+        }
 
         /// <summary>
         /// Occurs when a message has been published to the message bus.
@@ -67,7 +74,7 @@ namespace Apworks.Messaging.Simple
         public void Publish<TMessage>(TMessage message, string route = null) where TMessage : IMessage
         {
             messageQueue.PushMessage(message);
-            this.OnMessagePublished(new MessagePublishedEventArgs(message));
+            this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));
         }
 
         /// <summary>
@@ -112,8 +119,8 @@ namespace Apworks.Messaging.Simple
                 messageQueue.MessagePushed += (s, e) =>
                 {
                     var message = ((MessageQueue)s).PopMessage();
-                    this.OnMessageReceived(new MessageReceivedEventArgs(message));
-                    this.OnMessageAcknowledged(new MessageAcknowledgedEventArgs(message));
+                    this.OnMessageReceived(new MessageReceivedEventArgs(message, this.messageSerializer));
+                    this.OnMessageAcknowledged(new MessageAcknowledgedEventArgs(message, this.messageSerializer));
                 };
                 subscribed = true;
             }

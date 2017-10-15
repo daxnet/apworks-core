@@ -9,6 +9,7 @@ using Xunit;
 using Apworks.EventStore.Simple;
 using Apworks.Repositories;
 using Apworks.Snapshots;
+using Apworks.Serialization.Json;
 
 namespace Apworks.Tests
 {
@@ -17,7 +18,7 @@ namespace Apworks.Tests
         [Fact]
         public void PublishMessageTest()
         {
-            var mb = new MessageBus();
+            var mb = new MessageBus(new MessageJsonSerializer());
             int numOfMessagesReceived = 0;
             mb.MessageReceived += (x, y) => numOfMessagesReceived++;
             mb.Subscribe();
@@ -32,7 +33,7 @@ namespace Apworks.Tests
         [Fact]
         public void PublishMultipleMessagesTest()
         {
-            var mb = new MessageBus();
+            var mb = new MessageBus(new MessageJsonSerializer());
             int numOfMessagesReceived = 0;
             mb.MessageReceived += (x, y) => numOfMessagesReceived++;
             mb.Subscribe();
@@ -52,7 +53,7 @@ namespace Apworks.Tests
         {
             var changedName = string.Empty;
             var eventStore = new DictionaryEventStore();
-            var eventBus = new EventBus();
+            var eventBus = new EventBus(new MessageJsonSerializer());
             var snapshotProvider = new SuppressedSnapshotProvider();
             eventBus.MessageReceived += (s, e) =>
             {

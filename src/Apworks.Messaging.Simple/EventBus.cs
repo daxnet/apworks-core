@@ -9,5 +9,8 @@ namespace Apworks.Messaging.Simple
 {
     public sealed class EventBus : MessageBus, IEventBus
     {
+        public EventBus(IMessageSerializer messageSerializer)
+            : base(messageSerializer)
+        { }
     }
 }

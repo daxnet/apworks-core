@@ -9,14 +9,20 @@ namespace Apworks.Messaging.Simple
 {
     internal sealed class MessageQueue
     {
+        private readonly IMessageSerializer messageSerializer;
         private readonly ConcurrentQueue<IMessage> queue = new ConcurrentQueue<IMessage>();
 
         public event EventHandler<MessageProcessedEventArgs> MessagePushed;
 
+        public MessageQueue(IMessageSerializer messageSerializer)
+        {
+            this.messageSerializer = messageSerializer;
+        }
+
         public void PushMessage(IMessage message)
         {
             queue.Enqueue(message);
-            OnMessagePushed(new MessageProcessedEventArgs(message));
+            OnMessagePushed(new MessageProcessedEventArgs(message, this.messageSerializer));
         }
 
         public IMessage PopMessage()

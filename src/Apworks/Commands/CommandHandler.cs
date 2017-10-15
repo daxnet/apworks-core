@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 
 namespace Apworks.Commands
 {
-    public interface ICommandHandler : IMessageHandler
-    { }
-
     /// <summary>
-    /// Represents that the implemented classes are command handlers.
+    /// Represents the base class for command handlers.
     /// </summary>
     /// <typeparam name="TCommand">The type of the command.</typeparam>
-    /// <seealso cref="Apworks.Messaging.IMessageHandler{TCommand}" />
-    public interface ICommandHandler<in TCommand> : IMessageHandler<TCommand>, ICommandHandler
+    /// <seealso cref="Apworks.Messaging.MessageHandler{TCommand}" />
+    /// <seealso cref="Apworks.Commands.ICommandHandler{TCommand}" />
+    public abstract class CommandHandler<TCommand> : MessageHandler<TCommand>, ICommandHandler<TCommand>
         where TCommand : ICommand
     {
     }

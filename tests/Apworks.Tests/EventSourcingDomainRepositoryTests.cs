@@ -10,12 +10,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xunit;
+using Apworks.Serialization.Json;
 
 namespace Apworks.Tests
 {
     public class EventSourcingDomainRepositoryTests
     {
-        private readonly IEventPublisher eventPublisher = new EventBus();
+        private readonly IEventPublisher eventPublisher = new EventBus(new MessageJsonSerializer());
         private readonly IEventStore eventStore = new DictionaryEventStore();
         private readonly IDomainRepository repository;
         private readonly ISnapshotProvider snapshotProvider = new SuppressedSnapshotProvider();
