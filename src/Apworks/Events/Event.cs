@@ -37,7 +37,7 @@ namespace Apworks.Events
             return new EventDescriptor
             {
                 Id = Guid.NewGuid(),
-                EventClrType = this.GetMessageClrType(),
+                EventClrType = this.GetMessageClrTypeName(),
                 EventId = this.Id,
                 EventIntent = this.GetEventIntent(),
                 EventTimestamp = this.Timestamp,

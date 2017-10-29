@@ -90,7 +90,7 @@ namespace Apworks.Tests
         public void EventMetadataTest2()
         {
             var nameChangedEvent = new NameChangedEvent("daxnet");
-            Assert.Equal(typeof(NameChangedEvent).AssemblyQualifiedName, nameChangedEvent.GetMessageClrType());
+            Assert.Equal(typeof(NameChangedEvent).AssemblyQualifiedName, nameChangedEvent.GetMessageClrTypeName());
             Assert.Equal(typeof(NameChangedEvent).Name, nameChangedEvent.GetEventIntent());
         }
 

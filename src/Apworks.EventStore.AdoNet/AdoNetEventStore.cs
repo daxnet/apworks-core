@@ -244,7 +244,7 @@ namespace Apworks.EventStore.AdoNet
                 EventClrType = eventClrType,
                 EventId = (Guid)reader[this.config.GetFieldName(x => x.EventId)],
                 EventIntent = (string)reader[this.config.GetFieldName(x => x.EventIntent)],
-                EventPayload = this.PayloadSerializer.Deserialize(eventType, (byte[])reader[this.config.GetFieldName(x => x.EventPayload)]),
+                EventPayload = this.PayloadSerializer.Deserialize((byte[])reader[this.config.GetFieldName(x => x.EventPayload)], eventType),
                 EventTimestamp = (DateTime)reader[this.config.GetFieldName(x => x.EventTimestamp)],
                 OriginatorClrType = (string)reader[this.config.GetFieldName(x => x.OriginatorClrType)],
                 OriginatorId = (string)reader[this.config.GetFieldName(x => x.OriginatorId)],

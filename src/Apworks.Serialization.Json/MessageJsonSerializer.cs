@@ -8,50 +8,64 @@ using Newtonsoft.Json;
 
 namespace Apworks.Serialization.Json
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <seealso cref="Apworks.Messaging.IMessageSerializer" />
     public sealed class MessageJsonSerializer : IMessageSerializer
     {
-        private readonly IObjectSerializer internalSerializer;
+        private readonly Encoding encoding;
+        private readonly IObjectSerializer objectSerializer;
 
-        public MessageJsonSerializer()
-            : this(null, null)
-        { }
-
-        public MessageJsonSerializer(JsonSerializerSettings settings, Encoding encoding)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MessageJsonSerializer"/> class.
+        /// </summary>
+        /// <param name="encoding">The encoding.</param>
+        public MessageJsonSerializer(Encoding encoding = null)
         {
-            this.internalSerializer = new ObjectJsonSerializer(settings, encoding);
+            this.encoding = encoding ?? Encoding.UTF8;
+            this.objectSerializer = new ObjectJsonSerializer(encoding);
         }
 
-        public dynamic Deserialize(byte[] value)
-            => this.internalSerializer.Deserialize(value);
-
-        public async Task<dynamic> DeserializeAsync(byte[] value, CancellationToken cancellationToken = default(CancellationToken))
-            => await this.internalSerializer.DeserializeAsync(value, cancellationToken);
-
-        public byte[] Serialize<TMessage>(TMessage message) 
-            where TMessage : IMessage
+        public IMessage Deserialize(byte[] value)
         {
-            return this.internalSerializer.Serialize(message);
+            var jsonString = this.encoding.GetString(value);
+            return (IMessage)this.objectSerializer.Deserialize(value, GetMessageClrTypeNameFromMessageJson(jsonString));
         }
 
-        public async Task<byte[]> SerializeAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default(CancellationToken))
-            where TMessage : IMessage
+        public async Task<IMessage> DeserializeAsync(byte[] value, CancellationToken cancellationToken = default(CancellationToken))
         {
-            return await this.internalSerializer.SerializeAsync(message, cancellationToken);
+            var jsonString = this.encoding.GetString(value);
+            return (IMessage)await this.objectSerializer.DeserializeAsync(value, GetMessageClrTypeNameFromMessageJson(jsonString));
         }
 
-        private static string GetMessageClrTypeName<TMessage>(byte[] value)
-            where TMessage : IMessage
+        public byte[] Serialize<TMessage>(TMessage message) where TMessage : IMessage
         {
-            var json = Encoding.UTF8.GetString(value);
+            return this.objectSerializer.Serialize(message);
+        }
+
+        public async Task<byte[]> SerializeAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default(CancellationToken)) where TMessage : IMessage
+        {
+            return await this.objectSerializer.SerializeAsync(message, cancellationToken);
+        }
+
+        private static Type GetMessageClrTypeNameFromMessageJson(string json)
+        {
             var jobj = JObject.Parse(json);
-            var messageClrType = (jobj?.Property("Metadata")?.Value as JObject)
-                ?.Property(Message.MessageClrTypeMetadataKey)
+            var messageClrTypeName = (jobj?.Property("Metadata")?.Value as JObject)
+                ?.Property(Message.MessageClrTypeNameMetadataKey)
                 ?.Value
                 ?.ToString();
 
-            if (string.IsNullOrEmpty(messageClrType))
+            if (string.IsNullOrEmpty(messageClrTypeName))
             {
-                throw new MessageSerializationException($"Cannot deserialize the message of type {typeof(TMessage)} as the type of the message cannot be inferred from the message metadata.");
+                throw new MessageSerializationException($"Cannot deserialize the message. The type of the message cannot be inferred from the message metadata.");
+            }
+
+            var messageClrType = Type.GetType(messageClrTypeName);
+            if (messageClrType == null)
+            {
+                throw new MessageSerializationException($"The message cannot be deserialized. The specified type {messageClrTypeName} cannot be found.");
             }
 
             return messageClrType;

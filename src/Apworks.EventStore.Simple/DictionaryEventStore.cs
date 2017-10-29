@@ -40,22 +40,12 @@ namespace Apworks.EventStore.Simple
 
     internal sealed class DummySerializer : ObjectSerializer
     {
-        public override object Deserialize(Type objType, byte[] data)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override object Deserialize(byte[] data)
+        public override object Deserialize(byte[] data, Type objType)
         {
             throw new NotImplementedException();
         }
 
         public override byte[] Serialize(Type objType, object obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override byte[] Serialize(object @object)
         {
             throw new NotImplementedException();
         }

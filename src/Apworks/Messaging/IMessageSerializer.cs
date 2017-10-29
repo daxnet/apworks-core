@@ -54,20 +54,18 @@ namespace Apworks.Messaging
             where TMessage : IMessage;
 
         /// <summary>
-        /// Deserializes a message from the specified byte array.
+        /// Deserializes the message from the specified <see cref="byte"/> array.
         /// </summary>
-        /// <typeparam name="TMessage">The type of the message to be deserialized.</typeparam>
-        /// <param name="value">The byte array that contains the serialized data.</param>
-        /// <returns>The message that is deserialized.</returns>
-        dynamic Deserialize(byte[] value);
+        /// <param name="value">The <see cref="byte"/> array which contains the message data.</param>
+        /// <returns>The deserialized message.</returns>
+        IMessage Deserialize(byte[] value);
 
         /// <summary>
-        /// Deserializes a message from the specified byte array asynchronously.
+        /// Deserializes a message from the specified <see cref="byte"/> array asynchronously.
         /// </summary>
-        /// <typeparam name="TMessage">The type of the message to be deserialized.</typeparam>
         /// <param name="value">The byte array that contains the serialized data.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> instance that propagates notification that operations should be canceled.</param>
-        /// <returns>The <see cref="Task"/> that when finished, returns the deserialized message.</returns>
-        Task<dynamic> DeserializeAsync(byte[] value, CancellationToken cancellationToken = default(CancellationToken));
+        /// <returns>The deserialized message.</returns>
+        Task<IMessage> DeserializeAsync(byte[] value, CancellationToken cancellationToken = default(CancellationToken));
     }
 }
