@@ -29,10 +29,11 @@ using Apworks.Messaging;
 namespace Apworks.Commands
 {
     /// <summary>
-    /// Represents that the implemented classes are commands.
+    /// Represents that the implemented classes are the command consumers which subscribes to the
+    /// command buses and handles the commands by using command handlers.
     /// </summary>
-    /// <seealso cref="Apworks.Messaging.IMessage" />
-    public interface ICommand : IMessage
+    /// <seealso cref="Apworks.Messaging.IMessageConsumer{Apworks.Commands.ICommandSubscriber, Apworks.Commands.ICommandHandler}" />
+    public interface ICommandConsumer : IMessageConsumer<ICommandSubscriber, ICommandHandler>
     {
     }
 }

@@ -24,6 +24,7 @@
 // limitations under the License.
 // ==================================================================================================================
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,9 +32,11 @@ namespace Apworks.Messaging
 {
     public interface IMessageHandler
     {
-        bool Handle(object message);
+        bool Handle(IMessage message);
 
-        Task<bool> HandleAsync(object message, CancellationToken cancellationToken = default(CancellationToken));
+        bool CanHandle(Type messageType);
+
+        Task<bool> HandleAsync(IMessage message, CancellationToken cancellationToken = default(CancellationToken));
     }
 
     /// <summary>

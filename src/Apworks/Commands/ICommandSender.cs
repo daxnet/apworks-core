@@ -1,4 +1,4 @@
-﻿// ==================================================================================================================
+﻿// ==================================================================================================================                                                                                          
 //        ,::i                                                           BBB                
 //       BBBBBi                                                         EBBB                
 //      MBBNBBU                                                         BBB,                
@@ -29,10 +29,11 @@ using Apworks.Messaging;
 namespace Apworks.Commands
 {
     /// <summary>
-    /// Represents that the implemented classes are commands.
+    /// Represents that the implemented classes are command senders which can send commands
+    /// to the specified message bus.
     /// </summary>
-    /// <seealso cref="Apworks.Messaging.IMessage" />
-    public interface ICommand : IMessage
+    /// <seealso cref="Apworks.Messaging.IMessagePublisher" />
+    public interface ICommandSender : IMessagePublisher
     {
     }
 }

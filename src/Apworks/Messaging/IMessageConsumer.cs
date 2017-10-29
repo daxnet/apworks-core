@@ -25,6 +25,7 @@
 // ==================================================================================================================
 
 using System;
+using System.Collections.Generic;
 
 namespace Apworks.Messaging
 {
@@ -34,12 +35,16 @@ namespace Apworks.Messaging
     /// actions when there is any incoming messages.
     /// </summary>
     /// <seealso cref="System.IDisposable" />
-    public interface IMessageConsumer : IDisposable
+    public interface IMessageConsumer<TMessageSubscriber, TMessageHandler> : IDisposable
+        where TMessageSubscriber : IMessageSubscriber
+        where TMessageHandler : IMessageHandler
     {
         /// <summary>
         /// Gets the instance of <see cref="IMessageSubscriber"/> which subscribes
         /// to the message bus and notifies events when there is any incoming messages.
         /// </summary>
-        IMessageSubscriber Subscriber { get; }
+        TMessageSubscriber Subscriber { get; }
+
+        IEnumerable<TMessageHandler> Handlers { get; }
     }
 }

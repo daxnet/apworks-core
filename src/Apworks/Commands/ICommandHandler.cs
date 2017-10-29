@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace Apworks.Commands
 {
+    /// <summary>
+    /// Represents that the implemented classes are command handlers.
+    /// </summary>
+    /// <seealso cref="Apworks.Messaging.IMessageHandler" />
     public interface ICommandHandler : IMessageHandler
     { }
 
