@@ -9,8 +9,8 @@ namespace Apworks.Events
 {
     public class EventConsumer : MessageConsumer<IEventSubscriber, IEventHandler>, IEventConsumer
     {
-        protected EventConsumer(IEventSubscriber subscriber, IEnumerable<IEventHandler> handlers) 
-            : base(subscriber, handlers)
+        public EventConsumer(IEventSubscriber subscriber, IEnumerable<IEventHandler> handlers, string route = null) 
+            : base(subscriber, handlers, route)
         {
         }
     }

@@ -9,8 +9,8 @@ namespace Apworks.Commands
 {
     public class CommandConsumer : MessageConsumer<ICommandSubscriber, ICommandHandler>, ICommandConsumer
     {
-        protected CommandConsumer(ICommandSubscriber subscriber, IEnumerable<ICommandHandler> handlers) 
-            : base(subscriber, handlers)
+        public CommandConsumer(ICommandSubscriber subscriber, IEnumerable<ICommandHandler> handlers, string route = null) 
+            : base(subscriber, handlers, route)
         {
         }
     }

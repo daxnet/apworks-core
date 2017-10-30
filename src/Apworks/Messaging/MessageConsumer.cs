@@ -15,13 +15,15 @@ namespace Apworks.Messaging
         private readonly IEnumerable<TMessageHandler> handlers;
         private volatile bool disposed;
 
-        protected MessageConsumer(TMessageSubscriber subscriber, IEnumerable<TMessageHandler> handlers)
+        protected MessageConsumer(TMessageSubscriber subscriber, IEnumerable<TMessageHandler> handlers, string route = null)
         {
             this.subscriber = subscriber;
             this.handlers = handlers;
 
             this.subscriber.MessageReceived += OnMessageReceived;
             this.subscriber.MessageAcknowledged += OnMessageAcknowledged;
+
+            this.subscriber.Subscribe(route);
         }
 
         protected virtual async void OnMessageReceived(object sender, MessageReceivedEventArgs e)
