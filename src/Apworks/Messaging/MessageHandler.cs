@@ -54,8 +54,8 @@ namespace Apworks.Messaging
             return false;
         }
 
-        public abstract bool Handle(TMessage message);
+        public virtual bool Handle(TMessage message) => this.HandleAsync(message).Result;
 
-        public virtual Task<bool> HandleAsync(TMessage message, CancellationToken cancellationToken = default(CancellationToken)) => Task.FromResult(Handle(message));
+        public abstract Task<bool> HandleAsync(TMessage message, CancellationToken cancellationToken = default(CancellationToken));
     }
 }
