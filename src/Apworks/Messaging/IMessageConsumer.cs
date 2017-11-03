@@ -45,6 +45,18 @@ namespace Apworks.Messaging
         /// </summary>
         TMessageSubscriber Subscriber { get; }
 
+        /// <summary>
+        /// Gets a list of handlers that can handle the messages subscribed
+        /// by the current subscriber.
+        /// </summary>
+        /// <value>
+        /// The handlers.
+        /// </value>
         IEnumerable<TMessageHandler> Handlers { get; }
+
+        /// <summary>
+        /// Start consume the messages by using the message handlers.
+        /// </summary>
+        void Consume();
     }
 }

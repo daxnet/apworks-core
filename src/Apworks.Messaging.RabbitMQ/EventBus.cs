@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Apworks.Messaging.RabbitMQ
 {
-    public sealed class EventBus : MessageBus, IEventBus
+    public class EventBus : MessageBus, IEventBus
     {
         public EventBus(string uri, 
             IMessageSerializer messageSerializer, 

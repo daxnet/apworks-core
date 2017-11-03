@@ -13,17 +13,17 @@ namespace Apworks.Messaging
     {
         private readonly TMessageSubscriber subscriber;
         private readonly IEnumerable<TMessageHandler> handlers;
+        private readonly string route;
         private volatile bool disposed;
 
         protected MessageConsumer(TMessageSubscriber subscriber, IEnumerable<TMessageHandler> handlers, string route = null)
         {
             this.subscriber = subscriber;
             this.handlers = handlers;
+            this.route = route;
 
             this.subscriber.MessageReceived += OnMessageReceived;
             this.subscriber.MessageAcknowledged += OnMessageAcknowledged;
-
-            this.subscriber.Subscribe(route);
         }
 
         protected virtual async void OnMessageReceived(object sender, MessageReceivedEventArgs e)
@@ -66,6 +66,11 @@ namespace Apworks.Messaging
                     disposed = true;
                 }
             }
+        }
+
+        public void Consume()
+        {
+            this.subscriber.Subscribe(this.route);
         }
     }
 }
