@@ -147,7 +147,7 @@ namespace Apworks.Tests
             Assert.Equal(5, pagedResult.TotalPages);
             Assert.Equal(2, pagedResult.PageNumber);
             Assert.Equal(5, pagedResult.PageSize);
-            Assert.True(CompareIds(idList, pagedResult.Select(x => x.Id).ToList()));
+            Assert.True(CompareIds(idList, pagedResult.As<int, Customer>().Select(x => x.Id).ToList()));
         }
 
         [Fact]
@@ -171,7 +171,7 @@ namespace Apworks.Tests
             Assert.Equal(totalPages, pagedResult.TotalPages);
             Assert.Equal(2, pagedResult.PageNumber);
             Assert.Equal(15, pagedResult.PageSize);
-            Assert.True(CompareIds(idList, pagedResult.Select(x => x.Id).ToList()));
+            Assert.True(CompareIds(idList, pagedResult.As<int, Customer>().Select(x => x.Id).ToList()));
         }
 
         private static bool CompareIds(List<int> a, List<int> b)
