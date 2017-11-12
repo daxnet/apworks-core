@@ -28,7 +28,10 @@ using Apworks.Querying;
 using Hal.Builders;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Primitives;
+using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -60,7 +63,7 @@ namespace Apworks.Integration.AspNetCore.Hal
         /// whose return value will be represented in HAL notation.</param>
         public PagedResultHalBuildConfiguration(params string[] signatures)
         {
-            foreach(var signature in signatures)
+            foreach (var signature in signatures)
             {
                 this.RegisterHalBuilderFactory(signature, this.GetPagedResultHalBuildFactory);
             }
@@ -86,31 +89,27 @@ namespace Apworks.Integration.AspNetCore.Hal
             var totalRecords = state.TotalRecords;
             var totalPages = state.TotalPages;
             var selfLinkItem = context.HttpContext.Request.GetEncodedUrl();
-
-            string prevLinkItem = null;
-            if (pageNumber > 1 && pageNumber <= totalPages)
-            {
-                prevLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { "page", (pageNumber - 1).ToString() } });
-            }
-
-            string nextLinkItem = null;
-            if (pageNumber < totalPages)
-            {
-                nextLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { "page", (pageNumber + 1).ToString() } });
-            }
+            var pageNumberParameterName = InferPageNumberParameterName(context.ControllerAction);
 
             var linkItemBuilder = new ResourceBuilder()
-                .WithState(new { pageNumber, pageSize, totalRecords, totalPages })
-                .AddSelfLink().WithLinkItem(selfLinkItem);
+               .WithState(new { pageNumber, pageSize, totalRecords, totalPages })
+               .AddSelfLink().WithLinkItem(selfLinkItem);
 
-            if (!string.IsNullOrEmpty(prevLinkItem))
+            if (!string.IsNullOrEmpty(pageNumberParameterName))
             {
-                linkItemBuilder = linkItemBuilder.AddLink("prev").WithLinkItem(prevLinkItem);
-            }
+                string prevLinkItem = null;
+                if (pageNumber > 1 && pageNumber <= totalPages)
+                {
+                    prevLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { pageNumberParameterName, (pageNumber - 1).ToString() } });
+                    linkItemBuilder = linkItemBuilder.AddLink("prev").WithLinkItem(prevLinkItem);
+                }
 
-            if (!string.IsNullOrEmpty(nextLinkItem))
-            {
-                linkItemBuilder = linkItemBuilder.AddLink("next").WithLinkItem(nextLinkItem);
+                string nextLinkItem = null;
+                if (pageNumber < totalPages)
+                {
+                    nextLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { pageNumberParameterName, (pageNumber + 1).ToString() } });
+                    linkItemBuilder = linkItemBuilder.AddLink("next").WithLinkItem(nextLinkItem);
+                }
             }
 
             var embeddedResourceName = context.ControllerAction.ControllerName.ToLower();
@@ -143,20 +142,51 @@ namespace Apworks.Integration.AspNetCore.Hal
 
             if (request.Query?.Count > 0)
             {
-                foreach (var queryItem in request.Query)
+                request.Query.ToList().ForEach(q => substQuery.Add(q.Key, q.Value));
+                foreach(var subst in querySubstitution)
                 {
-                    if (querySubstitution.Any(item => item.Key == queryItem.Key))
+                    if (substQuery.ContainsKey(subst.Key))
                     {
-                        substQuery[queryItem.Key] = querySubstitution.First(item => item.Key == queryItem.Key).Value;
+                        substQuery[subst.Key] = subst.Value;
                     }
                     else
                     {
-                        substQuery[queryItem.Key] = queryItem.Value;
+                        substQuery.Add(subst.Key, subst.Value);
                     }
                 }
             }
+            else
+            {
+                querySubstitution.ToList().ForEach(kvp => substQuery.Add(kvp.Key, kvp.Value));
+            }
 
             return UriHelper.BuildAbsolute(scheme, host, pathBase, path, QueryString.Create(substQuery), default(FragmentString));
+        }
+
+        /// <summary>
+        /// Infers the name of the page number parameter.
+        /// </summary>
+        /// <param name="cad">The <see cref="ControllerActionDescriptor"/> which contains the controller action definition information.</param>
+        /// <returns>The name of the page number parameter, or null, if the name cannot be inferred.</returns>
+        private static string InferPageNumberParameterName(ControllerActionDescriptor cad)
+        {
+            if (cad.Parameters.Any(p => p.ParameterType == typeof(int) && p.Name.Equals("page", StringComparison.OrdinalIgnoreCase)))
+            {
+                return "page";
+            }
+
+            if (cad.Parameters.Any(p => p.ParameterType == typeof(int) && p.Name.Equals("pageNumber", StringComparison.OrdinalIgnoreCase)))
+            {
+                return "pageNumber";
+            }
+
+            var pageNumberParameter = cad.MethodInfo.GetParameters().FirstOrDefault(x => x.IsDefined(typeof(PageNumberAttribute)));
+            if (pageNumberParameter != null)
+            {
+                return pageNumberParameter.Name;
+            }
+
+            return null;
         }
         #endregion
     }

@@ -30,7 +30,7 @@ using System;
 namespace Apworks.Integration.AspNetCore.Hal
 {
     /// <summary>
-    /// 
+    /// Represents that the decorated controller class or action method can support HAL representation.
     /// </summary>
     /// <seealso cref="System.Attribute" />
     /// <seealso cref="Microsoft.AspNetCore.Mvc.Filters.IFilterFactory" />
