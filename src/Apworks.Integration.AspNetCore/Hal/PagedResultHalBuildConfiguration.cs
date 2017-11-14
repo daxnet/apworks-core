@@ -85,7 +85,7 @@ namespace Apworks.Integration.AspNetCore.Hal
 
             var state = (IPagedResult)context.State;
             var pageSize = state.PageSize;
-            var pageNumber = state.PageNumber;
+            var pageNumber = state.PageNumber <= 0 ? 1 : state.PageNumber;
             var totalRecords = state.TotalRecords;
             var totalPages = state.TotalPages;
             var selfLinkItem = context.HttpContext.Request.GetEncodedUrl();
@@ -97,6 +97,12 @@ namespace Apworks.Integration.AspNetCore.Hal
 
             if (!string.IsNullOrEmpty(pageNumberParameterName))
             {
+                var firstLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { pageNumberParameterName, 1.ToString() } });
+                linkItemBuilder = linkItemBuilder.AddLink("first").WithLinkItem(firstLinkItem);
+
+                var lastLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { pageNumberParameterName, totalPages.ToString() } });
+                linkItemBuilder = linkItemBuilder.AddLink("last").WithLinkItem(lastLinkItem);
+
                 string prevLinkItem = null;
                 if (pageNumber > 1 && pageNumber <= totalPages)
                 {
@@ -105,7 +111,7 @@ namespace Apworks.Integration.AspNetCore.Hal
                 }
 
                 string nextLinkItem = null;
-                if (pageNumber < totalPages)
+                if (pageNumber >= 1 && pageNumber < totalPages)
                 {
                     nextLinkItem = GenerateLink(context.HttpContext.Request, new Dictionary<string, StringValues> { { pageNumberParameterName, (pageNumber + 1).ToString() } });
                     linkItemBuilder = linkItemBuilder.AddLink("next").WithLinkItem(nextLinkItem);
