@@ -30,7 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Irony.Interpreter" Version="1.0.7" />
+    <PackageReference Include="Irony.Interpreter.NetCore" Version="1.0.10" />
+    <PackageReference Include="Irony.NetCore" Version="1.0.10" />
   </ItemGroup>
 
   <ItemGroup>
