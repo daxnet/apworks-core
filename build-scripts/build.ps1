@@ -42,7 +42,7 @@ param (
 	[switch]$generatePackages = $false,
 	[string]$framework = "all",
 	[switch]$runUnitTests = $false,
-	[switch]$runIntegrationTests = $false
+	[switch]$runIntegrationTests = $false,
 	[switch]$substVersion = $false
 )
 
