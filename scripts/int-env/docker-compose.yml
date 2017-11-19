@@ -24,4 +24,12 @@ services:
       - 5671:5671
       - 25672:25672
     container_name: apworks_rabbitmq
-
+    
+  mssql:
+    image: microsoft/mssql-server-linux:2017-latest
+    ports:
+      - "1433:1433"
+    container_name: apworks_mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=G1veMeP@ss

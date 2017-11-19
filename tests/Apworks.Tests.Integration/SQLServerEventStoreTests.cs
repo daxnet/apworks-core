@@ -1,6 +1,6 @@
 ﻿using Apworks.Events;
 using Apworks.EventStore.AdoNet;
-using Apworks.EventStore.PostgreSQL;
+using Apworks.EventStore.SQLServer;
 using Apworks.KeyGeneration;
 using Apworks.Serialization.Json;
 using Apworks.Tests.Integration.Fixtures;
@@ -13,11 +13,11 @@ using Xunit;
 
 namespace Apworks.Tests.Integration
 {
-    public class PostgreSQLEventStoreTests : IClassFixture<PostgreSQLFixture>, IDisposable
+    public class SQLServerEventStoreTests : IClassFixture<SQLServerFixture>, IDisposable
     {
-        private readonly PostgreSQLFixture fixture;
-
-        public PostgreSQLEventStoreTests(PostgreSQLFixture fixture)
+        private readonly SQLServerFixture fixture;
+       
+        public SQLServerEventStoreTests(SQLServerFixture fixture)
         {
             this.fixture = fixture;
         }
@@ -41,9 +41,9 @@ namespace Apworks.Tests.Integration
             event2.AttachTo(employee);
             event3.AttachTo(employee);
 
-            var storeConfig = new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator());
+            var storeConfig = new AdoNetEventStoreConfiguration(SQLServerFixture.ConnectionString, new GuidKeyGenerator());
             var payloadSerializer = new ObjectJsonSerializer();
-            var store = new PostgreSqlEventStore(storeConfig, payloadSerializer);
+            var store = new SqlServerEventStore(storeConfig, payloadSerializer);
             store.Save(new List<DomainEvent>
             {
                 event1,
@@ -66,9 +66,9 @@ namespace Apworks.Tests.Integration
             event2.AttachTo(employee);
             event3.AttachTo(employee);
 
-            var storeConfig = new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator());
+            var storeConfig = new AdoNetEventStoreConfiguration(SQLServerFixture.ConnectionString, new GuidKeyGenerator());
             var payloadSerializer = new ObjectJsonSerializer();
-            var store = new PostgreSqlEventStore(storeConfig, payloadSerializer);
+            var store = new SqlServerEventStore(storeConfig, payloadSerializer);
             store.Save(new List<DomainEvent>
             {
                 event1,
@@ -94,9 +94,9 @@ namespace Apworks.Tests.Integration
             event2.AttachTo(employee);
             event3.AttachTo(employee);
 
-            var storeConfig = new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator());
+            var storeConfig = new AdoNetEventStoreConfiguration(SQLServerFixture.ConnectionString, new GuidKeyGenerator());
             var payloadSerializer = new ObjectJsonSerializer();
-            var store = new PostgreSqlEventStore(storeConfig, payloadSerializer);
+            var store = new SqlServerEventStore(storeConfig, payloadSerializer);
             store.Save(new List<DomainEvent>
             {
                 event1,
@@ -124,9 +124,9 @@ namespace Apworks.Tests.Integration
             event2.AttachTo(employee);
             event3.AttachTo(employee);
 
-            var storeConfig = new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator());
+            var storeConfig = new AdoNetEventStoreConfiguration(SQLServerFixture.ConnectionString, new GuidKeyGenerator());
             var payloadSerializer = new ObjectJsonSerializer();
-            var store = new PostgreSqlEventStore(storeConfig, payloadSerializer);
+            var store = new SqlServerEventStore(storeConfig, payloadSerializer);
             store.Save(new List<DomainEvent>
             {
                 event1,
@@ -154,9 +154,9 @@ namespace Apworks.Tests.Integration
             event2.AttachTo(employee);
             event3.AttachTo(employee);
 
-            var storeConfig = new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator());
+            var storeConfig = new AdoNetEventStoreConfiguration(SQLServerFixture.ConnectionString, new GuidKeyGenerator());
             var payloadSerializer = new ObjectJsonSerializer();
-            var store = new PostgreSqlEventStore(storeConfig, payloadSerializer);
+            var store = new SqlServerEventStore(storeConfig, payloadSerializer);
             store.Save(new List<DomainEvent>
             {
                 event1,

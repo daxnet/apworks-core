@@ -43,21 +43,24 @@ param (
 	[string]$framework = "all",
 	[switch]$runUnitTests = $false,
 	[switch]$runIntegrationTests = $false
+	[switch]$substVersion = $false
 )
 
 $workspace = (Split-Path $PSScriptRoot -Parent).ToString()
 
 echo "Building Apworks from $workspace ..."
 
-echo "Substituting version number to $version ..."
-# Firstly substitutes the version number on both .cs and .csproj files
-# to ensure that the version number for assembly and NuGet package is consistent.
-$files = Get-ChildItem $workspace -Include AssemblyInfo.cs,*.csproj -Recurse
-foreach ($file in $files)
-{
-	(Get-Content $file.FullName) |
-	ForEach-Object { $_ -replace "0.999.0", "$($version)" } |
-	Set-Content $file.FullName
+if ($substVersion) {
+	echo "Substituting version number to $version ..."
+	# Firstly substitutes the version number on both .cs and .csproj files
+	# to ensure that the version number for assembly and NuGet package is consistent.
+	$files = Get-ChildItem $workspace -Include AssemblyInfo.cs,*.csproj -Recurse
+	foreach ($file in $files)
+	{
+		(Get-Content $file.FullName) |
+		ForEach-Object { $_ -replace "0.999.0", "$($version)" } |
+		Set-Content $file.FullName
+	}
 }
 
 # Switch to the workspace folder and restore the packages

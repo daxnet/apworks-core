@@ -30,7 +30,7 @@ namespace Apworks.Tests.Integration
 
         public EventSourcingDomainRepositoryTests(PostgreSQLFixture fixture)
         {
-            Thread.Sleep(1000);
+            // Thread.Sleep(1000);
             this.fixture = fixture;
         }
 
@@ -162,9 +162,9 @@ namespace Apworks.Tests.Integration
         {
             if (disposing)
             {
-                this.fixture.ClearTable();
+                this.fixture.ClearTables();
             }
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
         }
     }
 }

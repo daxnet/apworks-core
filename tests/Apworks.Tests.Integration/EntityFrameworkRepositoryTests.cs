@@ -17,7 +17,7 @@ namespace Apworks.Tests.Integration
 
         public EntityFrameworkRepositoryTests(PostgreSQLFixture fixture)
         {
-            Thread.Sleep(1000);
+            //Thread.Sleep(1000);
             this.fixture = fixture;
         }
 
@@ -263,8 +263,8 @@ namespace Apworks.Tests.Integration
 
         public void Dispose()
         {
-            this.fixture.ClearTable();
-            Thread.Sleep(1000);
+            this.fixture.ClearTables();
+            //Thread.Sleep(1000);
         }
     }
 

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -39,6 +37,16 @@ namespace Apworks.Events
         IEnumerable<IEvent> Load<TKey>(string originatorClrType, TKey originatorId, long sequenceMin = EventStore.MinimalSequence, long sequenceMax = EventStore.MaximumSequence)
             where TKey : IEquatable<TKey>;
 
+        /// <summary>
+        /// Loads the events from event store, by using the specified originator CLR type, originator identifier and the sequence values asynchronously.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the originator key.</typeparam>
+        /// <param name="originatorClrType">Type of the originator CLR type.</param>
+        /// <param name="originatorId">The originator identifier.</param>
+        /// <param name="sequenceMin">The minimum event sequence value (inclusive).</param>
+        /// <param name="sequenceMax">The maximum event sequence value (inclusive).</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The events.</returns>
         Task<IEnumerable<IEvent>> LoadAsync<TKey>(string originatorClrType, TKey originatorId, long sequenceMin = EventStore.MinimalSequence, long sequenceMax = EventStore.MaximumSequence, CancellationToken cancellationToken = default(CancellationToken))
             where TKey : IEquatable<TKey>;
     }

@@ -27,7 +27,10 @@ namespace Apworks.EventStore.AdoNet
             // Prepare the SQL statement
             var originatorClrTypeParameterName = $"{ParameterChar}{nameof(originatorClrType)}";
             var originatorIdParameterName = $"{ParameterChar}{nameof(originatorId)}";
-            var baseSql = $"SELECT {this.GetEscapedFieldNames()} FROM {this.GetEscapedTableName()} WHERE {this.GetEscapedFieldNames(propertyExpressions: x => x.OriginatorClrType)}={originatorClrTypeParameterName} AND {this.GetEscapedFieldNames(propertyExpressions: x => x.OriginatorId)}={originatorIdParameterName}";
+            var baseSql = $@"SELECT {this.GetEscapedFieldNames()} 
+FROM {this.GetEscapedTableName()} 
+WHERE {this.GetEscapedFieldNames(propertyExpressions: x => x.OriginatorClrType)}={originatorClrTypeParameterName} 
+AND {this.GetEscapedFieldNames(propertyExpressions: x => x.OriginatorId)}={originatorIdParameterName}";
 
             // Prepare the ADO.NET DbCommand parameter list
             var parameters = new List<IDbDataParameter>();
@@ -49,6 +52,8 @@ namespace Apworks.EventStore.AdoNet
                 sqlBuilder.Append($" AND {this.GetEscapedFieldNames(propertyExpressions: x => x.EventSequence)}<={sequenceMaxParameterName}");
                 parameters.Add(CreateParameter(command, sequenceMaxParameterName, sequenceMax));
             }
+
+            sqlBuilder.Append($" ORDER BY {this.GetEscapedFieldNames(propertyExpressions: x => x.EventSequence)}");
 
             return (sqlBuilder.ToString(), parameters);
         }

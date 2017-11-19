@@ -11,17 +11,67 @@ namespace Apworks.Tests.Integration.Fixtures
     {
         public const string ConnectionString = "User ID=test;Password=oe9jaacZLbR9pN;Host=localhost;Port=5432;Database=test;";
 
+        private const string CreateAddressTableSql = @"CREATE TABLE ""Addresses"" (
+    ""Id"" serial NOT NULL,
+    ""City"" text,
+    ""Country"" text,
+    ""CustomerId"" int4,
+    ""State"" text,
+    ""Street"" text,
+    ""ZipCode"" text,
+    CONSTRAINT ""PK_Addresses"" PRIMARY KEY(""Id""),
+    CONSTRAINT ""FK_Addresses_Customers_CustomerId"" FOREIGN KEY(""CustomerId"") REFERENCES ""Customers""(""Id"") ON DELETE NO ACTION
+);
+
+CREATE INDEX ""IX_Addresses_CustomerId"" ON ""Addresses"" (""CustomerId"");
+
+ALTER TABLE public.""Addresses""
+  OWNER TO test;";
+
+        private const string CreateCustomerTableSql = @"CREATE TABLE public.""Customers""
+(
+  ""Id"" integer NOT NULL,
+  ""Email"" text,
+  ""Name"" text,
+  CONSTRAINT ""PK_Customers"" PRIMARY KEY(""Id"")
+)
+WITH(
+  OIDS = FALSE
+);
+
+ALTER TABLE public.""Customers""
+  OWNER TO test;";
+
+        private const string CreateEventsTableSql = @"CREATE TABLE public.""EVENTS""
+(
+    ""ID"" uuid NOT NULL,
+    ""EVENTID"" uuid NOT NULL,
+    ""EVENTTIMESTAMP"" timestamp without time zone NOT NULL,
+    ""EVENTCLRTYPE"" text COLLATE pg_catalog.""default"" NOT NULL,
+    ""EVENTINTENT"" text COLLATE pg_catalog.""default"" NOT NULL,
+    ""ORIGINATORCLRTYPE"" text COLLATE pg_catalog.""default"" NOT NULL,
+    ""ORIGINATORID"" text COLLATE pg_catalog.""default"" NOT NULL,
+    ""EVENTPAYLOAD"" bytea NOT NULL,
+    ""EVENTSEQUENCE"" bigint NOT NULL,
+    CONSTRAINT ""EVENTS_pkey"" PRIMARY KEY(""ID"")
+);
+
+ALTER TABLE public.""EVENTS""
+    OWNER TO test;";
+
         public PostgreSQLFixture()
         {
-            if (CheckTableExists("Customers") || CheckTableExists("Addresses") || CheckTableExists("EVENTS"))
-            {
-                DropTable();
-            }
+            if (!CheckTableExists("Customers"))
+                CreateTable("Customers");
 
-            CreateTable();
+            if (!CheckTableExists("Addresses"))
+                CreateTable("Addresses");
+
+            if (!CheckTableExists("EVENTS"))
+                CreateTable("EVENTS");
         }
 
-        public void ClearTable()
+        public void ClearTables()
         {
             ExecuteCommand("DELETE FROM public.\"Addresses\"");
             ExecuteCommand("DELETE FROM public.\"Customers\"");
@@ -70,57 +120,22 @@ namespace Apworks.Tests.Integration.Fixtures
             ExecuteCommand("DROP TABLE public.\"EVENTS\"");
         }
 
-        private static void CreateTable()
+        private static void CreateTable(string tableName)
         {
-            var createScript = @"
-CREATE TABLE public.""Customers""
-(
-  ""Id"" integer NOT NULL,
-  ""Email"" text,
-  ""Name"" text,
-  CONSTRAINT ""PK_Customers"" PRIMARY KEY(""Id"")
-)
-WITH(
-  OIDS = FALSE
-);
+            var createScript = "";
+            switch (tableName.ToLower())
+            {
+                case "customers":
+                    createScript = CreateCustomerTableSql;
+                    break;
+                case "addresses":
+                    createScript = CreateAddressTableSql;
+                    break;
+                case "events":
+                    createScript = CreateEventsTableSql;
+                    break;
+            }
 
-ALTER TABLE public.""Customers""
-  OWNER TO test;
-
-CREATE TABLE ""Addresses"" (
-    ""Id"" serial NOT NULL,
-    ""City"" text,
-    ""Country"" text,
-    ""CustomerId"" int4,
-    ""State"" text,
-    ""Street"" text,
-    ""ZipCode"" text,
-    CONSTRAINT ""PK_Addresses"" PRIMARY KEY(""Id""),
-    CONSTRAINT ""FK_Addresses_Customers_CustomerId"" FOREIGN KEY(""CustomerId"") REFERENCES ""Customers""(""Id"") ON DELETE NO ACTION
-);
-
-CREATE INDEX ""IX_Addresses_CustomerId"" ON ""Addresses"" (""CustomerId"");
-
-ALTER TABLE public.""Addresses""
-  OWNER TO test;
-
-CREATE TABLE public.""EVENTS""
-(
-    ""ID"" uuid NOT NULL,
-    ""EVENTID"" uuid NOT NULL,
-    ""EVENTTIMESTAMP"" timestamp without time zone NOT NULL,
-    ""EVENTCLRTYPE"" text COLLATE pg_catalog.""default"" NOT NULL,
-    ""EVENTINTENT"" text COLLATE pg_catalog.""default"" NOT NULL,
-    ""ORIGINATORCLRTYPE"" text COLLATE pg_catalog.""default"" NOT NULL,
-    ""ORIGINATORID"" text COLLATE pg_catalog.""default"" NOT NULL,
-    ""EVENTPAYLOAD"" bytea NOT NULL,
-    ""EVENTSEQUENCE"" bigint NOT NULL,
-    CONSTRAINT ""EVENTS_pkey"" PRIMARY KEY(""ID"")
-);
-
-ALTER TABLE public.""EVENTS""
-    OWNER TO test;
-";
             ExecuteCommand(createScript);
         }
 
