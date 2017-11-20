@@ -30,6 +30,7 @@ namespace Apworks.Tests.Integration
 
         public EventSourcingDomainRepositoryTests(PostgreSQLFixture fixture)
         {
+            Monitor.Enter(PostgreSQLFixture.locker);
             // Thread.Sleep(1000);
             this.fixture = fixture;
         }
@@ -165,6 +166,7 @@ namespace Apworks.Tests.Integration
                 this.fixture.ClearTables();
             }
             //Thread.Sleep(1000);
+            Monitor.Exit(PostgreSQLFixture.locker);
         }
     }
 }

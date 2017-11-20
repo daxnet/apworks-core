@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Xunit;
 
 namespace Apworks.Tests.Integration
@@ -19,12 +20,14 @@ namespace Apworks.Tests.Integration
 
         public PostgreSQLEventStoreTests(PostgreSQLFixture fixture)
         {
+            Monitor.Enter(PostgreSQLFixture.locker);
             this.fixture = fixture;
         }
 
         public void Dispose()
         {
             this.fixture.ClearTables();
+            Monitor.Exit(PostgreSQLFixture.locker);
         }
 
         [Fact]

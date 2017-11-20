@@ -8,6 +8,7 @@ namespace Apworks.Tests.Integration.Fixtures
 {
     public class SQLServerFixture
     {
+        public static readonly object locker = new object();
         public const string ConnectionString = "Server=localhost;Database=SQLServerEventStoreTest;User Id=sa;Password=G1veMeP@ss";
         public const string ConnectionStringWithoutDatabase = "Server=localhost;User Id=sa;Password=G1veMeP@ss";
 
