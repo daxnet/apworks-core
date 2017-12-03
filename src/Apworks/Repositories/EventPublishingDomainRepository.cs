@@ -37,6 +37,7 @@ namespace Apworks.Repositories
     {
         #region Private Fields
         private readonly IEventPublisher publisher;
+        private bool disposed = false;
         #endregion
 
         #region Protected Properties        
@@ -75,9 +76,15 @@ namespace Apworks.Repositories
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposed)
             {
-                this.publisher?.Dispose();
+                if (disposing)
+                {
+                    this.publisher.Dispose();
+                }
+
+                disposed = true;
+                base.Dispose(disposing);
             }
         }
         #endregion

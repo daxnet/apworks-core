@@ -57,6 +57,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
         private readonly IQueryConditionParser queryConditionParser;
         private readonly ISortSpecificationParser sortSpecificationParser;
         private readonly IKeyGenerator<TKey, TAggregateRoot> keyGenerator;
+        private bool disposed = false;
         #endregion
 
         #region Ctor        
@@ -358,12 +359,16 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// otherwise <c>false</c>.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposed)
             {
-                this.repositoryContext.Dispose();
-            }
+                if (disposing)
+                {
+                    this.repositoryContext.Dispose();
+                }
 
-            base.Dispose(disposing);
+                disposed = true;
+                base.Dispose(disposing);
+            }
         }
     }
 }

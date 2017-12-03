@@ -11,7 +11,7 @@ namespace Apworks.Tests.Integration.Fixtures
     {
         public static readonly object locker = new object();
 
-        public const string ConnectionString = "User ID=test;Password=oe9jaacZLbR9pN;Host=localhost;Port=5432;Database=test;";
+        public const string ConnectionString = "User ID=test;Password=test;Host=localhost;Port=5432;Database=test;";
 
         private const string CreateAddressTableSql = @"CREATE TABLE ""Addresses"" (
     ""Id"" serial NOT NULL,

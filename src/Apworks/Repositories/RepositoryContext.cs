@@ -131,12 +131,6 @@ namespace Apworks.Repositories
         protected abstract IRepository<TKey, TAggregateRoot> CreateRepository<TKey, TAggregateRoot>()
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRoot<TKey>;
-
-        /// <summary>
-        /// Releases unmanaged and - optionally - managed resources.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected override void Dispose(bool disposing) { }
         #endregion
 
     }

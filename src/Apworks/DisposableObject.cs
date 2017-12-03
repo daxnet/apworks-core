@@ -37,6 +37,11 @@ namespace Apworks
     public abstract class DisposableObject : IDisposable
     {
         /// <summary>
+        /// Occurs when the current object has been disposed.
+        /// </summary>
+        public event EventHandler Disposed;
+
+        /// <summary>
         /// Finalizes an instance of the <see cref="DisposableObject"/> class.
         /// </summary>
         ~DisposableObject()
@@ -57,6 +62,9 @@ namespace Apworks
         /// Releases unmanaged and - optionally - managed resources.
         /// </summary>
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
-        protected abstract void Dispose(bool disposing);
+        protected virtual void Dispose(bool disposing)
+        {
+            this.Disposed?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

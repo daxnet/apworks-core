@@ -14,7 +14,7 @@ namespace Apworks.Messaging
         private readonly TMessageSubscriber subscriber;
         private readonly IEnumerable<TMessageHandler> handlers;
         private readonly string route;
-        private volatile bool disposed;
+        private bool disposed;
 
         protected MessageConsumer(TMessageSubscriber subscriber, IEnumerable<TMessageHandler> handlers, string route = null)
         {
@@ -52,9 +52,9 @@ namespace Apworks.Messaging
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposed)
             {
-                if (!disposed)
+                if (disposing)
                 {
                     if (this.subscriber != null)
                     {
@@ -62,9 +62,10 @@ namespace Apworks.Messaging
                         this.subscriber.MessageAcknowledged -= this.OnMessageAcknowledged;
                         this.subscriber.Dispose();
                     }
-
-                    disposed = true;
                 }
+
+                disposed = true;
+                base.Dispose(disposing);
             }
         }
 

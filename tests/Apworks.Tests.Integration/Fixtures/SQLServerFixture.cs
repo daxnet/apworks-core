@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Text;
 
 namespace Apworks.Tests.Integration.Fixtures
 {
     public class SQLServerFixture
     {
+        private const string EventStoreDatabaseName = "SQLServerEventStoreTest";
+
         public static readonly object locker = new object();
-        public const string ConnectionString = "Server=localhost;Database=SQLServerEventStoreTest;User Id=sa;Password=G1veMeP@ss";
-        public const string ConnectionStringWithoutDatabase = "Server=localhost;User Id=sa;Password=G1veMeP@ss";
+        public static readonly string ConnectionString = $@"Server=localhost\sqlexpress;Database={EventStoreDatabaseName};Integrated Security=SSPI;";
+        public const string ConnectionStringWithoutDatabase = @"Server=localhost\sqlexpress;Integrated Security=SSPI;";
+
+        private static readonly string MDF_FileName = Path.Combine(Path.GetTempPath(), EventStoreDatabaseName + ".mdf");
+        private static readonly string LDF_FileName = Path.Combine(Path.GetTempPath(), EventStoreDatabaseName + ".ldf");
 
         public SQLServerFixture()
         {
@@ -34,7 +40,7 @@ namespace Apworks.Tests.Integration.Fixtures
         {
             using (var tmpConn = new SqlConnection(ConnectionStringWithoutDatabase))
             {
-                var sqlCreateDBQuery = "DROP DATABASE SQLServerEventStoreTest";
+                var sqlCreateDBQuery = $"DROP DATABASE {EventStoreDatabaseName}";
                 tmpConn.Open();
                 tmpConn.ChangeDatabase("master");
                 using (SqlCommand sqlCmd = new SqlCommand(sqlCreateDBQuery, tmpConn))
@@ -50,7 +56,7 @@ namespace Apworks.Tests.Integration.Fixtures
             {
                 using (var tmpConn = new SqlConnection(ConnectionStringWithoutDatabase))
                 {
-                    var sqlCreateDBQuery = "SELECT COUNT(*) FROM sys.databases where name = 'SQLServerEventStoreTest'";
+                    var sqlCreateDBQuery = $"SELECT COUNT(*) FROM sys.databases where name = '{EventStoreDatabaseName}'";
                     tmpConn.Open();
                     tmpConn.ChangeDatabase("master");
                     using (SqlCommand sqlCmd = new SqlCommand(sqlCreateDBQuery, tmpConn))
@@ -74,7 +80,7 @@ namespace Apworks.Tests.Integration.Fixtures
                 using (var con = new SqlConnection(ConnectionString))
                 {
                     var sqlCheck = $@"SELECT COUNT(*)
-  FROM SQLServerEventStoreTest.INFORMATION_SCHEMA.TABLES
+  FROM {EventStoreDatabaseName}.INFORMATION_SCHEMA.TABLES
   WHERE TABLE_SCHEMA = 'dbo'
   AND TABLE_NAME = '{tableName}'";
                     con.Open();
@@ -95,12 +101,12 @@ namespace Apworks.Tests.Integration.Fixtures
             String str;
             SqlConnection myConn = new SqlConnection(ConnectionStringWithoutDatabase);
 
-            str = "CREATE DATABASE SQLServerEventStoreTest ON PRIMARY " +
-                "(NAME = 'SQLServerEventStoreTest_Data', " +
-                "FILENAME = '/var/opt/mssql/data/SQLServerEventStoreTest.mdf', " +
+            str = $@"CREATE DATABASE {EventStoreDatabaseName} ON PRIMARY " +
+                $"(NAME = '{EventStoreDatabaseName}_Data', " +
+                $"FILENAME = '{MDF_FileName}', " +
                 "SIZE = 2MB, MAXSIZE = 10MB, FILEGROWTH = 10%) " +
-                "LOG ON (NAME = 'SQLServerEventStoreTest_Log', " +
-                "FILENAME = '/var/opt/mssql/data/SQLServerEventStoreTest.ldf', " +
+                $"LOG ON (NAME = '{EventStoreDatabaseName}_Log', " +
+                $"FILENAME = '{LDF_FileName}', " +
                 "SIZE = 1MB, " +
                 "MAXSIZE = 5MB, " +
                 "FILEGROWTH = 10%)";

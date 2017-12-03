@@ -10,6 +10,7 @@ namespace Apworks.Repositories
     public sealed class SimpleDomainRepository : DomainRepository
     {
         private readonly IRepositoryContext repositoryContext;
+        private bool disposed = false;
 
         public SimpleDomainRepository(IRepositoryContext repositoryContext)
         {
@@ -50,9 +51,15 @@ namespace Apworks.Repositories
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposed)
             {
-                this.repositoryContext?.Dispose();
+                if (disposing)
+                {
+                    this.repositoryContext?.Dispose();
+                }
+
+                disposed = true;
+                base.Dispose(disposing);
             }
         }
 

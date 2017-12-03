@@ -7,6 +7,8 @@ namespace Apworks.Repositories.EntityFramework
 {
     public sealed class EntityFrameworkRepositoryContext : RepositoryContext<DbContext>
     {
+        private bool disposed = false;
+
         public EntityFrameworkRepositoryContext(DbContext session) : base(session)
         {
         }
@@ -26,9 +28,15 @@ namespace Apworks.Repositories.EntityFramework
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposed)
             {
-                this.Session.Dispose();
+                if (disposing)
+                {
+                    this.Session.Dispose();
+                }
+
+                disposed = true;
+                base.Dispose(disposing);
             }
         }
     }

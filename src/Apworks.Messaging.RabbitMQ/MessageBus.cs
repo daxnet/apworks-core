@@ -148,14 +148,16 @@ namespace Apworks.Messaging.RabbitMQ
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
+            if (!disposed)
             {
-                if (!disposed)
+                if (disposing)
                 {
                     this.channel.Dispose();
                     this.connection.Dispose();
-                    disposed = true;
                 }
+
+                disposed = true;
+                base.Dispose(disposing);
             }
         }
 

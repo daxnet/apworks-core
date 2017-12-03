@@ -12,6 +12,7 @@ namespace Apworks.Repositories
         private readonly IEventStore eventStore;
         private readonly ISnapshotProvider snapshotProvider;
         private readonly string route;
+        private bool disposed = false;
 
         public EventSourcingDomainRepository(IEventStore eventStore, 
             IEventPublisher publisher,
@@ -128,6 +129,20 @@ namespace Apworks.Repositories
                     var snapshot = aggregateRoot.TakeSnapshot();
                     await this.snapshotProvider.SaveSnapshotAsync(snapshot, cancellationToken);
                 }
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    this.eventStore.Dispose();
+                }
+
+                disposed = true;
+                base.Dispose(disposing);
             }
         }
     }
