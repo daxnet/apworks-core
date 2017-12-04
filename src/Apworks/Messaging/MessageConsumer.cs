@@ -71,7 +71,7 @@ namespace Apworks.Messaging
 
         public void Consume()
         {
-            this.subscriber.Subscribe(this.route);
+            this.subscriber.Subscribe();
         }
     }
 }

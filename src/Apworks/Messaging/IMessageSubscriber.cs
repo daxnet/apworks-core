@@ -36,12 +36,7 @@ namespace Apworks.Messaging
     /// <seealso cref="System.IDisposable" />
     public interface IMessageSubscriber : IDisposable
     {
-        /// <summary>
-        /// Subscribes to the underlying messaging infrastructure.
-        /// </summary>
-        /// <param name="route">The routing that the current subscriber will use. In some of the message publisher implementation,
-        /// the routing can be ignored.</param>
-        void Subscribe(string route = null);
+        void Subscribe();
 
         /// <summary>
         /// Occurs when there is any incoming messages.

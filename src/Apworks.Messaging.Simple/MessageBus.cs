@@ -71,7 +71,7 @@ namespace Apworks.Messaging.Simple
         /// <typeparam name="TMessage">The type of the message.</typeparam>
         /// <param name="message">The message.</param>
         /// <param name="route">The route.</param>
-        public void Publish<TMessage>(TMessage message, string route = null) where TMessage : IMessage
+        public void Publish<TMessage>(TMessage message) where TMessage : IMessage
         {
             messageQueue.PushMessage(message);
             this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));
@@ -83,7 +83,7 @@ namespace Apworks.Messaging.Simple
         /// <param name="messages">The messages to be published.</param>
         /// <param name="route">The routing for the publishing message. In some of the message publisher implementation,
         /// the routing can be ignored.</param>
-        public void PublishAll(IEnumerable<IMessage> messages, string route = null) => messages.ToList().ForEach(msg => Publish(msg));
+        public void PublishAll(IEnumerable<IMessage> messages) => messages.ToList().ForEach(msg => Publish(msg));
 
         /// <summary>
         /// publishes the specified message asynchronously.
@@ -94,7 +94,7 @@ namespace Apworks.Messaging.Simple
         /// the routing can be ignored.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> instance that propagates notification that operations should be canceled.</param>
         /// <returns></returns>
-        public Task PublishAsync<TMessage>(TMessage message, string route = null, CancellationToken cancellationToken = default(CancellationToken)) 
+        public Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default(CancellationToken)) 
             where TMessage : IMessage => Task.Factory.StartNew(() => Publish(message), cancellationToken);
 
         /// <summary>
@@ -105,14 +105,14 @@ namespace Apworks.Messaging.Simple
         /// the routing can be ignored.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> which propagates notification that operations should be canceled.</param>
         /// <returns></returns>
-        public Task PublishAllAsync(IEnumerable<IMessage> messages, string route = null, CancellationToken cancellationToken = default(CancellationToken)) => Task.Factory.StartNew(() => PublishAll(messages), cancellationToken);
+        public Task PublishAllAsync(IEnumerable<IMessage> messages, CancellationToken cancellationToken = default(CancellationToken)) => Task.Factory.StartNew(() => PublishAll(messages), cancellationToken);
 
         /// <summary>
         /// Subscribes to the underlying messaging infrastructure.
         /// </summary>
         /// <param name="route">The routing that the current subscriber will use. In some of the message publisher implementation,
         /// the routing can be ignored.</param>
-        public void Subscribe(string route = null)
+        public void Subscribe()
         {
             if (!subscribed)
             {

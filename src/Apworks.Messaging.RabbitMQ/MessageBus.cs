@@ -74,40 +74,40 @@ namespace Apworks.Messaging.RabbitMQ
         public event EventHandler<MessageReceivedEventArgs> MessageReceived;
         public event EventHandler<MessageAcknowledgedEventArgs> MessageAcknowledged;
 
-        public void Publish<TMessage>(TMessage message, string route = null) where TMessage : IMessage
+        public void Publish<TMessage>(TMessage message) where TMessage : IMessage
         {
             var messageBody = this.messageSerializer.Serialize(message);
             channel.BasicPublish(this.exchangeName,
-                route ?? string.Empty,
+                string.Empty,
                 null,
                 messageBody);
             this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));
         }
 
-        public void PublishAll(IEnumerable<IMessage> messages, string route = null)
+        public void PublishAll(IEnumerable<IMessage> messages)
         {
-            messages.ToList().ForEach(m => this.Publish(m, route));
+            messages.ToList().ForEach(m => this.Publish(m));
         }
 
-        public async Task PublishAllAsync(IEnumerable<IMessage> messages, string route = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task PublishAllAsync(IEnumerable<IMessage> messages, CancellationToken cancellationToken = default(CancellationToken))
         {
             foreach (var message in messages)
             {
-                await this.PublishAsync(message, route, cancellationToken);
+                await this.PublishAsync(message, cancellationToken);
             }
         }
 
-        public async Task PublishAsync<TMessage>(TMessage message, string route = null, CancellationToken cancellationToken = default(CancellationToken)) where TMessage : IMessage
+        public async Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default(CancellationToken)) where TMessage : IMessage
         {
             var messageBody = await this.messageSerializer.SerializeAsync(message, cancellationToken);
             channel.BasicPublish(this.exchangeName,
-                route ?? string.Empty,
+                string.Empty,
                 null,
                 messageBody);
             this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));
         }
 
-        public void Subscribe(string route = null)
+        public void Subscribe()
         {
             if (!this.subscribed)
             {
@@ -121,7 +121,7 @@ namespace Apworks.Messaging.RabbitMQ
                     this.channel.QueueDeclare(queue, true, false, false, null);
                 }
 
-                this.channel.QueueBind(queue, this.exchangeName, route ?? string.Empty);
+                this.channel.QueueBind(queue, this.exchangeName, string.Empty);
                 var consumer = new EventingBasicConsumer(this.channel);
                 consumer.Received += (model, eventArgument) =>
                   {

@@ -44,7 +44,7 @@ namespace Apworks.Messaging
         /// <param name="message">The message that is going to be published.</param>
         /// <param name="route">The routing of the message publication. In some of the message publisher implementation,
         /// this parameter can be ignored.</param>
-        void Publish<TMessage>(TMessage message, string route = null)
+        void Publish<TMessage>(TMessage message)
             where TMessage : IMessage;
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Apworks.Messaging
         /// <param name="messages">The messages that is going to be published.</param>
         /// <param name="route">The routing of the message publication. In some of the message publisher implementation,
         /// this parameter can be ignored.</param>
-        void PublishAll(IEnumerable<IMessage> messages, string route = null);
+        void PublishAll(IEnumerable<IMessage> messages);
 
         /// <summary>
         /// Publishes the specified message to the message bus asynchronously.
@@ -64,7 +64,7 @@ namespace Apworks.Messaging
         /// this parameter can be ignored.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> instance that propagates notification that operations should be canceled.</param>
         /// <returns>The <see cref="Task"/> that executes the message publication.</returns>
-        Task PublishAsync<TMessage>(TMessage message, string route = null, CancellationToken cancellationToken = default(CancellationToken))
+        Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default(CancellationToken))
             where TMessage : IMessage;
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Apworks.Messaging
         /// this parameter can be ignored.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> which propagates notification that operations should be canceled.</param>
         /// <returns>The <see cref="Task"/> that executes the message publication.</returns>
-        Task PublishAllAsync(IEnumerable<IMessage> messages, string route = null, CancellationToken cancellationToken = default(CancellationToken));
+        Task PublishAllAsync(IEnumerable<IMessage> messages, CancellationToken cancellationToken = default(CancellationToken));
 
         /// <summary>
         /// Represents the event that occurs when the message has been published.
