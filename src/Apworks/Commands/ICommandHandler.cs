@@ -11,6 +11,7 @@ namespace Apworks.Commands
     /// Represents that the implemented classes are command handlers.
     /// </summary>
     /// <seealso cref="Apworks.Messaging.IMessageHandler" />
+    [MessageHandlerStub(typeof(ICommand))]
     public interface ICommandHandler : IMessageHandler
     { }
 
