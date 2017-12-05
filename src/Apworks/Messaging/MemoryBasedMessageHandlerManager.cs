@@ -9,7 +9,7 @@ namespace Apworks.Messaging
 {
     public abstract class MemoryBasedMessageHandlerManager : MessageHandlerManager
     {
-        private readonly ConcurrentDictionary<Type, List<Type>> registrations = new ConcurrentDictionary<Type, List<Type>>();
+        protected readonly ConcurrentDictionary<Type, List<Type>> registrations = new ConcurrentDictionary<Type, List<Type>>();
 
         public override void RegisterHandler(Type messageType, Type handlerType)
         {

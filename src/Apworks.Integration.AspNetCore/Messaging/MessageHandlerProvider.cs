@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Apworks.Integration.AspNetCore.Messaging
@@ -21,12 +23,40 @@ namespace Apworks.Integration.AspNetCore.Messaging
         {
             base.RegisterHandler(messageType, handlerType);
 
-            throw new NotImplementedException();
+            var (handlerStubType, handlerTargetType) = EvaluateMessageHandlerStub(handlerType);
+
+            if (handlerStubType == null ||
+                handlerTargetType == null)
+            {
+                throw new MessageProcessingException($"Cannot evaluate the base interface type for the message handler {handlerType.FullName}.");
+            }
+
+            if (!messageType.GetInterfaces().Contains(handlerTargetType))
+            {
+                throw new MessageProcessingException($"The message handler type {handlerType.FullName} is not expected to handler the message with the type ${messageType.FullName}.");
+            }
+
+            this.registry.AddTransient(handlerStubType, handlerType);
         }
 
         protected override IEnumerable<IMessageHandler> ResolveHandler(Type messageType)
         {
-            throw new NotImplementedException();
+            if (registrations.TryGetValue(messageType, out List<Type> handlerTypes) &&
+                handlerTypes?.Count > 0)
+            {
+                var ret = new List<IMessageHandler>();
+                foreach(var handlerType in handlerTypes.Distinct())
+                {
+                    var (handlerStubType, __) = EvaluateMessageHandlerStub(handlerType);
+                    this.provider.GetServices(handlerStubType)
+                        .ToList()
+                        .ForEach(service => ret.Add(service as IMessageHandler));
+                }
+
+                return ret;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -39,7 +69,17 @@ namespace Apworks.Integration.AspNetCore.Messaging
         /// <exception cref="NotImplementedException"></exception>
         private static (Type handlerStubType, Type handlerTargetType) EvaluateMessageHandlerStub(Type handlerType)
         {
-            throw new NotImplementedException();
+            var query = from it in handlerType.GetTypeInfo().GetInterfaces()
+                        let typeInfo = it.GetTypeInfo()
+                        where typeInfo.IsDefined(typeof(MessageHandlerStubAttribute))
+                        select new
+                        {
+                            HandlerStubType = it,
+                            HandlerTargetType = typeInfo.GetCustomAttribute<MessageHandlerStubAttribute>().TargetType
+                        };
+
+            var handlerStubInfo = query.FirstOrDefault();
+            return (handlerStubInfo?.HandlerStubType, handlerStubInfo?.HandlerTargetType);
         }
     }
 }
