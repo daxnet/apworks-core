@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Apworks.Events
 {
-    public class EventConsumer : MessageConsumer<IEventSubscriber, IEventHandler>, IEventConsumer
+    public class EventConsumer : MessageConsumer<IEventSubscriber>, IEventConsumer
     {
-        public EventConsumer(IEventSubscriber subscriber, IEnumerable<IEventHandler> handlers, string route = null) 
-            : base(subscriber, handlers, route)
+        public EventConsumer(IEventSubscriber subscriber, IMessageHandlerManager messageHandlerManager) 
+            : base(subscriber, messageHandlerManager)
         {
         }
     }

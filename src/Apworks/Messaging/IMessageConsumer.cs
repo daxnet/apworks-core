@@ -35,9 +35,8 @@ namespace Apworks.Messaging
     /// actions when there is any incoming messages.
     /// </summary>
     /// <seealso cref="System.IDisposable" />
-    public interface IMessageConsumer<TMessageSubscriber, TMessageHandler> : IDisposable
+    public interface IMessageConsumer<TMessageSubscriber> : IDisposable
         where TMessageSubscriber : IMessageSubscriber
-        where TMessageHandler : IMessageHandler
     {
         /// <summary>
         /// Gets the instance of <see cref="IMessageSubscriber"/> which subscribes
@@ -46,13 +45,14 @@ namespace Apworks.Messaging
         TMessageSubscriber Subscriber { get; }
 
         /// <summary>
-        /// Gets a list of handlers that can handle the messages subscribed
-        /// by the current subscriber.
+        /// Gets the message handler manager which manages all the instances of the registered
+        /// message handlers. Also provides the message handler instances to the current
+        /// message consumer.
         /// </summary>
         /// <value>
-        /// The handlers.
+        /// The message handler manager.
         /// </value>
-        IEnumerable<TMessageHandler> Handlers { get; }
+        IMessageHandlerManager MessageHandlerManager { get; }
 
         /// <summary>
         /// Start consume the messages by using the message handlers.

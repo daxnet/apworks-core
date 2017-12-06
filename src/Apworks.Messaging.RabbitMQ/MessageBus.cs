@@ -78,7 +78,7 @@ namespace Apworks.Messaging.RabbitMQ
         {
             var messageBody = this.messageSerializer.Serialize(message);
             channel.BasicPublish(this.exchangeName,
-                string.Empty,
+                message.GetType().FullName,
                 null,
                 messageBody);
             this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));
@@ -101,7 +101,7 @@ namespace Apworks.Messaging.RabbitMQ
         {
             var messageBody = await this.messageSerializer.SerializeAsync(message, cancellationToken);
             channel.BasicPublish(this.exchangeName,
-                string.Empty,
+                message.GetType().FullName,
                 null,
                 messageBody);
             this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));

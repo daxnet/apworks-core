@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using Apworks.Messaging;
 
 namespace Apworks.Integration.AspNetCore.Configuration
 {
@@ -28,7 +29,7 @@ namespace Apworks.Integration.AspNetCore.Configuration
     internal sealed class EventConsumerConfigurator : EventConsumerConfigurator<EventConsumer>
     {
         public EventConsumerConfigurator(IConfigurator context, ServiceLifetime serviceLifetime, string route = null)
-            : base(context, x => new EventConsumer(x.GetService<IEventSubscriber>(), x.GetServices<IEventHandler>(), route), serviceLifetime)
+            : base(context, x => new EventConsumer(x.GetService<IEventSubscriber>(), x.GetService<IMessageHandlerManager>()), serviceLifetime)
         {
         }
     }

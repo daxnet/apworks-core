@@ -30,6 +30,7 @@ using Apworks.Integration.AspNetCore.Configuration;
 using Apworks.Integration.AspNetCore.DataServices;
 using Apworks.Integration.AspNetCore.Hal;
 using Apworks.KeyGeneration;
+using Apworks.Messaging;
 using Apworks.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -202,9 +203,9 @@ namespace Apworks.Integration.AspNetCore
             return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
         }
 
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IApworksConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
+        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IApworksConfigurator configurator, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
         {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
+            return new CommandConsumerConfigurator(configurator, serviceLifetime);
         }
         #endregion
 
@@ -357,9 +358,9 @@ namespace Apworks.Integration.AspNetCore
             return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
         }
 
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IDomainRepositoryConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
+        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IDomainRepositoryConfigurator configurator, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
         {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
+            return new CommandConsumerConfigurator(configurator, serviceLifetime);
         }
         #endregion
 
@@ -499,9 +500,9 @@ namespace Apworks.Integration.AspNetCore
             return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
         }
 
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IEventStoreConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
+        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IEventStoreConfigurator configurator, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
         {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
+            return new CommandConsumerConfigurator(configurator, serviceLifetime);
         }
         #endregion
 
@@ -633,9 +634,9 @@ namespace Apworks.Integration.AspNetCore
             return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
         }
 
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IRepositoryConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
+        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IRepositoryConfigurator configurator, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
         {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
+            return new CommandConsumerConfigurator(configurator, serviceLifetime);
         }
         #endregion
 
@@ -767,9 +768,9 @@ namespace Apworks.Integration.AspNetCore
             return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
         }
 
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IKeyGeneratorConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
+        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IKeyGeneratorConfigurator configurator, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
         {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
+            return new CommandConsumerConfigurator(configurator, serviceLifetime);
         }
         #endregion
 
@@ -875,9 +876,9 @@ namespace Apworks.Integration.AspNetCore
             return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
         }
 
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IHalSupportConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
+        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IHalSupportConfigurator configurator, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
         {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
+            return new CommandConsumerConfigurator(configurator, serviceLifetime);
         }
         #endregion
 
@@ -1026,9 +1027,9 @@ namespace Apworks.Integration.AspNetCore
             return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
         }
 
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this ICommandSubscriberConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
+        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this ICommandSubscriberConfigurator configurator, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
         {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
+            return new CommandConsumerConfigurator(configurator, serviceLifetime);
         }
 
         public static IEventBusConfigurator WithEventBus<TEventBus>(this ICommandSubscriberConfigurator configurator, TEventBus eventBus, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)

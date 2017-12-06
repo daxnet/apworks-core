@@ -32,8 +32,8 @@ namespace Apworks.Commands
     /// Represents that the implemented classes are the command consumers which subscribes to the
     /// command buses and handles the commands by using command handlers.
     /// </summary>
-    /// <seealso cref="Apworks.Messaging.IMessageConsumer{Apworks.Commands.ICommandSubscriber, Apworks.Commands.ICommandHandler}" />
-    public interface ICommandConsumer : IMessageConsumer<ICommandSubscriber, ICommandHandler>
+    /// <seealso cref="Apworks.Messaging.IMessageConsumer{Apworks.Commands.ICommandSubscriber}" />
+    public interface ICommandConsumer : IMessageConsumer<ICommandSubscriber>
     {
     }
 }

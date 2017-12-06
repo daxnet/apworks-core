@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Apworks.Commands
 {
-    public class CommandConsumer : MessageConsumer<ICommandSubscriber, ICommandHandler>, ICommandConsumer
+    public class CommandConsumer : MessageConsumer<ICommandSubscriber>, ICommandConsumer
     {
-        public CommandConsumer(ICommandSubscriber subscriber, IEnumerable<ICommandHandler> handlers, string route = null) 
-            : base(subscriber, handlers, route)
+        public CommandConsumer(ICommandSubscriber subscriber, IMessageHandlerManager messageHandlerManager) 
+            : base(subscriber, messageHandlerManager)
         {
         }
     }

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
+using Apworks.Messaging;
 
 namespace Apworks.Integration.AspNetCore.Configuration
 {
@@ -23,8 +24,8 @@ namespace Apworks.Integration.AspNetCore.Configuration
 
     internal sealed class CommandConsumerConfigurator : CommandConsumerConfigurator<CommandConsumer>
     {
-        public CommandConsumerConfigurator(IConfigurator context, ServiceLifetime serviceLifetime, string route = null)
-            : base(context, x => new CommandConsumer(x.GetService<ICommandSubscriber>(), x.GetServices<ICommandHandler>(), route), serviceLifetime)
+        public CommandConsumerConfigurator(IConfigurator context, ServiceLifetime serviceLifetime)
+            : base(context, x => new CommandConsumer(x.GetService<ICommandSubscriber>(), x.GetService<IMessageHandlerManager>()), serviceLifetime)
         { }
     }
 }

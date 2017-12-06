@@ -7,20 +7,17 @@ using System.Threading.Tasks;
 
 namespace Apworks.Messaging
 {
-    public abstract class MessageConsumer<TMessageSubscriber, TMessageHandler> : DisposableObject, IMessageConsumer<TMessageSubscriber, TMessageHandler>
+    public abstract class MessageConsumer<TMessageSubscriber> : DisposableObject, IMessageConsumer<TMessageSubscriber>
         where TMessageSubscriber : IMessageSubscriber
-        where TMessageHandler : IMessageHandler
     {
         private readonly TMessageSubscriber subscriber;
-        private readonly IEnumerable<TMessageHandler> handlers;
-        private readonly string route;
+        private readonly IMessageHandlerManager messageHandlerManager;
         private bool disposed;
 
-        protected MessageConsumer(TMessageSubscriber subscriber, IEnumerable<TMessageHandler> handlers, string route = null)
+        protected MessageConsumer(TMessageSubscriber subscriber, IMessageHandlerManager messageHandlerManager)
         {
             this.subscriber = subscriber;
-            this.handlers = handlers;
-            this.route = route;
+            this.messageHandlerManager = messageHandlerManager;
 
             this.subscriber.MessageReceived += OnMessageReceived;
             this.subscriber.MessageAcknowledged += OnMessageAcknowledged;
@@ -28,10 +25,11 @@ namespace Apworks.Messaging
 
         protected virtual async void OnMessageReceived(object sender, MessageReceivedEventArgs e)
         {
-            if (this.handlers != null)
+            var messageType = e.Message.GetType();
+            if (this.messageHandlerManager != null)
             {
-                var messageType = e.Message.GetType();
-                foreach(var handler in this.handlers)
+                var handlers = this.messageHandlerManager.GetHandlersFor(messageType);
+                foreach(var handler in handlers)
                 {
                     if (handler.CanHandle(messageType))
                     {
@@ -48,7 +46,7 @@ namespace Apworks.Messaging
 
         public TMessageSubscriber Subscriber => subscriber;
 
-        public IEnumerable<TMessageHandler> Handlers => handlers;
+        public IMessageHandlerManager MessageHandlerManager => this.messageHandlerManager;
 
         protected override void Dispose(bool disposing)
         {

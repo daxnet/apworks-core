@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Apworks.Events
 {
-    [MessageHandlerStub(typeof(IDomainEvent))]
+    [MessageHandlerStub(typeof(IDomainEvent), 1)]
     public interface IDomainEventHandler : IEventHandler<IDomainEvent>
     {
     }
