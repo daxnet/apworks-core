@@ -44,12 +44,18 @@ namespace Apworks.Integration.AspNetCore.Messaging
             {
                 var serviceProvider = this.registry.BuildServiceProvider();
                 var ret = new List<IMessageHandler>();
+                var cachedHandlerStubType = new List<Type>();
                 foreach(var handlerType in handlerTypes.Distinct())
                 {
                     var (handlerStubType, __) = EvaluateMessageHandlerStub(handlerType);
-                    serviceProvider.GetServices(handlerStubType)
-                        .ToList()
-                        .ForEach(service => ret.Add(service as IMessageHandler));
+                    if (!cachedHandlerStubType.Contains(handlerStubType))
+                    {
+                        serviceProvider.GetServices(handlerStubType)
+                            .ToList()
+                            .ForEach(service => 
+                                ret.Add(service as IMessageHandler));
+                        cachedHandlerStubType.Add(handlerStubType);
+                    }
                 }
 
                 return ret;
@@ -71,10 +77,12 @@ namespace Apworks.Integration.AspNetCore.Messaging
             var query = from it in handlerType.GetTypeInfo().GetInterfaces()
                         let typeInfo = it.GetTypeInfo()
                         where typeInfo.IsDefined(typeof(MessageHandlerStubAttribute))
+                        let messageHandlerStubAttribute = typeInfo.GetCustomAttribute<MessageHandlerStubAttribute>()
+                        orderby messageHandlerStubAttribute.Priority descending
                         select new
                         {
                             HandlerStubType = it,
-                            HandlerTargetType = typeInfo.GetCustomAttribute<MessageHandlerStubAttribute>().TargetType
+                            HandlerTargetType = messageHandlerStubAttribute.TargetType
                         };
 
             var handlerStubInfo = query.FirstOrDefault();
