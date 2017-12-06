@@ -11,12 +11,10 @@ namespace Apworks.Integration.AspNetCore.Messaging
     public sealed class MessageHandlerProvider : MemoryBasedMessageHandlerManager
     {
         private readonly IServiceCollection registry;
-        private readonly IServiceProvider provider;
 
         public MessageHandlerProvider(IServiceCollection registry)
         {
             this.registry = registry;
-            this.provider = registry.BuildServiceProvider();
         }
 
         public override void RegisterHandler(Type messageType, Type handlerType)
@@ -44,11 +42,12 @@ namespace Apworks.Integration.AspNetCore.Messaging
             if (registrations.TryGetValue(messageType, out List<Type> handlerTypes) &&
                 handlerTypes?.Count > 0)
             {
+                var serviceProvider = this.registry.BuildServiceProvider();
                 var ret = new List<IMessageHandler>();
                 foreach(var handlerType in handlerTypes.Distinct())
                 {
                     var (handlerStubType, __) = EvaluateMessageHandlerStub(handlerType);
-                    this.provider.GetServices(handlerStubType)
+                    serviceProvider.GetServices(handlerStubType)
                         .ToList()
                         .ForEach(service => ret.Add(service as IMessageHandler));
                 }
