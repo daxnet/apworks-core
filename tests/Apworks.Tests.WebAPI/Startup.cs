@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Apworks.Commands;
 using Apworks.Messaging.RabbitMQ;
 using RabbitMQ.Client;
@@ -17,12 +13,18 @@ using Apworks.Messaging;
 using Apworks.Integration.AspNetCore.Messaging;
 using Apworks.Tests.WebAPI.Commands;
 using Apworks.Tests.WebAPI.CommandHandlers;
+using Apworks.Events;
+using Apworks.EventStore.SQLServer;
+using Apworks.EventStore.AdoNet;
+using Apworks.Snapshots;
+using Apworks.Repositories;
 
 namespace Apworks.Tests.WebAPI
 {
     public class Startup
     {
         private const string RabbitExchangeName = "Apworks.Tests.WebAPI";
+        private const string EventStoreConnectionString = @"Server=localhost\sqlexpress; Database=ApworksTestWebAPIDatabase; Integrated Security=SSPI;";
         private readonly ILogger logger;
 
         public Startup(IConfiguration configuration, ILoggerFactory loggerFactory)
@@ -50,47 +52,51 @@ namespace Apworks.Tests.WebAPI
 
             var commandBus = new CommandBus(rabbitMQConnectionFactory, messageSerializer, RabbitExchangeName);
 
+            services.AddSingleton<IMessageHandlerManager>(commandHandlerManager);
             services.AddSingleton<ICommandSender>(commandBus);
             services.AddSingleton<ICommandSubscriber>(commandBus);
             services.AddSingleton<ICommandConsumer>(serviceProvider => new CommandConsumer(serviceProvider.GetRequiredService<ICommandSubscriber>(), commandHandlerManager));
 
-            // Hook the registered services to dump the information about the disposing.
-            var sp = services.BuildServiceProvider();
-            var commandSender = sp.GetService<ICommandSender>();
-            ((DisposableObject)commandSender).Disposed += (s1, e1) =>
-              {
-                  logger.LogInformation("Command Sender has disposed.");
-              };
+            var adonetConfig = new AdoNetEventStoreConfiguration(EventStoreConnectionString);
+            var objectSerializer = new ObjectJsonSerializer();
 
-            var commandSubscriber = sp.GetService<ICommandSubscriber>();
-            ((DisposableObject)commandSubscriber).Disposed += (s2, e2) =>
-             {
-                 logger.LogInformation("Command Subscriber has disposed.");
-             };
+            services.AddTransient<IEventStore>(serviceProvider => new SqlServerEventStore(adonetConfig, objectSerializer));
+            services.AddTransient<IEventPublisher>(serviceProvider => new EventBus(rabbitMQConnectionFactory, messageSerializer, RabbitExchangeName));
+            services.AddSingleton<ISnapshotProvider, SuppressedSnapshotProvider>();
 
-            var commandConsumer = sp.GetService<ICommandConsumer>();
-            ((DisposableObject)commandConsumer).Disposed += (s2, e2) =>
-            {
-                logger.LogInformation("Command Consumer has disposed.");
-            };
+            services.AddTransient<IDomainRepository, EventSourcingDomainRepositoryWithLogging>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
         {
             var applicationServices = app.ApplicationServices;
+
+            // Hook the registered services to dump the information about the disposing.
+            var commandSender = applicationServices.GetRequiredService<ICommandSender>();
+            ((DisposableObject)commandSender).Disposed += (s1, e1) =>
+            {
+                logger.LogInformation("Command Sender has disposed.");
+            };
+
+            var commandSubscriber = applicationServices.GetRequiredService<ICommandSubscriber>();
+            ((DisposableObject)commandSubscriber).Disposed += (s2, e2) =>
+            {
+                logger.LogInformation("Command Subscriber has disposed.");
+            };
+
             var commandConsumer = applicationServices.GetRequiredService<ICommandConsumer>();
+            ((DisposableObject)commandConsumer).Disposed += (s3, e3) =>
+            {
+                logger.LogInformation("Command Consumer has disposed.");
+            };
 
             commandConsumer.Consume();
 
             lifetime.ApplicationStopping.Register(() =>
             {
-                var commandSender = app.ApplicationServices.GetRequiredService<ICommandSender>();
                 commandSender.Dispose();
-
-                var commandSubscriber = app.ApplicationServices.GetRequiredService<ICommandSubscriber>();
                 commandSubscriber.Dispose();
-
                 commandConsumer.Dispose();
             });
 
