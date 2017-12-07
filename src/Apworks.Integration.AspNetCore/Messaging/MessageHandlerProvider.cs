@@ -11,10 +11,20 @@ namespace Apworks.Integration.AspNetCore.Messaging
     public sealed class MessageHandlerProvider : MemoryBasedMessageHandlerManager
     {
         private readonly IServiceCollection registry;
+        private readonly Func<IServiceCollection, IServiceProvider> serviceProviderFactory;
 
-        public MessageHandlerProvider(IServiceCollection registry)
+        public MessageHandlerProvider(IServiceCollection registry,
+            Func<IServiceCollection, IServiceProvider> serviceProviderFactory = null)
         {
             this.registry = registry;
+            if (serviceProviderFactory == null)
+            {
+                this.serviceProviderFactory = sc => registry.BuildServiceProvider();
+            }
+            else
+            {
+                this.serviceProviderFactory = serviceProviderFactory;
+            }
         }
 
         public override void RegisterHandler(Type messageType, Type handlerType)
@@ -42,7 +52,7 @@ namespace Apworks.Integration.AspNetCore.Messaging
             if (registrations.TryGetValue(messageType, out List<Type> handlerTypes) &&
                 handlerTypes?.Count > 0)
             {
-                var serviceProvider = this.registry.BuildServiceProvider();
+                var serviceProvider = this.serviceProviderFactory(this.registry);
                 var ret = new List<IMessageHandler>();
                 var cachedHandlerStubType = new List<Type>();
                 foreach(var handlerType in handlerTypes.Distinct())
