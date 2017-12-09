@@ -47,15 +47,15 @@ namespace Apworks.Tests.WebAPI
             var rabbitMQConnectionFactory = new ConnectionFactory() { HostName = "localhost" };
             var messageSerializer = new MessageJsonSerializer();
 
-            var commandHandlerManager = new MessageHandlerProvider(services, sc => sc.BuildServiceProvider());
-            commandHandlerManager.RegisterHandler<CreateCustomerCommand, CreateCustomerCommandHandler>();
+            var commandHandlerExecutionContext = new ServiceProviderMessageHandlerExecutionContext(services, sc => sc.BuildServiceProvider());
+            commandHandlerExecutionContext.RegisterHandler<CreateCustomerCommand, CreateCustomerCommandHandler>();
 
             var commandBus = new CommandBus(rabbitMQConnectionFactory, messageSerializer, RabbitExchangeName);
 
-            services.AddSingleton<IMessageHandlerManager>(commandHandlerManager);
+            services.AddSingleton<IMessageHandlerExecutionContext>(commandHandlerExecutionContext);
             services.AddSingleton<ICommandSender>(commandBus);
             services.AddSingleton<ICommandSubscriber>(commandBus);
-            services.AddSingleton<ICommandConsumer>(serviceProvider => new CommandConsumer(serviceProvider.GetRequiredService<ICommandSubscriber>(), commandHandlerManager));
+            services.AddSingleton<ICommandConsumer>(serviceProvider => new CommandConsumer(serviceProvider.GetRequiredService<ICommandSubscriber>(), commandHandlerExecutionContext));
 
             var adonetConfig = new AdoNetEventStoreConfiguration(EventStoreConnectionString);
             var objectSerializer = new ObjectJsonSerializer();

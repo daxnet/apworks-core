@@ -1,19 +1,25 @@
 ﻿using Apworks.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Apworks.Integration.AspNetCore.Messaging
 {
-    public sealed class MessageHandlerProvider : MemoryBasedMessageHandlerManager
+    public sealed class ServiceProviderMessageHandlerExecutionContext : MemoryBasedMessageHandlerExecutionContext
     {
+        private readonly ConcurrentDictionary<Type, List<Type>> messageHandlerStubTypeMapping =
+            new ConcurrentDictionary<Type, List<Type>>();
+
         private readonly IServiceCollection registry;
         private readonly Func<IServiceCollection, IServiceProvider> serviceProviderFactory;
 
-        public MessageHandlerProvider(IServiceCollection registry,
+        public ServiceProviderMessageHandlerExecutionContext(IServiceCollection registry,
             Func<IServiceCollection, IServiceProvider> serviceProviderFactory = null)
         {
             this.registry = registry;
@@ -44,34 +50,60 @@ namespace Apworks.Integration.AspNetCore.Messaging
                 throw new MessageProcessingException($"The message handler type {handlerType.FullName} is not expected to handler the message with the type ${messageType.FullName}.");
             }
 
+            // Registers the relationship between the message type and its handler stub type.
+            if (messageHandlerStubTypeMapping.TryGetValue(messageType, out List<Type> handlerStubTypeList))
+            {
+                if (handlerStubTypeList != null)
+                {
+                    if (!handlerStubTypeList.Contains(handlerStubType))
+                    {
+                        messageHandlerStubTypeMapping[messageType].Add(handlerStubType);
+                    }
+                }
+                else
+                {
+                    messageHandlerStubTypeMapping[messageType] = new List<Type> { handlerStubType };
+                }
+            }
+            else
+            {
+                messageHandlerStubTypeMapping.TryAdd(messageType, new List<Type> { handlerStubType });
+            }
+
             this.registry.AddTransient(handlerStubType, handlerType);
         }
 
-        protected override IEnumerable<IMessageHandler> ResolveHandler(Type messageType)
+        public override async Task HandleMessageAsync(IMessage message, 
+            CancellationToken cancellationToken = default(CancellationToken))
         {
+            var messageType = message.GetType();
+
+            // Checks if the handlers of the current message have already been registered.
             if (registrations.TryGetValue(messageType, out List<Type> handlerTypes) &&
                 handlerTypes?.Count > 0)
             {
                 var serviceProvider = this.serviceProviderFactory(this.registry);
-                var ret = new List<IMessageHandler>();
-                var cachedHandlerStubType = new List<Type>();
-                foreach(var handlerType in handlerTypes.Distinct())
+
+                // Creates the child scope for the message handlers so that the dependencies can be disposed
+                // after the message has been handled.
+                using (var childScope = serviceProvider.CreateScope())
                 {
-                    var (handlerStubType, __) = EvaluateMessageHandlerStub(handlerType);
-                    if (!cachedHandlerStubType.Contains(handlerStubType))
+                    if (messageHandlerStubTypeMapping.TryGetValue(messageType, out List<Type> handlerStubTypes))
                     {
-                        serviceProvider.GetServices(handlerStubType)
-                            .ToList()
-                            .ForEach(service => 
-                                ret.Add(service as IMessageHandler));
-                        cachedHandlerStubType.Add(handlerStubType);
+                        foreach(var handlerStubType in handlerStubTypes)
+                        {
+                            var messageHandlers = childScope.ServiceProvider.GetServices(handlerStubType);
+                            foreach(var obj in messageHandlers)
+                            {
+                                if (obj is IMessageHandler messageHandler && messageHandler.CanHandle(messageType))
+                                {
+                                    await messageHandler.HandleAsync(message, cancellationToken);
+                                }
+                            }
+                        }
                     }
                 }
-
-                return ret;
             }
-
-            return null;
         }
 
         /// <summary>

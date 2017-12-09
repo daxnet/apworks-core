@@ -25,7 +25,7 @@ namespace Apworks.Integration.AspNetCore.Configuration
     internal sealed class CommandConsumerConfigurator : CommandConsumerConfigurator<CommandConsumer>
     {
         public CommandConsumerConfigurator(IConfigurator context, ServiceLifetime serviceLifetime)
-            : base(context, x => new CommandConsumer(x.GetService<ICommandSubscriber>(), x.GetService<IMessageHandlerManager>()), serviceLifetime)
+            : base(context, x => new CommandConsumer(x.GetService<ICommandSubscriber>(), x.GetService<IMessageHandlerExecutionContext>()), serviceLifetime)
         { }
     }
 }

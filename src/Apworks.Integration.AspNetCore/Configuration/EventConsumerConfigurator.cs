@@ -29,7 +29,7 @@ namespace Apworks.Integration.AspNetCore.Configuration
     internal sealed class EventConsumerConfigurator : EventConsumerConfigurator<EventConsumer>
     {
         public EventConsumerConfigurator(IConfigurator context, ServiceLifetime serviceLifetime, string route = null)
-            : base(context, x => new EventConsumer(x.GetService<IEventSubscriber>(), x.GetService<IMessageHandlerManager>()), serviceLifetime)
+            : base(context, x => new EventConsumer(x.GetService<IEventSubscriber>(), x.GetService<IMessageHandlerExecutionContext>()), serviceLifetime)
         {
         }
     }

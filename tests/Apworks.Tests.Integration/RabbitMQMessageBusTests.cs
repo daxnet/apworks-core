@@ -53,7 +53,7 @@ namespace Apworks.Tests.Integration
             var names = new List<string>();
             serviceCollection.AddTransient(x => names);
 
-            var messageHandlerProvider = new MessageHandlerProvider(serviceCollection);
+            var messageHandlerProvider = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
             messageHandlerProvider.RegisterHandler<NameChangedEvent, NameChangedEventHandler>();
 
             using (var eventPublisher = new EventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
@@ -79,7 +79,7 @@ namespace Apworks.Tests.Integration
             var names = new List<string>();
             serviceCollection.AddTransient(x => names);
 
-            var messageHandlerProvider = new MessageHandlerProvider(serviceCollection);
+            var messageHandlerProvider = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
             messageHandlerProvider.RegisterHandler<NameChangedEvent, NameChangedEventHandler>();
             messageHandlerProvider.RegisterHandler<NameChangedEvent, NameChangedEventHandler2>();
 

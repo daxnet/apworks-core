@@ -9,7 +9,7 @@ namespace Apworks.Commands
 {
     public class CommandConsumer : MessageConsumer<ICommandSubscriber>, ICommandConsumer
     {
-        public CommandConsumer(ICommandSubscriber subscriber, IMessageHandlerManager messageHandlerManager) 
+        public CommandConsumer(ICommandSubscriber subscriber, IMessageHandlerExecutionContext messageHandlerManager) 
             : base(subscriber, messageHandlerManager)
         {
         }

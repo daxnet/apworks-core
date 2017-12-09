@@ -9,7 +9,7 @@ namespace Apworks.Events
 {
     public class EventConsumer : MessageConsumer<IEventSubscriber>, IEventConsumer
     {
-        public EventConsumer(IEventSubscriber subscriber, IMessageHandlerManager messageHandlerManager) 
+        public EventConsumer(IEventSubscriber subscriber, IMessageHandlerExecutionContext messageHandlerManager) 
             : base(subscriber, messageHandlerManager)
         {
         }

@@ -11,10 +11,10 @@ namespace Apworks.Messaging
         where TMessageSubscriber : IMessageSubscriber
     {
         private readonly TMessageSubscriber subscriber;
-        private readonly IMessageHandlerManager messageHandlerManager;
+        private readonly IMessageHandlerExecutionContext messageHandlerManager;
         private bool disposed;
 
-        protected MessageConsumer(TMessageSubscriber subscriber, IMessageHandlerManager messageHandlerManager)
+        protected MessageConsumer(TMessageSubscriber subscriber, IMessageHandlerExecutionContext messageHandlerManager)
         {
             this.subscriber = subscriber;
             this.messageHandlerManager = messageHandlerManager;
@@ -23,21 +23,8 @@ namespace Apworks.Messaging
             this.subscriber.MessageAcknowledged += OnMessageAcknowledged;
         }
 
-        protected virtual async void OnMessageReceived(object sender, MessageReceivedEventArgs e)
-        {
-            var messageType = e.Message.GetType();
-            if (this.messageHandlerManager != null)
-            {
-                var handlers = this.messageHandlerManager.GetHandlersFor(messageType);
-                foreach(var handler in handlers)
-                {
-                    if (handler.CanHandle(messageType))
-                    {
-                        await handler.HandleAsync(e.Message);
-                    }
-                }
-            }
-        }
+        protected virtual async void OnMessageReceived(object sender, MessageReceivedEventArgs e) 
+            => await this.messageHandlerManager?.HandleMessageAsync(e.Message);
 
         protected virtual async void OnMessageAcknowledged(object sender, MessageAcknowledgedEventArgs e)
         {
@@ -46,7 +33,7 @@ namespace Apworks.Messaging
 
         public TMessageSubscriber Subscriber => subscriber;
 
-        public IMessageHandlerManager MessageHandlerManager => this.messageHandlerManager;
+        public IMessageHandlerExecutionContext MessageHandlerManager => this.messageHandlerManager;
 
         protected override void Dispose(bool disposing)
         {

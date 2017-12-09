@@ -52,7 +52,7 @@ namespace Apworks.Messaging
         /// <value>
         /// The message handler manager.
         /// </value>
-        IMessageHandlerManager MessageHandlerManager { get; }
+        IMessageHandlerExecutionContext MessageHandlerManager { get; }
 
         /// <summary>
         /// Start consume the messages by using the message handlers.
