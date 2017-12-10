@@ -48,20 +48,21 @@ namespace Apworks.Tests.WebAPI
             var messageSerializer = new MessageJsonSerializer();
 
             var commandHandlerExecutionContext = new ServiceProviderMessageHandlerExecutionContext(services, sc => sc.BuildServiceProvider());
-            commandHandlerExecutionContext.RegisterHandler<CreateCustomerCommand, CreateCustomerCommandHandler>();
+            var eventHandlerExecutionContext = new ServiceProviderMessageHandlerExecutionContext(services, sc => sc.BuildServiceProvider());
 
-            var commandBus = new RabbitCommandBus(rabbitMQConnectionFactory, messageSerializer, RabbitExchangeName);
+            var commandBus = new RabbitCommandBus(rabbitMQConnectionFactory, messageSerializer, commandHandlerExecutionContext, RabbitExchangeName);
+            commandBus.Subscribe<CreateCustomerCommand, CreateCustomerCommandHandler>();
+            commandBus.Subscribe<PingCommand, PingCommandHandler>();
 
             services.AddSingleton<IMessageHandlerExecutionContext>(commandHandlerExecutionContext);
             services.AddSingleton<ICommandSender>(commandBus);
             services.AddSingleton<ICommandSubscriber>(commandBus);
-            services.AddSingleton<ICommandConsumer>(serviceProvider => new CommandConsumer(serviceProvider.GetRequiredService<ICommandSubscriber>(), commandHandlerExecutionContext));
 
             var adonetConfig = new AdoNetEventStoreConfiguration(EventStoreConnectionString);
             var objectSerializer = new ObjectJsonSerializer();
 
             services.AddTransient<IEventStore>(serviceProvider => new SqlServerEventStore(adonetConfig, objectSerializer));
-            services.AddTransient<IEventPublisher>(serviceProvider => new RabbitEventBus(rabbitMQConnectionFactory, messageSerializer, RabbitExchangeName));
+            services.AddTransient<IEventPublisher>(serviceProvider => new RabbitEventBus(rabbitMQConnectionFactory, messageSerializer, eventHandlerExecutionContext, RabbitExchangeName));
             services.AddSingleton<ISnapshotProvider, SuppressedSnapshotProvider>();
 
             services.AddTransient<IDomainRepository, EventSourcingDomainRepositoryWithLogging>();
@@ -85,19 +86,10 @@ namespace Apworks.Tests.WebAPI
                 logger.LogInformation("Command Subscriber has disposed.");
             };
 
-            var commandConsumer = applicationServices.GetRequiredService<ICommandConsumer>();
-            ((DisposableObject)commandConsumer).Disposed += (s3, e3) =>
-            {
-                logger.LogInformation("Command Consumer has disposed.");
-            };
-
-            commandConsumer.Consume();
-
             lifetime.ApplicationStopping.Register(() =>
             {
                 commandSender.Dispose();
                 commandSubscriber.Dispose();
-                commandConsumer.Dispose();
             });
 
             if (env.IsDevelopment())

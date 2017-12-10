@@ -18,33 +18,34 @@ namespace Apworks.Tests.Integration
         private readonly IMessageSerializer serializer = new MessageJsonSerializer();
         private readonly ConnectionFactory connectionFactory = new ConnectionFactory() { HostName = "localhost" };
 
-        [Fact]
-        public void PublishMessageTest()
-        {
-            int numOfMessagesReceived = 0;
-            bool finished = false;
+        //[Fact]
+        //public void PublishMessageTest()
+        //{
+        //    int numOfMessagesReceived = 0;
+        //    bool finished = false;
 
-            using (var bus = new RabbitMessageBus(connectionFactory,
-                serializer, 
-                "RabbitMQMessageBusTests.PublishMessageTest", queueName: "RabbitMQMessageBusTests.PublishMessageTestQueue"))
-            {
-                // When any message received, increase the counter
-                bus.MessageReceived += (x, y) => numOfMessagesReceived++;
+        //    using (var bus = new RabbitMessageBus(connectionFactory,
+        //        serializer, 
+        //        "RabbitMQMessageBusTests.PublishMessageTest", queueName: "RabbitMQMessageBusTests.PublishMessageTestQueue"))
+        //    {
+        //        // When any message received, increase the counter
+        //        bus.MessageReceived += (x, y) => numOfMessagesReceived++;
 
-                // When any message acknowledged, stop waiting the do the assertion.
-                bus.MessageAcknowledged += (x, y) => finished = true;
+        //        // When any message acknowledged, stop waiting the do the assertion.
+        //        bus.MessageAcknowledged += (x, y) => finished = true;
 
-                bus.Subscribe();
+        //        bus.Subscribe();
 
-                var event1 = new NameChangedEvent("daxnet");
-                bus.Publish(event1);
+        //        var event1 = new NameChangedEvent("daxnet");
+        //        bus.Publish(event1);
 
-                while (!finished) ;
-            }
+        //        while (!finished) ;
+        //    }
 
-            Assert.Equal(1, numOfMessagesReceived);
-        }
+        //    Assert.Equal(1, numOfMessagesReceived);
+        //}
 
+        /*
         [Fact]
         public async Task SimpleEventHandlerTest()
         {
@@ -98,5 +99,6 @@ namespace Apworks.Tests.Integration
                 Assert.Equal("daxnet2", names[1]);
             }
         }
+        */
     }
 }

@@ -36,7 +36,9 @@ namespace Apworks.Messaging
     /// <seealso cref="System.IDisposable" />
     public interface IMessageSubscriber : IDisposable
     {
-        void Subscribe();
+        void Subscribe<TMessage, TMessageHandler>()
+            where TMessage : IMessage
+            where TMessageHandler : IMessageHandler<TMessage>;
 
         /// <summary>
         /// Occurs when there is any incoming messages.

@@ -12,20 +12,22 @@ namespace Apworks.Messaging.RabbitMQ
     {
         public RabbitCommandBus(string uri, 
             IMessageSerializer messageSerializer, 
+            IMessageHandlerExecutionContext messageHandlerExecutionContext,
             string exchangeName, 
             string exchangeType = ExchangeType.Fanout, 
             string queueName = null,
             bool autoAck = false)
-            : base(uri, messageSerializer, exchangeName, exchangeType, queueName, autoAck)
+            : base(uri, messageSerializer, messageHandlerExecutionContext, exchangeName, exchangeType, queueName, autoAck)
         { }
 
         public RabbitCommandBus(IConnectionFactory connectionFactory, 
-            IMessageSerializer messageSerializer, 
+            IMessageSerializer messageSerializer,
+            IMessageHandlerExecutionContext messageHandlerExecutionContext,
             string exchangeName, 
             string exchangeType = ExchangeType.Fanout, 
             string queueName = null,
             bool autoAck = false)
-            : base(connectionFactory, messageSerializer, exchangeName, exchangeType, queueName, autoAck)
+            : base(connectionFactory, messageSerializer, messageHandlerExecutionContext, exchangeName, exchangeType, queueName, autoAck)
         { }
     }
 }

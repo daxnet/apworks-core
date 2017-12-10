@@ -16,5 +16,15 @@ namespace Apworks.Messaging
         {
             Utils.ConcurrentDictionarySafeRegister(messageType, handlerType, this.registrations);
         }
+
+        public override bool HandlerRegistered(Type messageType, Type handlerType)
+        {
+            if (this.registrations.TryGetValue(messageType, out List<Type> handlerTypeList))
+            {
+                return handlerTypeList != null && handlerTypeList.Contains(handlerType);
+            }
+
+            return false;
+        }
     }
 }

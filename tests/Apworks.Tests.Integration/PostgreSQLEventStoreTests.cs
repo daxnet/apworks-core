@@ -109,8 +109,8 @@ namespace Apworks.Tests.Integration
 
             var events = store.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId, 2).ToList();
             Assert.Equal(2, events.Count);
-            Assert.IsType(typeof(TitleChangedEvent), events[0]);
-            Assert.IsType(typeof(RegisteredEvent), events[1]);
+            Assert.IsType<TitleChangedEvent>(events[0]);
+            Assert.IsType<RegisteredEvent>(events[1]);
         }
 
         [Fact]
@@ -139,8 +139,8 @@ namespace Apworks.Tests.Integration
 
             var events = store.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId, sequenceMax: 2).ToList();
             Assert.Equal(2, events.Count);
-            Assert.IsType(typeof(NameChangedEvent), events[0]);
-            Assert.IsType(typeof(TitleChangedEvent), events[1]);
+            Assert.IsType<NameChangedEvent>(events[0]);
+            Assert.IsType<TitleChangedEvent>(events[1]);
         }
 
         [Fact]
@@ -169,9 +169,9 @@ namespace Apworks.Tests.Integration
 
             var events = store.Load<Guid>(typeof(Employee).AssemblyQualifiedName, aggregateRootId, 1, 3).ToList();
             Assert.Equal(3, events.Count);
-            Assert.IsType(typeof(NameChangedEvent), events[0]);
-            Assert.IsType(typeof(TitleChangedEvent), events[1]);
-            Assert.IsType(typeof(RegisteredEvent), events[2]);
+            Assert.IsType<NameChangedEvent>(events[0]);
+            Assert.IsType<TitleChangedEvent>(events[1]);
+            Assert.IsType<RegisteredEvent>(events[2]);
         }
     }
 }

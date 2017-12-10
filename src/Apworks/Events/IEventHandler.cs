@@ -11,7 +11,6 @@ namespace Apworks.Events
     /// Represents that the implemented classes are event handlers.
     /// </summary>
     /// <seealso cref="Apworks.Messaging.IMessageHandler" />
-    [MessageHandlerStub(typeof(IEvent))]
     public interface IEventHandler : IMessageHandler
     { }
 

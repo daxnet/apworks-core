@@ -29,6 +29,13 @@ namespace Apworks.Messaging
             this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));
         }
 
+        public virtual async Task PublishAsync<TMessage>(TMessage message,
+            CancellationToken cancellationToken = default(CancellationToken)) where TMessage : IMessage
+        {
+            await this.DoPublishAsync(message, cancellationToken);
+            this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));
+        }
+
         public virtual void PublishAll(IEnumerable<IMessage> messages)
             => messages.ToList().ForEach(m => Publish(m));
 
@@ -41,17 +48,9 @@ namespace Apworks.Messaging
             }
         }
 
-        public virtual async Task PublishAsync<TMessage>(TMessage message, 
-            CancellationToken cancellationToken = default(CancellationToken)) where TMessage : IMessage
-        {
-            await this.DoPublishAsync(message, cancellationToken);
-            this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));
-        }
-
-        public void Subscribe()
-        {
-            throw new NotImplementedException();
-        }
+        public abstract void Subscribe<TMessage, TMessageHandler>()
+            where TMessage : IMessage
+            where TMessageHandler : IMessageHandler<TMessage>;
 
         public IMessageSerializer MessageSerializer => this.messageSerializer;
 

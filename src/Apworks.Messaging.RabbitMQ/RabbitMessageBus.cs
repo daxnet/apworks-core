@@ -15,19 +15,16 @@ namespace Apworks.Messaging.RabbitMQ
     /// <remarks>
     /// For more information about RabbitMQ, please refer to: https://www.rabbitmq.com.
     /// </remarks>
-    public class RabbitMessageBus : DisposableObject, IMessageBus
+    public class RabbitMessageBus : MessageBus
     {
         #region Fields
         private readonly IConnectionFactory connectionFactory;
-        private readonly IMessageSerializer messageSerializer;
         private readonly IConnection connection;
         private readonly IModel channel;
         private readonly string exchangeName;
         private readonly string queueName;
         private readonly string exchangeType;
         private readonly bool autoAck;
-
-        private bool subscribed;
         private bool disposed;
         #endregion
 
@@ -41,79 +38,70 @@ namespace Apworks.Messaging.RabbitMQ
         /// <param name="queueName"></param>
         /// <param name="autoAck"></param>
         public RabbitMessageBus(string uri, 
-            IMessageSerializer messageSerializer, 
+            IMessageSerializer messageSerializer,
+            IMessageHandlerExecutionContext messageHandlerExecutionContext,
             string exchangeName, 
             string exchangeType = ExchangeType.Fanout, 
             string queueName = null,
             bool autoAck = false)
-            : this(new ConnectionFactory { Uri = new Uri(uri) }, messageSerializer, exchangeName, exchangeType, queueName, autoAck)
+            : this(new ConnectionFactory { Uri = new Uri(uri) }, 
+                  messageSerializer, 
+                  messageHandlerExecutionContext,
+                  exchangeName, 
+                  exchangeType, 
+                  queueName, 
+                  autoAck)
         { }
 
         public RabbitMessageBus(IConnectionFactory connectionFactory, 
-            IMessageSerializer messageSerializer, 
+            IMessageSerializer messageSerializer,
+            IMessageHandlerExecutionContext messageHandlerExecutionContext,
             string exchangeName, 
             string exchangeType = ExchangeType.Fanout, 
             string queueName = null,
             bool autoAck = false)
+            : base(messageSerializer, messageHandlerExecutionContext)
         {
             // Initializes the local variables
             this.connectionFactory = connectionFactory;
-            this.messageSerializer = messageSerializer;
             this.connection = connectionFactory.CreateConnection();
             this.channel = connection.CreateModel();
             this.exchangeType = exchangeType;
             this.exchangeName = exchangeName;
             this.autoAck = autoAck;
 
-            // Declares the exchanges
+            // Declares the exchange
             this.channel.ExchangeDeclare(this.exchangeName, this.exchangeType);
 
+            // Initializes the consumer of the message queue
             this.queueName = this.InitializeMessageConsumer(queueName);
         }
 
-        public event EventHandler<MessagePublishedEventArgs> MessagePublished;
-        public event EventHandler<MessageReceivedEventArgs> MessageReceived;
-        public event EventHandler<MessageAcknowledgedEventArgs> MessageAcknowledged;
-
-        public void Publish<TMessage>(TMessage message) where TMessage : IMessage
+        protected override void DoPublish<TMessage>(TMessage message)
         {
-            var messageBody = this.messageSerializer.Serialize(message);
+            var messageBody = this.MessageSerializer.Serialize(message);
             channel.BasicPublish(this.exchangeName,
                 message.GetType().FullName,
                 null,
                 messageBody);
-            this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));
         }
 
-        public void PublishAll(IEnumerable<IMessage> messages)
+        protected override async Task DoPublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default(CancellationToken))
         {
-            messages.ToList().ForEach(m => this.Publish(m));
-        }
-
-        public async Task PublishAllAsync(IEnumerable<IMessage> messages, CancellationToken cancellationToken = default(CancellationToken))
-        {
-            foreach (var message in messages)
-            {
-                await this.PublishAsync(message, cancellationToken);
-            }
-        }
-
-        public async Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default(CancellationToken)) where TMessage : IMessage
-        {
-            var messageBody = await this.messageSerializer.SerializeAsync(message, cancellationToken);
+            var messageBody = await this.MessageSerializer.SerializeAsync(message, cancellationToken);
             channel.BasicPublish(this.exchangeName,
                 message.GetType().FullName,
                 null,
                 messageBody);
-            this.OnMessagePublished(new MessagePublishedEventArgs(message, this.messageSerializer));
         }
 
-        public void Subscribe()
+        public override void Subscribe<TMessage, TMessageHandler>()
         {
-            if (!this.subscribed)
+            if (!this.MessageHandlerExecutionContext.HandlerRegistered<TMessage, TMessageHandler>())
             {
-                this.channel.QueueBind(this.queueName, this.exchangeName, string.Empty);
-                this.subscribed = true;
+                this.MessageHandlerExecutionContext.RegisterHandler<TMessage, TMessageHandler>();
+
+                this.channel.QueueBind(this.queueName, this.exchangeName, typeof(TMessage).FullName);
             }
         }
 
@@ -149,37 +137,23 @@ namespace Apworks.Messaging.RabbitMQ
             }
 
             var consumer = new EventingBasicConsumer(this.channel);
-            consumer.Received += (model, eventArgument) =>
+            consumer.Received += async (model, eventArgument) =>
             {
                 var messageBody = eventArgument.Body;
-                var message = this.messageSerializer.Deserialize(messageBody);
-                this.OnMessageReceived(new MessageReceivedEventArgs(message, this.messageSerializer));
+                var message = this.MessageSerializer.Deserialize(messageBody);
+                this.OnMessageReceived(new MessageReceivedEventArgs(message, this.MessageSerializer));
+                await this.MessageHandlerExecutionContext.HandleMessageAsync(message);
                 if (!autoAck)
                 {
                     channel.BasicAck(eventArgument.DeliveryTag, false);
                 }
 
-                this.OnMessageAcknowledged(new MessageAcknowledgedEventArgs(message, this.messageSerializer, this.autoAck));
+                this.OnMessageAcknowledged(new MessageAcknowledgedEventArgs(message, this.MessageSerializer, this.autoAck));
             };
 
             this.channel.BasicConsume(localQueueName, autoAck: this.autoAck, consumer: consumer);
 
             return localQueueName;
-        }
-
-        private void OnMessagePublished(MessagePublishedEventArgs e)
-        {
-            this.MessagePublished?.Invoke(this, e);
-        }
-
-        private void OnMessageReceived(MessageReceivedEventArgs e)
-        {
-            this.MessageReceived?.Invoke(this, e);
-        }
-
-        private void OnMessageAcknowledged(MessageAcknowledgedEventArgs e)
-        {
-            this.MessageAcknowledged?.Invoke(this, e);
         }
     }
 }

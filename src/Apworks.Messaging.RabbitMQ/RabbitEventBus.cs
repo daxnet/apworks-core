@@ -11,21 +11,23 @@ namespace Apworks.Messaging.RabbitMQ
     public class RabbitEventBus : RabbitMessageBus, IEventBus
     {
         public RabbitEventBus(string uri, 
-            IMessageSerializer messageSerializer, 
+            IMessageSerializer messageSerializer,
+            IMessageHandlerExecutionContext messageHandlerExecutionContext,
             string exchangeName, 
             string exchangeType = ExchangeType.Fanout, 
             string queueName = null,
             bool autoAck = false)
-            : base(uri, messageSerializer, exchangeName, exchangeType, queueName, autoAck)
+            : base(uri, messageSerializer, messageHandlerExecutionContext, exchangeName, exchangeType, queueName, autoAck)
         { }
 
         public RabbitEventBus(IConnectionFactory connectionFactory, 
-            IMessageSerializer messageSerializer, 
+            IMessageSerializer messageSerializer,
+            IMessageHandlerExecutionContext messageHandlerExecutionContext,
             string exchangeName, 
             string exchangeType = ExchangeType.Fanout, 
             string queueName = null,
             bool autoAck = false)
-            : base(connectionFactory, messageSerializer, exchangeName, exchangeType, queueName, autoAck)
+            : base(connectionFactory, messageSerializer, messageHandlerExecutionContext, exchangeName, exchangeType, queueName, autoAck)
         { }
     }
 }

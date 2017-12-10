@@ -29,5 +29,12 @@ namespace Apworks.Tests.WebAPI.Controllers
             await this.commandSender.PublishAsync(new CreateCustomerCommand(name));
             return Ok();
         }
+
+        [HttpGet("ping")]
+        public async Task<IActionResult> Ping()
+        {
+            await this.commandSender.PublishAsync(new PingCommand());
+            return Ok();
+        }
     }
 }
