@@ -18,7 +18,7 @@ namespace Apworks.Tests
         [Fact]
         public void PublishMessageTest()
         {
-            var mb = new MessageBus(new MessageJsonSerializer());
+            var mb = new Messaging.Simple.MessageBus(new MessageJsonSerializer());
             int numOfMessagesReceived = 0;
             mb.MessageReceived += (x, y) => numOfMessagesReceived++;
             mb.Subscribe();
@@ -33,7 +33,7 @@ namespace Apworks.Tests
         [Fact]
         public void PublishMultipleMessagesTest()
         {
-            var mb = new MessageBus(new MessageJsonSerializer());
+            var mb = new Messaging.Simple.MessageBus(new MessageJsonSerializer());
             int numOfMessagesReceived = 0;
             mb.MessageReceived += (x, y) => numOfMessagesReceived++;
             mb.Subscribe();

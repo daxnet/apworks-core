@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Apworks.Messaging.RabbitMQ
 {
-    public class EventBus : MessageBus, IEventBus
+    public class RabbitEventBus : RabbitMessageBus, IEventBus
     {
-        public EventBus(string uri, 
+        public RabbitEventBus(string uri, 
             IMessageSerializer messageSerializer, 
             string exchangeName, 
             string exchangeType = ExchangeType.Fanout, 
@@ -19,7 +19,7 @@ namespace Apworks.Messaging.RabbitMQ
             : base(uri, messageSerializer, exchangeName, exchangeType, queueName, autoAck)
         { }
 
-        public EventBus(IConnectionFactory connectionFactory, 
+        public RabbitEventBus(IConnectionFactory connectionFactory, 
             IMessageSerializer messageSerializer, 
             string exchangeName, 
             string exchangeType = ExchangeType.Fanout, 

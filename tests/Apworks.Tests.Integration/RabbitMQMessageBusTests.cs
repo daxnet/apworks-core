@@ -24,7 +24,7 @@ namespace Apworks.Tests.Integration
             int numOfMessagesReceived = 0;
             bool finished = false;
 
-            using (var bus = new MessageBus(connectionFactory,
+            using (var bus = new RabbitMessageBus(connectionFactory,
                 serializer, 
                 "RabbitMQMessageBusTests.PublishMessageTest", queueName: "RabbitMQMessageBusTests.PublishMessageTestQueue"))
             {
@@ -56,8 +56,8 @@ namespace Apworks.Tests.Integration
             var messageHandlerProvider = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
             messageHandlerProvider.RegisterHandler<NameChangedEvent, NameChangedEventHandler>();
 
-            using (var eventPublisher = new EventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
-            using (var eventSubscriber = new EventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
+            using (var eventSubscriber = new RabbitEventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
             using (var eventConsumer = new EventConsumer(eventSubscriber, messageHandlerProvider))
             {
                 eventSubscriber.MessageAcknowledged += (x, y) => finished = true;
@@ -83,8 +83,8 @@ namespace Apworks.Tests.Integration
             messageHandlerProvider.RegisterHandler<NameChangedEvent, NameChangedEventHandler>();
             messageHandlerProvider.RegisterHandler<NameChangedEvent, NameChangedEventHandler2>();
 
-            using (var eventPublisher = new EventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
-            using (var eventSubscriber = new EventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
+            using (var eventSubscriber = new RabbitEventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
             using (var eventConsumer = new EventConsumer(eventSubscriber, messageHandlerProvider))
             {
                 eventSubscriber.MessageAcknowledged += (x, y) => finished = true;

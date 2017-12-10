@@ -38,7 +38,7 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void SaveAggregateRootTest()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
@@ -55,7 +55,7 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void LoadAggregateRootTest()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
@@ -75,7 +75,7 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void SaveAggregateRootAndSubscribeEventTest()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
@@ -99,7 +99,7 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void EventSequenceAfterSaveTest()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
@@ -120,7 +120,7 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void GetByVersionTest1()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
@@ -141,7 +141,7 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void GetByVersionTest2()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {

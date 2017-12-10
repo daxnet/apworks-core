@@ -50,7 +50,7 @@ namespace Apworks.Tests.WebAPI
             var commandHandlerExecutionContext = new ServiceProviderMessageHandlerExecutionContext(services, sc => sc.BuildServiceProvider());
             commandHandlerExecutionContext.RegisterHandler<CreateCustomerCommand, CreateCustomerCommandHandler>();
 
-            var commandBus = new CommandBus(rabbitMQConnectionFactory, messageSerializer, RabbitExchangeName);
+            var commandBus = new RabbitCommandBus(rabbitMQConnectionFactory, messageSerializer, RabbitExchangeName);
 
             services.AddSingleton<IMessageHandlerExecutionContext>(commandHandlerExecutionContext);
             services.AddSingleton<ICommandSender>(commandBus);
@@ -61,7 +61,7 @@ namespace Apworks.Tests.WebAPI
             var objectSerializer = new ObjectJsonSerializer();
 
             services.AddTransient<IEventStore>(serviceProvider => new SqlServerEventStore(adonetConfig, objectSerializer));
-            services.AddTransient<IEventPublisher>(serviceProvider => new EventBus(rabbitMQConnectionFactory, messageSerializer, RabbitExchangeName));
+            services.AddTransient<IEventPublisher>(serviceProvider => new RabbitEventBus(rabbitMQConnectionFactory, messageSerializer, RabbitExchangeName));
             services.AddSingleton<ISnapshotProvider, SuppressedSnapshotProvider>();
 
             services.AddTransient<IDomainRepository, EventSourcingDomainRepositoryWithLogging>();

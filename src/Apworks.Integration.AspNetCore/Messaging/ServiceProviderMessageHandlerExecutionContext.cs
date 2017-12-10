@@ -1,4 +1,5 @@
 ﻿using Apworks.Messaging;
+using Apworks.Utilities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
@@ -51,24 +52,7 @@ namespace Apworks.Integration.AspNetCore.Messaging
             }
 
             // Registers the relationship between the message type and its handler stub type.
-            if (messageHandlerStubTypeMapping.TryGetValue(messageType, out List<Type> handlerStubTypeList))
-            {
-                if (handlerStubTypeList != null)
-                {
-                    if (!handlerStubTypeList.Contains(handlerStubType))
-                    {
-                        messageHandlerStubTypeMapping[messageType].Add(handlerStubType);
-                    }
-                }
-                else
-                {
-                    messageHandlerStubTypeMapping[messageType] = new List<Type> { handlerStubType };
-                }
-            }
-            else
-            {
-                messageHandlerStubTypeMapping.TryAdd(messageType, new List<Type> { handlerStubType });
-            }
+            Utils.ConcurrentDictionarySafeRegister(messageType, handlerStubType, this.messageHandlerStubTypeMapping);
 
             this.registry.AddTransient(handlerStubType, handlerType);
         }

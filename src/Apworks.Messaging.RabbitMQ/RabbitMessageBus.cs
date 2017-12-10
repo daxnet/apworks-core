@@ -15,7 +15,7 @@ namespace Apworks.Messaging.RabbitMQ
     /// <remarks>
     /// For more information about RabbitMQ, please refer to: https://www.rabbitmq.com.
     /// </remarks>
-    public class MessageBus : DisposableObject, IMessageBus
+    public class RabbitMessageBus : DisposableObject, IMessageBus
     {
         #region Fields
         private readonly IConnectionFactory connectionFactory;
@@ -32,7 +32,7 @@ namespace Apworks.Messaging.RabbitMQ
         #endregion
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MessageBus"/> class.
+        /// Initializes a new instance of the <see cref="RabbitMessageBus"/> class.
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="messageSerializer"></param>
@@ -40,7 +40,7 @@ namespace Apworks.Messaging.RabbitMQ
         /// <param name="exchangeType"></param>
         /// <param name="queueName"></param>
         /// <param name="autoAck"></param>
-        public MessageBus(string uri, 
+        public RabbitMessageBus(string uri, 
             IMessageSerializer messageSerializer, 
             string exchangeName, 
             string exchangeType = ExchangeType.Fanout, 
@@ -49,7 +49,7 @@ namespace Apworks.Messaging.RabbitMQ
             : this(new ConnectionFactory { Uri = new Uri(uri) }, messageSerializer, exchangeName, exchangeType, queueName, autoAck)
         { }
 
-        public MessageBus(IConnectionFactory connectionFactory, 
+        public RabbitMessageBus(IConnectionFactory connectionFactory, 
             IMessageSerializer messageSerializer, 
             string exchangeName, 
             string exchangeType = ExchangeType.Fanout, 
@@ -63,11 +63,12 @@ namespace Apworks.Messaging.RabbitMQ
             this.channel = connection.CreateModel();
             this.exchangeType = exchangeType;
             this.exchangeName = exchangeName;
-            this.queueName = queueName;
             this.autoAck = autoAck;
 
             // Declares the exchanges
             this.channel.ExchangeDeclare(this.exchangeName, this.exchangeType);
+
+            this.queueName = this.InitializeMessageConsumer(queueName);
         }
 
         public event EventHandler<MessagePublishedEventArgs> MessagePublished;
@@ -111,33 +112,7 @@ namespace Apworks.Messaging.RabbitMQ
         {
             if (!this.subscribed)
             {
-                var queue = this.queueName;
-                if (string.IsNullOrEmpty(this.queueName))
-                {
-                    queue = this.channel.QueueDeclare().QueueName;
-                }
-                else
-                {
-                    this.channel.QueueDeclare(queue, true, false, false, null);
-                }
-
-                this.channel.QueueBind(queue, this.exchangeName, string.Empty);
-                var consumer = new EventingBasicConsumer(this.channel);
-                consumer.Received += (model, eventArgument) =>
-                  {
-                      var messageBody = eventArgument.Body;
-                      var message = this.messageSerializer.Deserialize(messageBody);
-                      this.OnMessageReceived(new MessageReceivedEventArgs(message, this.messageSerializer));
-                      if (!autoAck)
-                      {
-                          channel.BasicAck(eventArgument.DeliveryTag, false);
-                      }
-
-                      this.OnMessageAcknowledged(new MessageAcknowledgedEventArgs(message, this.messageSerializer, this.autoAck));
-                  };
-
-                this.channel.BasicConsume(queue, autoAck: this.autoAck, consumer: consumer);
-
+                this.channel.QueueBind(this.queueName, this.exchangeName, string.Empty);
                 this.subscribed = true;
             }
         }
@@ -159,6 +134,37 @@ namespace Apworks.Messaging.RabbitMQ
                 disposed = true;
                 base.Dispose(disposing);
             }
+        }
+
+        private string InitializeMessageConsumer(string queue)
+        {
+            var localQueueName = queue;
+            if (string.IsNullOrEmpty(localQueueName))
+            {
+                localQueueName = this.channel.QueueDeclare().QueueName;
+            }
+            else
+            {
+                this.channel.QueueDeclare(localQueueName, true, false, false, null);
+            }
+
+            var consumer = new EventingBasicConsumer(this.channel);
+            consumer.Received += (model, eventArgument) =>
+            {
+                var messageBody = eventArgument.Body;
+                var message = this.messageSerializer.Deserialize(messageBody);
+                this.OnMessageReceived(new MessageReceivedEventArgs(message, this.messageSerializer));
+                if (!autoAck)
+                {
+                    channel.BasicAck(eventArgument.DeliveryTag, false);
+                }
+
+                this.OnMessageAcknowledged(new MessageAcknowledgedEventArgs(message, this.messageSerializer, this.autoAck));
+            };
+
+            this.channel.BasicConsume(localQueueName, autoAck: this.autoAck, consumer: consumer);
+
+            return localQueueName;
         }
 
         private void OnMessagePublished(MessagePublishedEventArgs e)
