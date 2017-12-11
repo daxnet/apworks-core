@@ -6,6 +6,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Xunit;
 
 namespace Apworks.Tests.Integration
@@ -17,6 +18,7 @@ namespace Apworks.Tests.Integration
 
         public MongoDBRepositoryTests(MongoDBFixture fixture)
         {
+            Monitor.Enter(MongoDBFixture.locker);
             this.fixture = fixture;
             mongoClient = new MongoClient(fixture.Settings.ClientSettings);
         }
@@ -27,6 +29,7 @@ namespace Apworks.Tests.Integration
                 fixture.Settings.DatabaseSettings);
             var collection = database.GetCollection<Customer>("Customers", fixture.Settings.CollectionSettings);
             collection.DeleteMany(_ => true);
+            Monitor.Exit(MongoDBFixture.locker);
         }
 
         [Fact]
