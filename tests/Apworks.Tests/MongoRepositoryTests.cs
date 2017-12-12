@@ -33,7 +33,7 @@ namespace Apworks.Tests
             mongoRepository.Add(new Customer { Id = 10 });
 
             // Assert
-            Assert.Equal(1, cache.Count);
+            Assert.Single(cache);
             Assert.Equal(10, cache[0].Id);
         }
     }

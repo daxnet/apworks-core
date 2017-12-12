@@ -25,6 +25,8 @@
 // ==================================================================================================================
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -143,6 +145,36 @@ namespace Apworks.Utilities
             }
 
             return memberExpression?.Member?.Name;
+        }
+
+        /// <summary>
+        /// Safely registers a list of values against a given key, by using the <see cref="ConcurrentDictionary{TKey, TValue}"/> implementation.
+        /// </summary>
+        /// <typeparam name="TKey">The type of the key.</typeparam>
+        /// <typeparam name="TValue">The type of the value.</typeparam>
+        /// <param name="key">The key of the values to be registered.</param>
+        /// <param name="value">The value to be registered.</param>
+        /// <param name="registry">The <see cref="ConcurrentDictionary{TKey, TValue}"/> instance which holds the registration.</param>
+        public static void ConcurrentDictionarySafeRegister<TKey, TValue>(TKey key, TValue value, ConcurrentDictionary<TKey, List<TValue>> registry)
+        {
+            if (registry.TryGetValue(key, out List<TValue> registryItem))
+            {
+                if (registryItem != null)
+                {
+                    if (!registryItem.Contains(value))
+                    {
+                        registry[key].Add(value);
+                    }
+                }
+                else
+                {
+                    registry[key] = new List<TValue> { value };
+                }
+            }
+            else
+            {
+                registry.TryAdd(key, new List<TValue> { value });
+            }
         }
     }
 }

@@ -25,38 +25,52 @@
 // ==================================================================================================================
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using Apworks.Utilities;
 
-namespace Apworks.Messaging
+namespace Apworks.Messaging.Simple
 {
     /// <summary>
-    /// Represents that the implemented classes are message consumers that will use
-    /// its internal message subscriber to subscribe the message bus and take specific
-    /// actions when there is any incoming messages.
+    /// Represents the message bus that uses a dictionary data structure as the message queue
+    /// infrastructure.
     /// </summary>
-    /// <seealso cref="System.IDisposable" />
-    public interface IMessageConsumer<TMessageSubscriber, TMessageHandler> : IDisposable
-        where TMessageSubscriber : IMessageSubscriber
-        where TMessageHandler : IMessageHandler
+    /// <seealso cref="Apworks.DisposableObject" />
+    /// <seealso cref="Apworks.Messaging.IMessageBus" />
+    public class SimpleMessageBus : MessageBus
     {
-        /// <summary>
-        /// Gets the instance of <see cref="IMessageSubscriber"/> which subscribes
-        /// to the message bus and notifies events when there is any incoming messages.
-        /// </summary>
-        TMessageSubscriber Subscriber { get; }
+        private readonly MessageQueue messageQueue;
 
-        /// <summary>
-        /// Gets a list of handlers that can handle the messages subscribed
-        /// by the current subscriber.
-        /// </summary>
-        /// <value>
-        /// The handlers.
-        /// </value>
-        IEnumerable<TMessageHandler> Handlers { get; }
+        public SimpleMessageBus(IMessageSerializer messageSerializer,
+            IMessageHandlerExecutionContext messageHandlerExecutionContext)
+            : base(messageSerializer, messageHandlerExecutionContext)
+        {
+            this.messageQueue = new MessageQueue(this.MessageSerializer);
+            this.messageQueue.MessagePushed += (s, e) =>
+            {
+                var message = ((MessageQueue)s).PopMessage();
+                this.OnMessageReceived(new MessageReceivedEventArgs(message, this.MessageSerializer));
+                this.MessageHandlerExecutionContext.HandleMessageAsync(message).GetAwaiter().GetResult();
+                this.OnMessageAcknowledged(new MessageAcknowledgedEventArgs(message, this.MessageSerializer));
+            };
+        }
 
-        /// <summary>
-        /// Start consume the messages by using the message handlers.
-        /// </summary>
-        void Consume();
+        protected override void DoPublish<TMessage>(TMessage message)
+        {
+            messageQueue.PushMessage(message);
+        }
+
+        protected override Task DoPublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return Task.Factory.StartNew(() => DoPublish(message), cancellationToken);
+        }
+
+        public override void Subscribe<TMessage, TMessageHandler>()
+        {
+            this.MessageHandlerExecutionContext.RegisterHandler<TMessage, TMessageHandler>();
+        }
     }
 }

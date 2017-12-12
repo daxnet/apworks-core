@@ -7,29 +7,19 @@ using Apworks.Snapshots;
 
 namespace Apworks.Repositories
 {
-    public sealed class EventSourcingDomainRepository : EventPublishingDomainRepository
+    public class EventSourcingDomainRepository : EventPublishingDomainRepository
     {
         private readonly IEventStore eventStore;
         private readonly ISnapshotProvider snapshotProvider;
-        private readonly string route;
         private bool disposed = false;
 
         public EventSourcingDomainRepository(IEventStore eventStore, 
             IEventPublisher publisher,
             ISnapshotProvider snapshotProvider) 
-            : this(eventStore, publisher, snapshotProvider, null)
-        {
-
-        }
-
-        public EventSourcingDomainRepository(IEventStore eventStore,
-            IEventPublisher publisher,
-            ISnapshotProvider snapshotProvider,
-            string route) : base(publisher)
+            : base(publisher)
         {
             this.eventStore = eventStore;
             this.snapshotProvider = snapshotProvider;
-            this.route = route;
         }
 
         public override TAggregateRoot GetById<TKey, TAggregateRoot>(TKey id)
@@ -91,7 +81,7 @@ namespace Apworks.Repositories
             this.eventStore.Save(uncommittedEvents); // This will save the uncommitted events in a transaction.
 
             // Publishes the events.
-            this.Publisher.PublishAll(uncommittedEvents, this.route);
+            this.Publisher.PublishAll(uncommittedEvents);
 
             // Purges the uncommitted events.
             ((IPurgeable)aggregateRoot).Purge();
@@ -115,7 +105,7 @@ namespace Apworks.Repositories
             await this.eventStore.SaveAsync(uncommittedEvents, cancellationToken); // This will save the uncommitted events in a transaction.
 
             // Publishes the events.
-            await this.Publisher.PublishAllAsync(uncommittedEvents, this.route, cancellationToken);
+            await this.Publisher.PublishAllAsync(uncommittedEvents, cancellationToken);
 
             // Purges the uncommitted events.
             ((IPurgeable)aggregateRoot).Purge();

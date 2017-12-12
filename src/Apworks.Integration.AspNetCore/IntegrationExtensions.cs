@@ -137,23 +137,6 @@ namespace Apworks.Integration.AspNetCore
             return new EventPublisherConfigurator<TEventPublisher>(configurator, eventPublisherFactory, serviceLifetime);
         }
 
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IApworksConfigurator configurator, TEventConsumer eventConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumer, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IApworksConfigurator configurator, Func<IServiceProvider, TEventConsumer> eventConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumerFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithDefaultEventConsumer(this IApworksConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new EventConsumerConfigurator(configurator, serviceLifetime, route);
-        }
-
         public static ICommandBusConfigurator WithCommandBus<TCommandBus>(this IApworksConfigurator configurator, TCommandBus commandBus, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
             where TCommandBus : class, ICommandBus
         {
@@ -188,23 +171,6 @@ namespace Apworks.Integration.AspNetCore
             where TCommandSubscriber : class, ICommandSubscriber
         {
             return new CommandSubscriberConfigurator<TCommandSubscriber>(configurator, commandSubscriberFactory, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this IApworksConfigurator configurator, TCommandConsumer commandConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumer, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this IApworksConfigurator configurator, Func<IServiceProvider, TCommandConsumer> commandConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IApworksConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
         }
         #endregion
 
@@ -292,23 +258,6 @@ namespace Apworks.Integration.AspNetCore
             return new EventPublisherConfigurator<TEventPublisher>(configurator, eventPublisherFactory, serviceLifetime);
         }
 
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IDomainRepositoryConfigurator configurator, TEventConsumer eventConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumer, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IDomainRepositoryConfigurator configurator, Func<IServiceProvider, TEventConsumer> eventConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumerFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithDefaultEventConsumer(this IDomainRepositoryConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new EventConsumerConfigurator(configurator, serviceLifetime, route);
-        }
-
         public static ICommandBusConfigurator WithCommandBus<TCommandBus>(this IDomainRepositoryConfigurator configurator, TCommandBus commandBus, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
             where TCommandBus : class, ICommandBus
         {
@@ -343,23 +292,6 @@ namespace Apworks.Integration.AspNetCore
             where TCommandSubscriber : class, ICommandSubscriber
         {
             return new CommandSubscriberConfigurator<TCommandSubscriber>(configurator, commandSubscriberFactory, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this IDomainRepositoryConfigurator configurator, TCommandConsumer commandConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumer, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this IDomainRepositoryConfigurator configurator, Func<IServiceProvider, TCommandConsumer> commandConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IDomainRepositoryConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
         }
         #endregion
 
@@ -434,23 +366,6 @@ namespace Apworks.Integration.AspNetCore
             return new EventPublisherConfigurator<TEventPublisher>(configurator, eventPublisherFactory, serviceLifetime);
         }
 
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IEventStoreConfigurator configurator, TEventConsumer eventConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumer, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IEventStoreConfigurator configurator, Func<IServiceProvider, TEventConsumer> eventConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumerFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithDefaultEventConsumer(this IEventStoreConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new EventConsumerConfigurator(configurator, serviceLifetime, route);
-        }
-
         public static ICommandBusConfigurator WithCommandBus<TCommandBus>(this IEventStoreConfigurator configurator, TCommandBus commandBus, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
             where TCommandBus : class, ICommandBus
         {
@@ -485,23 +400,6 @@ namespace Apworks.Integration.AspNetCore
             where TCommandSubscriber : class, ICommandSubscriber
         {
             return new CommandSubscriberConfigurator<TCommandSubscriber>(configurator, commandSubscriberFactory, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this IEventStoreConfigurator configurator, TCommandConsumer commandConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumer, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this IEventStoreConfigurator configurator, Func<IServiceProvider, TCommandConsumer> commandConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IEventStoreConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
         }
         #endregion
 
@@ -568,23 +466,6 @@ namespace Apworks.Integration.AspNetCore
             return new EventSubscriberConfigurator<TEventSubscriber>(configurator, eventSubscriberFactory, serviceLifetime);
         }
 
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IRepositoryConfigurator configurator, TEventConsumer eventConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumer, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IRepositoryConfigurator configurator, Func<IServiceProvider, TEventConsumer> eventConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumerFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithDefaultEventConsumer(this IRepositoryConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new EventConsumerConfigurator(configurator, serviceLifetime, route);
-        }
-
         public static ICommandBusConfigurator WithCommandBus<TCommandBus>(this IRepositoryConfigurator configurator, TCommandBus commandBus, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
             where TCommandBus : class, ICommandBus
         {
@@ -619,23 +500,6 @@ namespace Apworks.Integration.AspNetCore
             where TCommandSubscriber : class, ICommandSubscriber
         {
             return new CommandSubscriberConfigurator<TCommandSubscriber>(configurator, commandSubscriberFactory, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this IRepositoryConfigurator configurator, TCommandConsumer commandConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumer, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this IRepositoryConfigurator configurator, Func<IServiceProvider, TCommandConsumer> commandConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IRepositoryConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
         }
         #endregion
 
@@ -702,23 +566,6 @@ namespace Apworks.Integration.AspNetCore
             return new EventSubscriberConfigurator<TEventSubscriber>(configurator, eventSubscriberFactory, serviceLifetime);
         }
 
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IKeyGeneratorConfigurator configurator, TEventConsumer eventConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumer, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IKeyGeneratorConfigurator configurator, Func<IServiceProvider, TEventConsumer> eventConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumerFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithDefaultEventConsumer(this IKeyGeneratorConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new EventConsumerConfigurator(configurator, serviceLifetime, route);
-        }
-
         public static ICommandBusConfigurator WithCommandBus<TCommandBus>(this IKeyGeneratorConfigurator configurator, TCommandBus commandBus, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
             where TCommandBus : class, ICommandBus
         {
@@ -755,22 +602,6 @@ namespace Apworks.Integration.AspNetCore
             return new CommandSubscriberConfigurator<TCommandSubscriber>(configurator, commandSubscriberFactory, serviceLifetime);
         }
 
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this IKeyGeneratorConfigurator configurator, TCommandConsumer commandConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumer, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this IKeyGeneratorConfigurator configurator, Func<IServiceProvider, TCommandConsumer> commandConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IKeyGeneratorConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
-        }
         #endregion
 
         #region IHalSupportConfigurator Extensions
@@ -810,23 +641,6 @@ namespace Apworks.Integration.AspNetCore
             return new EventSubscriberConfigurator<TEventSubscriber>(configurator, eventSubscriberFactory, serviceLifetime);
         }
 
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IHalSupportConfigurator configurator, TEventConsumer eventConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumer, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IHalSupportConfigurator configurator, Func<IServiceProvider, TEventConsumer> eventConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumerFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithDefaultEventConsumer(this IHalSupportConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new EventConsumerConfigurator(configurator, serviceLifetime, route);
-        }
-
         public static ICommandBusConfigurator WithCommandBus<TCommandBus>(this IHalSupportConfigurator configurator, TCommandBus commandBus, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
             where TCommandBus : class, ICommandBus
         {
@@ -863,22 +677,6 @@ namespace Apworks.Integration.AspNetCore
             return new CommandSubscriberConfigurator<TCommandSubscriber>(configurator, commandSubscriberFactory, serviceLifetime);
         }
 
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this IHalSupportConfigurator configurator, TCommandConsumer commandConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumer, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this IHalSupportConfigurator configurator, Func<IServiceProvider, TCommandConsumer> commandConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this IHalSupportConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
-        }
         #endregion
 
         #region ICommandBusConfigurator Extensions
@@ -916,23 +714,6 @@ namespace Apworks.Integration.AspNetCore
             where TEventSubscriber : class, IEventSubscriber
         {
             return new EventSubscriberConfigurator<TEventSubscriber>(configurator, eventSubscriberFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this ICommandBusConfigurator configurator, TEventConsumer eventConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumer, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this ICommandBusConfigurator configurator, Func<IServiceProvider, TEventConsumer> eventConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumerFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithDefaultEventConsumer(this ICommandBusConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new EventConsumerConfigurator(configurator, serviceLifetime, route);
         }
 
         public static IDataServiceConfigurator WithDataServiceSupport(this ICommandBusConfigurator configurator, DataServiceConfigurationOptions options)
@@ -990,23 +771,6 @@ namespace Apworks.Integration.AspNetCore
             return new EventSubscriberConfigurator<TEventSubscriber>(configurator, eventSubscriberFactory, serviceLifetime);
         }
 
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this ICommandSenderConfigurator configurator, TEventConsumer eventConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumer, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this ICommandSenderConfigurator configurator, Func<IServiceProvider, TEventConsumer> eventConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumerFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithDefaultEventConsumer(this ICommandSenderConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new EventConsumerConfigurator(configurator, serviceLifetime, route);
-        }
-
         public static IDataServiceConfigurator WithDataServiceSupport(this ICommandSenderConfigurator configurator, DataServiceConfigurationOptions options)
         {
             return new DataServiceConfigurator(configurator, options);
@@ -1014,23 +778,6 @@ namespace Apworks.Integration.AspNetCore
         #endregion
 
         #region ICommandSubscriberConfigurator Extensions
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this ICommandSubscriberConfigurator configurator, TCommandConsumer commandConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumer, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithCommandConsumer<TCommandConsumer>(this ICommandSubscriberConfigurator configurator, Func<IServiceProvider, TCommandConsumer> commandConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandConsumer : class, ICommandConsumer
-        {
-            return new CommandConsumerConfigurator<TCommandConsumer>(configurator, commandConsumerFactory, serviceLifetime);
-        }
-
-        public static ICommandConsumerConfigurator WithDefaultCommandConsumer(this ICommandSubscriberConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new CommandConsumerConfigurator(configurator, serviceLifetime, route);
-        }
-
         public static IEventBusConfigurator WithEventBus<TEventBus>(this ICommandSubscriberConfigurator configurator, TEventBus eventBus, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
             where TEventBus : class, IEventBus
         {
@@ -1067,96 +814,7 @@ namespace Apworks.Integration.AspNetCore
             return new EventSubscriberConfigurator<TEventSubscriber>(configurator, eventSubscriberFactory, serviceLifetime);
         }
 
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this ICommandSubscriberConfigurator configurator, TEventConsumer eventConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumer, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this ICommandSubscriberConfigurator configurator, Func<IServiceProvider, TEventConsumer> eventConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumerFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithDefaultEventConsumer(this ICommandSubscriberConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new EventConsumerConfigurator(configurator, serviceLifetime, route);
-        }
-
         public static IDataServiceConfigurator WithDataServiceSupport(this ICommandSubscriberConfigurator configurator, DataServiceConfigurationOptions options)
-        {
-            return new DataServiceConfigurator(configurator, options);
-        }
-        #endregion
-
-        #region ICommandConsumerConfigurator Extensions
-        public static ICommandHandlerConfigurator AddCommandHandler<TCommandHandler>(this ICommandConsumerConfigurator configurator, TCommandHandler commandHandler, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandHandler : class, ICommandHandler
-        {
-            return new CommandHandlerConfigurator<TCommandHandler>(configurator, commandHandler, serviceLifetime);
-        }
-
-        public static ICommandHandlerConfigurator AddCommandHandler<TCommandHandler>(this ICommandConsumerConfigurator configurator, Func<IServiceProvider, TCommandHandler> commandHandlerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TCommandHandler : class, ICommandHandler
-        {
-            return new CommandHandlerConfigurator<TCommandHandler>(configurator, commandHandlerFactory, serviceLifetime);
-        }
-
-        public static IEventBusConfigurator WithEventBus<TEventBus>(this ICommandConsumerConfigurator configurator, TEventBus eventBus, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventBus : class, IEventBus
-        {
-            return new EventBusConfigurator<TEventBus>(configurator, eventBus, serviceLifetime);
-        }
-
-        public static IEventBusConfigurator WithEventBus<TEventBus>(this ICommandConsumerConfigurator configurator, Func<IServiceProvider, TEventBus> eventBusFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventBus : class, IEventBus
-        {
-            return new EventBusConfigurator<TEventBus>(configurator, eventBusFactory, serviceLifetime);
-        }
-
-        public static IEventPublisherConfigurator WithEventPublisher<TEventPublisher>(this ICommandConsumerConfigurator configurator, TEventPublisher eventPublisher, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventPublisher : class, IEventPublisher
-        {
-            return new EventPublisherConfigurator<TEventPublisher>(configurator, eventPublisher, serviceLifetime);
-        }
-
-        public static IEventPublisherConfigurator WithEventPublisher<TEventPublisher>(this ICommandConsumerConfigurator configurator, Func<IServiceProvider, TEventPublisher> eventPublisherFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventPublisher : class, IEventPublisher
-        {
-            return new EventPublisherConfigurator<TEventPublisher>(configurator, eventPublisherFactory, serviceLifetime);
-        }
-
-        public static IEventSubscriberConfigurator WithEventSubscriber<TEventSubscriber>(this ICommandConsumerConfigurator configurator, TEventSubscriber eventSubscriber, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventSubscriber : class, IEventSubscriber
-        {
-            return new EventSubscriberConfigurator<TEventSubscriber>(configurator, eventSubscriber, serviceLifetime);
-        }
-
-        public static IEventSubscriberConfigurator WithEventSubscriber<TEventSubscriber>(this ICommandConsumerConfigurator configurator, Func<IServiceProvider, TEventSubscriber> eventSubscriberFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventSubscriber : class, IEventSubscriber
-        {
-            return new EventSubscriberConfigurator<TEventSubscriber>(configurator, eventSubscriberFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this ICommandConsumerConfigurator configurator, TEventConsumer eventConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumer, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this ICommandConsumerConfigurator configurator, Func<IServiceProvider, TEventConsumer> eventConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumerFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithDefaultEventConsumer(this ICommandConsumerConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new EventConsumerConfigurator(configurator, serviceLifetime, route);
-        }
-
-        public static IDataServiceConfigurator WithDataServiceSupport(this ICommandConsumerConfigurator configurator, DataServiceConfigurationOptions options)
         {
             return new DataServiceConfigurator(configurator, options);
         }
@@ -1211,23 +869,6 @@ namespace Apworks.Integration.AspNetCore
             return new EventSubscriberConfigurator<TEventSubscriber>(configurator, eventSubscriberFactory, serviceLifetime);
         }
 
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this ICommandHandlerConfigurator configurator, TEventConsumer eventConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumer, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this ICommandHandlerConfigurator configurator, Func<IServiceProvider, TEventConsumer> eventConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumerFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithDefaultEventConsumer(this ICommandHandlerConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new EventConsumerConfigurator(configurator, serviceLifetime, route);
-        }
-
         public static IDataServiceConfigurator WithDataServiceSupport(this ICommandHandlerConfigurator configurator, DataServiceConfigurationOptions options)
         {
             return new DataServiceConfigurator(configurator, options);
@@ -1262,43 +903,8 @@ namespace Apworks.Integration.AspNetCore
         #endregion
 
         #region IEventSubscriberConfigurator Extensions
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IEventSubscriberConfigurator configurator, TEventConsumer eventConsumer, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumer, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithEventConsumer<TEventConsumer>(this IEventSubscriberConfigurator configurator, Func<IServiceProvider, TEventConsumer> eventConsumerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventConsumer : class, IEventConsumer
-        {
-            return new EventConsumerConfigurator<TEventConsumer>(configurator, eventConsumerFactory, serviceLifetime);
-        }
-
-        public static IEventConsumerConfigurator WithDefaultEventConsumer(this IEventSubscriberConfigurator configurator, string route = null, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-        {
-            return new EventConsumerConfigurator(configurator, serviceLifetime, route);
-        }
 
         public static IDataServiceConfigurator WithDataServiceSupport(this IEventSubscriberConfigurator configurator, DataServiceConfigurationOptions options)
-        {
-            return new DataServiceConfigurator(configurator, options);
-        }
-        #endregion
-
-        #region IEventConsumerConfigurator Extensions
-        public static IEventHandlerConfigurator AddEventHandler<TEventHandler>(this IEventConsumerConfigurator configurator, TEventHandler eventHandler, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventHandler : class, IEventHandler
-        {
-            return new EventHandlerConfigurator<TEventHandler>(configurator, eventHandler, serviceLifetime);
-        }
-
-        public static IEventHandlerConfigurator AddEventHandler<TEventHandler>(this IEventConsumerConfigurator configurator, Func<IServiceProvider, TEventHandler> eventHandlerFactory, ServiceLifetime serviceLifetime = ServiceLifetime.Singleton)
-            where TEventHandler : class, IEventHandler
-        {
-            return new EventHandlerConfigurator<TEventHandler>(configurator, eventHandlerFactory, serviceLifetime);
-        }
-
-        public static IDataServiceConfigurator WithDataServiceSupport(this IEventConsumerConfigurator configurator, DataServiceConfigurationOptions options)
         {
             return new DataServiceConfigurator(configurator, options);
         }

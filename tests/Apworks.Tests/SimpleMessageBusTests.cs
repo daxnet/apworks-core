@@ -10,6 +10,10 @@ using Apworks.EventStore.Simple;
 using Apworks.Repositories;
 using Apworks.Snapshots;
 using Apworks.Serialization.Json;
+using Apworks.Integration.AspNetCore.Messaging;
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Apworks.Tests
 {
@@ -18,11 +22,12 @@ namespace Apworks.Tests
         [Fact]
         public void PublishMessageTest()
         {
-            var mb = new MessageBus(new MessageJsonSerializer());
+            var serviceCollection = new ServiceCollection();
+            var messageHandlerExecutionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
+
+            var mb = new SimpleMessageBus(new MessageJsonSerializer(), messageHandlerExecutionContext);
             int numOfMessagesReceived = 0;
             mb.MessageReceived += (x, y) => numOfMessagesReceived++;
-            mb.Subscribe();
-            mb.Subscribe(); // Test subscribe multiple times.
 
             var event1 = new NameChangedEvent("daxnet");
             mb.Publish(event1);
@@ -33,10 +38,12 @@ namespace Apworks.Tests
         [Fact]
         public void PublishMultipleMessagesTest()
         {
-            var mb = new MessageBus(new MessageJsonSerializer());
+            var serviceCollection = new ServiceCollection();
+            var messageHandlerExecutionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
+
+            var mb = new SimpleMessageBus(new MessageJsonSerializer(), messageHandlerExecutionContext);
             int numOfMessagesReceived = 0;
             mb.MessageReceived += (x, y) => numOfMessagesReceived++;
-            mb.Subscribe();
 
             var events = new List<IMessage>
             {
@@ -51,9 +58,12 @@ namespace Apworks.Tests
         [Fact]
         public void SimpleCQRSScenarioTest1()
         {
+            var serviceCollection = new ServiceCollection();
+            var messageHandlerExecutionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
+
             var changedName = string.Empty;
             var eventStore = new DictionaryEventStore();
-            var eventBus = new EventBus(new MessageJsonSerializer());
+            var eventBus = new SimpleEventBus(new MessageJsonSerializer(), messageHandlerExecutionContext);
             var snapshotProvider = new SuppressedSnapshotProvider();
             eventBus.MessageReceived += (s, e) =>
             {
@@ -62,7 +72,7 @@ namespace Apworks.Tests
                     changedName = (e.Message as NameChangedEvent).Name;
                 }
             };
-            eventBus.Subscribe();
+
             var domainRepository = new EventSourcingDomainRepository(eventStore, eventBus, snapshotProvider);
 
             var id = Guid.NewGuid();
@@ -71,6 +81,39 @@ namespace Apworks.Tests
             domainRepository.Save<Guid, Employee>(model);
 
             Assert.Equal("daxnet", changedName);
+        }
+
+        [Fact]
+        public void MessagePublishAndHandleWithEventHandlerTest()
+        {
+            var serviceCollection = new ServiceCollection();
+            var list = new List<string>();
+            var messageHandlerExecutionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
+            serviceCollection.AddSingleton(list);
+
+            var eventBus = new SimpleEventBus(new MessageJsonSerializer(), messageHandlerExecutionContext);
+            eventBus.Subscribe<NameChangedEvent, NameChangedEventHandler>();
+
+            eventBus.Publish(new NameChangedEvent("myName"));
+
+            Assert.Single(list);
+            Assert.Equal("myName", list[0]);
+        }
+
+        private class NameChangedEventHandler : Events.EventHandler<NameChangedEvent>
+        {
+            private readonly List<string> list;
+
+            public NameChangedEventHandler(List<string> list)
+            {
+                this.list = list;
+            }
+
+            public override Task<bool> HandleAsync(NameChangedEvent message, CancellationToken cancellationToken = default(CancellationToken))
+            {
+                this.list.Add(message.Name);
+                return Task.FromResult(true);
+            }
         }
     }
 }

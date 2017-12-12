@@ -12,7 +12,7 @@ namespace Apworks.Tests
         {
         }
 
-        [Fact]
+        // [Fact]
         public void PassingTest()
         {
             Assert.Equal(4, 2 + 2);
