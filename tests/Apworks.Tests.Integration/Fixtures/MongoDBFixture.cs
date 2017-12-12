@@ -7,6 +7,8 @@ namespace Apworks.Tests.Integration.Fixtures
 {
     public class MongoDBFixture
     {
+        public static readonly object locker = new object();
+
 
         public MongoDBFixture()
         {

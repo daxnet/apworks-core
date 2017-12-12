@@ -33,7 +33,7 @@ namespace Apworks.Tests
         {
             var customer = Customer.CreateOne();
             this.repository.Add(customer);
-            Assert.Equal(1, this.repository.FindAll().Count());
+            Assert.Single(this.repository.FindAll());
         }
 
         [Fact]

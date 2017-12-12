@@ -24,8 +24,14 @@ namespace Apworks.Tests.Integration
             int numOfMessagesReceived = 0;
             bool finished = false;
 
-            using (var bus = new MessageBus(connectionFactory,
-                serializer, 
+            var serviceCollection = new ServiceCollection();
+            var names = new List<string>();
+            serviceCollection.AddSingleton(names);
+            var executionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
+
+            using (var bus = new RabbitMessageBus(connectionFactory,
+                serializer,
+                executionContext,
                 "RabbitMQMessageBusTests.PublishMessageTest", queueName: "RabbitMQMessageBusTests.PublishMessageTestQueue"))
             {
                 // When any message received, increase the counter
@@ -34,7 +40,7 @@ namespace Apworks.Tests.Integration
                 // When any message acknowledged, stop waiting the do the assertion.
                 bus.MessageAcknowledged += (x, y) => finished = true;
 
-                bus.Subscribe();
+                bus.Subscribe<NameChangedEvent, NameChangedEventHandler>();
 
                 var event1 = new NameChangedEvent("daxnet");
                 bus.Publish(event1);
@@ -51,22 +57,20 @@ namespace Apworks.Tests.Integration
             bool finished = false;
             var serviceCollection = new ServiceCollection();
             var names = new List<string>();
-            serviceCollection.AddTransient(x => names);
+            serviceCollection.AddSingleton(names);
 
-            var messageHandlerProvider = new MessageHandlerProvider(serviceCollection);
-            messageHandlerProvider.RegisterHandler<NameChangedEvent, NameChangedEventHandler>();
+            var messageHandlerProvider = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
 
-            using (var eventPublisher = new EventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
-            using (var eventSubscriber = new EventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
-            using (var eventConsumer = new EventConsumer(eventSubscriber, messageHandlerProvider))
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, serializer, messageHandlerProvider, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
+            using (var eventSubscriber = new RabbitEventBus(connectionFactory, serializer, messageHandlerProvider, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
             {
                 eventSubscriber.MessageAcknowledged += (x, y) => finished = true;
-                eventConsumer.Consume();
+                eventSubscriber.Subscribe<NameChangedEvent, NameChangedEventHandler>();
 
                 await eventPublisher.PublishAsync(new NameChangedEvent("daxnet"));
                 while (!finished) ;
 
-                Assert.Equal(1, names.Count);
+                Assert.Single(names);
                 Assert.Equal("daxnet", names[0]);
             }
         }
@@ -77,18 +81,17 @@ namespace Apworks.Tests.Integration
             bool finished = false;
             var serviceCollection = new ServiceCollection();
             var names = new List<string>();
-            serviceCollection.AddTransient(x => names);
+            serviceCollection.AddSingleton(names);
 
-            var messageHandlerProvider = new MessageHandlerProvider(serviceCollection);
-            messageHandlerProvider.RegisterHandler<NameChangedEvent, NameChangedEventHandler>();
-            messageHandlerProvider.RegisterHandler<NameChangedEvent, NameChangedEventHandler2>();
+            var messageHandlerProvider = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
 
-            using (var eventPublisher = new EventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
-            using (var eventSubscriber = new EventBus(connectionFactory, serializer, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
-            using (var eventConsumer = new EventConsumer(eventSubscriber, messageHandlerProvider))
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, serializer, messageHandlerProvider, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
+            using (var eventSubscriber = new RabbitEventBus(connectionFactory, serializer, messageHandlerProvider, "RabbitMQMessageBusTests.SimpleEventHandlerTest"))
             {
                 eventSubscriber.MessageAcknowledged += (x, y) => finished = true;
-                eventConsumer.Consume();
+
+                eventSubscriber.Subscribe<NameChangedEvent, NameChangedEventHandler>();
+                eventSubscriber.Subscribe<NameChangedEvent, NameChangedEventHandler2>();
 
                 await eventPublisher.PublishAsync(new NameChangedEvent("daxnet"));
                 while (!finished) ;

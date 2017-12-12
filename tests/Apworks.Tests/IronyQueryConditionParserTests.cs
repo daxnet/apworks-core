@@ -37,7 +37,7 @@ namespace Apworks.Tests
             var parser = new IronyQueryConditionParser();
             var expression = parser.Parse<Customer>("Name eq \"paul\"");
             var result = Customers.Where(expression.Compile());
-            Assert.Equal(1, result.Count());
+            Assert.Single(result);
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace Apworks.Tests
             var parser = new IronyQueryConditionParser();
             var expression = parser.Parse<Customer>("Id ge 5 and Name eq \"jim\"");
             var result = Customers.Where(expression.Compile());
-            Assert.Equal(1, result.Count());
+            Assert.Single(result);
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace Apworks.Tests
             var parser = new IronyQueryConditionParser();
             var expression = parser.Parse<Customer>("email sw \"fr\"");
             var result = Customers.Where(expression.Compile());
-            Assert.Equal(1, result.Count());
+            Assert.Single(result);
         }
 
         [Fact]
@@ -136,7 +136,7 @@ namespace Apworks.Tests
             var parser = new IronyQueryConditionParser();
             var expression = parser.Parse<Customer>("name ew \"er\" and email sw \"w\"");
             var result = Customers.Where(expression.Compile());
-            Assert.Equal(1, result.Count());
+            Assert.Single(result);
         }
 
         [Fact]

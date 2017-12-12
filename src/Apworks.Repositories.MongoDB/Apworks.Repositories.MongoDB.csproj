@@ -26,11 +26,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Apworks\Apworks.csproj" />
+    <PackageReference Include="MongoDB.Driver.signed" Version="2.4.4" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="2.4.4" />
+    <ProjectReference Include="..\Apworks\Apworks.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">

@@ -7,7 +7,7 @@ using Apworks.Snapshots;
 
 namespace Apworks.Repositories
 {
-    public sealed class EventSourcingDomainRepository : EventPublishingDomainRepository
+    public class EventSourcingDomainRepository : EventPublishingDomainRepository
     {
         private readonly IEventStore eventStore;
         private readonly ISnapshotProvider snapshotProvider;

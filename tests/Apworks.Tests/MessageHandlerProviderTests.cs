@@ -23,56 +23,6 @@ namespace Apworks.Tests
             var svc = provider.GetService<IEventHandler>();
             Assert.IsType<AggregateUpdatedEventHandler>(svc);
         }
-
-        [Fact]
-        public void RegisterHandlerTest()
-        {
-            var serviceCollection = new ServiceCollection();
-            var provider = new MessageHandlerProvider(serviceCollection);
-            provider.RegisterHandler<AggregateUpdatedEvent, AggregateUpdatedEventHandler>();
-            Assert.True(provider.HasHandlersRegistered<AggregateUpdatedEvent>());
-        }
-
-        [Fact]
-        public void ResolveRegisteredHandlerTest()
-        {
-            var serviceCollection = new ServiceCollection();
-            var provider = new MessageHandlerProvider(serviceCollection);
-            provider.RegisterHandler<AggregateUpdatedEvent, AggregateUpdatedEventHandler>();
-            var handler = provider.GetHandlersFor<AggregateUpdatedEvent>();
-            Assert.True(handler.Count() == 1);
-            Assert.IsType<AggregateUpdatedEventHandler>(handler.First());
-        }
-
-        [Fact]
-        public void ResolveMultipleRegisteredHandlerTest()
-        {
-            var serviceCollection = new ServiceCollection();
-            var provider = new MessageHandlerProvider(serviceCollection);
-            provider.RegisterHandler<AggregateUpdatedEvent, AggregateUpdatedEventHandler>();
-            provider.RegisterHandler<AggregateUpdatedEvent, AggregateUpdatedEventHandler2>();
-            var handler = provider.GetHandlersFor<AggregateUpdatedEvent>();
-            Assert.True(handler.Count() == 2);
-            Assert.IsType<AggregateUpdatedEventHandler>(handler.First());
-            Assert.IsType<AggregateUpdatedEventHandler2>(handler.Last());
-        }
-
-        [Fact]
-        public void ResolveSameRegisteredHandlerTest()
-        {
-            var serviceCollection = new ServiceCollection();
-            var provider = new MessageHandlerProvider(serviceCollection);
-            provider.RegisterHandler<AggregateUpdatedEvent, AggregateUpdatedEventHandler>();
-
-            var handler1 = provider.GetHandlersFor<AggregateUpdatedEvent>().FirstOrDefault();
-            var handler2 = provider.GetHandlersFor<AggregateUpdatedEvent>().FirstOrDefault();
-
-            Assert.NotNull(handler1);
-            Assert.NotNull(handler2);
-            Assert.IsType<AggregateUpdatedEventHandler>(handler1);
-            Assert.IsType<AggregateUpdatedEventHandler>(handler2);
-            Assert.NotSame(handler1, handler2);
-        }
     }
 
     public class AggregateUpdatedEvent : Events.DomainEvent

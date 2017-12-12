@@ -73,7 +73,7 @@ namespace Apworks.Tests
             var employee = new Employee(Guid.NewGuid());
             employee.Replay(events);
 
-            Assert.Equal(0, employee.UncommittedEvents.Count());
+            Assert.Empty(employee.UncommittedEvents);
             Assert.Equal("daxnet", employee.Name);
             Assert.Equal("Sr. racer", employee.Title);
             Assert.NotEqual(DateTime.MinValue, employee.DateRegistered);

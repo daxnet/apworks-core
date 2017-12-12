@@ -4,19 +4,22 @@ using Apworks.Messaging.Simple;
 using Apworks.Repositories;
 using Apworks.Snapshots;
 using Apworks.Tests.Helpers;
-using Apworks.Tests.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xunit;
 using Apworks.Serialization.Json;
+using Apworks.Messaging;
+using Apworks.Integration.AspNetCore.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Apworks.Tests
 {
     public class EventSourcingDomainRepositoryTests
     {
-        private readonly IEventPublisher eventPublisher = new EventBus(new MessageJsonSerializer());
+        private static readonly ServiceCollection serviceCollection = new ServiceCollection();
+        private static readonly IMessageHandlerExecutionContext messageHandlerExecutionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
+
+        private readonly IEventPublisher eventPublisher = new SimpleEventBus(new MessageJsonSerializer(), messageHandlerExecutionContext);
         private readonly IEventStore eventStore = new DictionaryEventStore();
         private readonly IDomainRepository repository;
         private readonly ISnapshotProvider snapshotProvider = new SuppressedSnapshotProvider();
@@ -82,7 +85,7 @@ namespace Apworks.Tests
                 employee.ChangeName($"daxnet_{i}");
             }
             localRepository.Save<Guid, Employee>(employee);
-            Assert.Equal(1, localSnapshotProvider.snapshots.Count);
+            Assert.Single(localSnapshotProvider.snapshots);
         }
 
         [Fact]
@@ -126,7 +129,7 @@ namespace Apworks.Tests
             }
             localRepository.Save<Guid, Employee>(employee);
 
-            Assert.Equal(1, localSnapshotProvider.snapshots.Count);
+            Assert.Single(localSnapshotProvider.snapshots);
         }
 
         [Fact]

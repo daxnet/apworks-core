@@ -120,7 +120,7 @@ namespace Apworks.Tests
             ControllerActionSignature cas = "values.get(int)";
             Assert.True(cas.ControllerName == "values");
             Assert.True(cas.ActionName == "get");
-            Assert.Equal(1, cas.ParameterTypes.Count());
+            Assert.Single(cas.ParameterTypes);
             Assert.True(cas.ParameterTypes.First().Equals(typeof(int)));
         }
 

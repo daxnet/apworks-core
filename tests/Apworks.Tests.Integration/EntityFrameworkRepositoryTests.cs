@@ -237,7 +237,7 @@ namespace Apworks.Tests.Integration
 
                 var retrieved = repository.FindByKey(id);
 
-                Assert.Equal(1, retrieved.Addresses.Count);
+                Assert.Single(retrieved.Addresses);
             }
         }
 

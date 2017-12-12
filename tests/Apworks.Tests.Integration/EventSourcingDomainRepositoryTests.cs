@@ -1,6 +1,7 @@
 ﻿using Apworks.Events;
 using Apworks.EventStore.AdoNet;
 using Apworks.EventStore.PostgreSQL;
+using Apworks.Integration.AspNetCore.Messaging;
 using Apworks.KeyGeneration;
 using Apworks.Messaging;
 using Apworks.Messaging.RabbitMQ;
@@ -9,11 +10,14 @@ using Apworks.Serialization.Json;
 using Apworks.Snapshots;
 using Apworks.Tests.Integration.Fixtures;
 using Apworks.Tests.Integration.Models;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Apworks.Tests.Integration
@@ -38,7 +42,9 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void SaveAggregateRootTest()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            var serviceCollection = new ServiceCollection();
+            var executionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, executionContext, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
@@ -55,7 +61,10 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void LoadAggregateRootTest()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            var serviceCollection = new ServiceCollection();
+            var executionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
+
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, executionContext, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
@@ -75,7 +84,12 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void SaveAggregateRootAndSubscribeEventTest()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            var serviceCollection = new ServiceCollection();
+            var names = new List<string>();
+            serviceCollection.AddSingleton(names);
+            var executionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
+
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, executionContext, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
@@ -84,7 +98,8 @@ namespace Apworks.Tests.Integration
                 var subscriber = (IEventSubscriber)eventPublisher;
                 subscriber.MessageReceived += (a, b) => eventsReceived++;
                 subscriber.MessageAcknowledged += (x, y) => ackCnt++;
-                subscriber.Subscribe();
+                subscriber.Subscribe<NameChangedEvent, NameChangedEventHandler>();
+                subscriber.Subscribe<TitleChangedEvent, TitleChangedEventHandler>();
 
                 var aggregateRootId = Guid.NewGuid();
                 var employee = new Employee(aggregateRootId);
@@ -99,7 +114,10 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void EventSequenceAfterSaveTest()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            var serviceCollection = new ServiceCollection();
+            var executionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
+
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, executionContext, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
@@ -120,7 +138,10 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void GetByVersionTest1()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            var serviceCollection = new ServiceCollection();
+            var executionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
+
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, executionContext, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
@@ -141,7 +162,10 @@ namespace Apworks.Tests.Integration
         [Fact]
         public void GetByVersionTest2()
         {
-            using (var eventPublisher = new EventBus(connectionFactory, messageSerializer, this.GetType().Name))
+            var serviceCollection = new ServiceCollection();
+            var executionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
+
+            using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, executionContext, this.GetType().Name))
             using (var eventStore = new PostgreSqlEventStore(new AdoNetEventStoreConfiguration(PostgreSQLFixture.ConnectionString, new GuidKeyGenerator()), eventStoreSerializer))
             using (var repository = new EventSourcingDomainRepository(eventStore, eventPublisher, snapshotProvider))
             {
@@ -167,6 +191,25 @@ namespace Apworks.Tests.Integration
             }
             //Thread.Sleep(1000);
             Monitor.Exit(PostgreSQLFixture.locker);
+        }
+
+
+        
+    }
+
+    //class NameChangedEventHandler : Events.EventHandler<NameChangedEvent>
+    //{
+    //    public override Task<bool> HandleAsync(NameChangedEvent message, CancellationToken cancellationToken = default(CancellationToken))
+    //    {
+    //        return Task.FromResult(true);
+    //    }
+    //}
+
+    class TitleChangedEventHandler : Events.EventHandler<TitleChangedEvent>
+    {
+        public override Task<bool> HandleAsync(TitleChangedEvent message, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return Task.FromResult(true);
         }
     }
 }

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0-dev-00023" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Apworks.EventStore.AdoNet\Apworks.EventStore.AdoNet.csproj" />
+    <ProjectReference Include="..\..\src\Apworks.EventStore.SQLServer\Apworks.EventStore.SQLServer.csproj" />
+    <ProjectReference Include="..\..\src\Apworks.Integration.AspNetCore\Apworks.Integration.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Apworks.Messaging.RabbitMQ\Apworks.Messaging.RabbitMQ.csproj" />
+    <ProjectReference Include="..\..\src\Apworks.Serialization.Json\Apworks.Serialization.Json.csproj" />
+    <ProjectReference Include="..\..\src\Apworks\Apworks.csproj" />
+  </ItemGroup>
+
+</Project>
