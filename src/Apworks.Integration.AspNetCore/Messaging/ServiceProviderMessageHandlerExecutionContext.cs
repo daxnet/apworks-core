@@ -55,7 +55,7 @@ namespace Apworks.Integration.AspNetCore.Messaging
                 {
                     foreach(var handlerType in handlerTypes)
                     {
-                        var handler = (IMessageHandler)childScope.ServiceProvider.GetRequiredService(handlerType);
+                        var handler = (IMessageHandler)childScope.ServiceProvider.GetService(handlerType);
                         if (handler.CanHandle(messageType))
                         {
                             await handler.HandleAsync(message, cancellationToken);

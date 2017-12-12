@@ -25,6 +25,8 @@ namespace Apworks.Tests.Integration
             bool finished = false;
 
             var serviceCollection = new ServiceCollection();
+            var names = new List<string>();
+            serviceCollection.AddSingleton(names);
             var executionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
 
             using (var bus = new RabbitMessageBus(connectionFactory,
@@ -55,7 +57,7 @@ namespace Apworks.Tests.Integration
             bool finished = false;
             var serviceCollection = new ServiceCollection();
             var names = new List<string>();
-            serviceCollection.AddTransient(x => names);
+            serviceCollection.AddSingleton(names);
 
             var messageHandlerProvider = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
 
@@ -79,7 +81,7 @@ namespace Apworks.Tests.Integration
             bool finished = false;
             var serviceCollection = new ServiceCollection();
             var names = new List<string>();
-            serviceCollection.AddTransient(x => names);
+            serviceCollection.AddSingleton(names);
 
             var messageHandlerProvider = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
 

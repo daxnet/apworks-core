@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -84,6 +85,8 @@ namespace Apworks.Tests.Integration
         public void SaveAggregateRootAndSubscribeEventTest()
         {
             var serviceCollection = new ServiceCollection();
+            var names = new List<string>();
+            serviceCollection.AddSingleton(names);
             var executionContext = new ServiceProviderMessageHandlerExecutionContext(serviceCollection);
 
             using (var eventPublisher = new RabbitEventBus(connectionFactory, messageSerializer, executionContext, this.GetType().Name))
@@ -191,20 +194,22 @@ namespace Apworks.Tests.Integration
         }
 
 
-        private class NameChangedEventHandler : Events.EventHandler<NameChangedEvent>
-        {
-            public override Task<bool> HandleAsync(NameChangedEvent message, CancellationToken cancellationToken = default(CancellationToken))
-            {
-                return Task.FromResult(true);
-            }
-        }
+        
+    }
 
-        private class TitleChangedEventHandler : Events.EventHandler<TitleChangedEvent>
+    //class NameChangedEventHandler : Events.EventHandler<NameChangedEvent>
+    //{
+    //    public override Task<bool> HandleAsync(NameChangedEvent message, CancellationToken cancellationToken = default(CancellationToken))
+    //    {
+    //        return Task.FromResult(true);
+    //    }
+    //}
+
+    class TitleChangedEventHandler : Events.EventHandler<TitleChangedEvent>
+    {
+        public override Task<bool> HandleAsync(TitleChangedEvent message, CancellationToken cancellationToken = default(CancellationToken))
         {
-            public override Task<bool> HandleAsync(TitleChangedEvent message, CancellationToken cancellationToken = default(CancellationToken))
-            {
-                return Task.FromResult(true);
-            }
+            return Task.FromResult(true);
         }
     }
 }
