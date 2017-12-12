@@ -9,11 +9,9 @@ namespace Apworks.Messaging
 {
     public abstract class MessageHandler : IMessageHandler
     {
-        public abstract bool Handle(IMessage message);
-
         public abstract bool CanHandle(Type messageType);
 
-        public virtual Task<bool> HandleAsync(IMessage message, CancellationToken cancellationToken = default(CancellationToken)) => Task.FromResult(Handle(message));
+        public abstract Task<bool> HandleAsync(IMessage message, CancellationToken cancellationToken = default(CancellationToken));
     }
 
     public abstract class MessageHandler<TMessage> : MessageHandler, IMessageHandler<TMessage>
@@ -24,22 +22,7 @@ namespace Apworks.Messaging
             return typeof(TMessage).Equals(messageType);
         }
 
-        public override bool Handle(IMessage message)
-        {
-            if (message == null)
-            {
-                return false;
-            }
-
-            if  (message is TMessage)
-            {
-                return this.Handle((TMessage)message);
-            }
-
-            return false;
-        }
-
-        public override async Task<bool> HandleAsync(IMessage message, CancellationToken cancellationToken = default(CancellationToken))
+        public sealed override async Task<bool> HandleAsync(IMessage message, CancellationToken cancellationToken = default(CancellationToken))
         {
             if (message == null)
             {
@@ -53,8 +36,6 @@ namespace Apworks.Messaging
 
             return false;
         }
-
-        public virtual bool Handle(TMessage message) => this.HandleAsync(message).Result;
 
         public abstract Task<bool> HandleAsync(TMessage message, CancellationToken cancellationToken = default(CancellationToken));
     }
