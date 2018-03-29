@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.0
+VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks", "src\Apworks\Apworks.csproj", "{9D0B1FC5-57E6-4A60-8AFD-CDCAEC271A3A}"
 EndProject
@@ -44,6 +44,14 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Messaging.RabbitMQ", "src\Apworks.Messaging.RabbitMQ\Apworks.Messaging.RabbitMQ.csproj", "{BC0C9EDE-D0DE-4B51-8267-A59D53EC51CF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.EventStore.SQLServer", "src\Apworks.EventStore.SQLServer\Apworks.EventStore.SQLServer.csproj", "{2AAF367E-2566-4FF1-B569-6CCA2438A1F6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{A82F0A1A-EBE8-4D15-B688-BC5FCD7B05EF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sdk", "sdk", "{1D842584-A31F-4D70-9362-090C3B37D95F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Sdk.Cli", "tools\sdk\Apworks.Sdk.Cli\Apworks.Sdk.Cli.csproj", "{742F06FA-B2E4-4ECF-A97D-7005FC51C93F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Sdk.Framework", "tools\sdk\Apworks.Sdk.Framework\Apworks.Sdk.Framework.csproj", "{BCCB4E7A-3DDC-4A8D-ABEA-81589BDFC3EC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +119,14 @@ Global
 		{2AAF367E-2566-4FF1-B569-6CCA2438A1F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AAF367E-2566-4FF1-B569-6CCA2438A1F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AAF367E-2566-4FF1-B569-6CCA2438A1F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{742F06FA-B2E4-4ECF-A97D-7005FC51C93F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{742F06FA-B2E4-4ECF-A97D-7005FC51C93F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{742F06FA-B2E4-4ECF-A97D-7005FC51C93F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{742F06FA-B2E4-4ECF-A97D-7005FC51C93F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCCB4E7A-3DDC-4A8D-ABEA-81589BDFC3EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCCB4E7A-3DDC-4A8D-ABEA-81589BDFC3EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCCB4E7A-3DDC-4A8D-ABEA-81589BDFC3EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCCB4E7A-3DDC-4A8D-ABEA-81589BDFC3EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -131,6 +147,9 @@ Global
 		{558BF7B3-71E9-40B5-87D1-D82DA22454B5} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 		{BC0C9EDE-D0DE-4B51-8267-A59D53EC51CF} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 		{2AAF367E-2566-4FF1-B569-6CCA2438A1F6} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
+		{1D842584-A31F-4D70-9362-090C3B37D95F} = {A82F0A1A-EBE8-4D15-B688-BC5FCD7B05EF}
+		{742F06FA-B2E4-4ECF-A97D-7005FC51C93F} = {1D842584-A31F-4D70-9362-090C3B37D95F}
+		{BCCB4E7A-3DDC-4A8D-ABEA-81589BDFC3EC} = {1D842584-A31F-4D70-9362-090C3B37D95F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B26F4F2-C673-4523-AAF3-6FBC5A84C2D9}

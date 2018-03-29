@@ -53,6 +53,7 @@ namespace Apworks
         private TKey id;
         private readonly Queue<IDomainEvent> uncommittedEvents = new Queue<IDomainEvent>();
         private readonly Lazy<ConcurrentDictionary<string, IEnumerable<MethodInfo>>> eventHandlerRegistrations = new Lazy<ConcurrentDictionary<string, IEnumerable<MethodInfo>>>();
+        private readonly object syncLocker = new object();
         private long persistedVersion;
         #endregion
 
@@ -185,8 +186,11 @@ namespace Apworks
         protected void Raise<TEvent>(TEvent @event)
             where TEvent : class, IDomainEvent
         {
-            @event.Sequence = this.Version + 1;
-            this.uncommittedEvents.Enqueue(@event);
+            lock (this.syncLocker)
+            {
+                @event.Sequence = this.Version + 1;
+                this.uncommittedEvents.Enqueue(@event);
+            }
         }
 
         /// <summary>
@@ -300,10 +304,13 @@ namespace Apworks
         /// </summary>
         void IPurgeable.Purge()
         {
-            if (this.uncommittedEvents.Count > 0)
+            lock (this.syncLocker)
             {
-                this.PersistedVersion = this.persistedVersion + this.uncommittedEvents.Count;
-                this.uncommittedEvents.Clear();
+                if (this.uncommittedEvents.Count > 0)
+                {
+                    this.PersistedVersion = this.persistedVersion + this.uncommittedEvents.Count;
+                    this.uncommittedEvents.Clear();
+                }
             }
         }
 
