@@ -6,20 +6,20 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Apworks.Integration.AspNetCore.Configuration
 {
-    public interface IEventSubscriberConfigurator : IConfigurator
-    {
+    //internal interface IEventSubscriberConfigurator : IConfigurator
+    //{
 
-    }
+    //}
 
-    internal sealed class EventSubscriberConfigurator<TEventSubscriber> : ServiceRegisterConfigurator<IEventSubscriber, TEventSubscriber>, IEventSubscriberConfigurator
-        where TEventSubscriber : class, IEventSubscriber
-    {
-        public EventSubscriberConfigurator(IConfigurator context, TEventSubscriber implementation, ServiceLifetime serviceLifetime) : base(context, implementation, serviceLifetime)
-        {
-        }
+    //internal sealed class EventSubscriberConfigurator<TEventSubscriber> : ServiceRegisterConfigurator<IEventSubscriber, TEventSubscriber>, IEventSubscriberConfigurator
+    //    where TEventSubscriber : class, IEventSubscriber
+    //{
+    //    public EventSubscriberConfigurator(IConfigurator context, TEventSubscriber implementation, ServiceLifetime serviceLifetime) : base(context, implementation, serviceLifetime)
+    //    {
+    //    }
 
-        public EventSubscriberConfigurator(IConfigurator context, Func<IServiceProvider, TEventSubscriber> implementationFactory, ServiceLifetime serviceLifetime) : base(context, implementationFactory, serviceLifetime)
-        {
-        }
-    }
+    //    public EventSubscriberConfigurator(IConfigurator context, Func<IServiceProvider, TEventSubscriber> implementationFactory, ServiceLifetime serviceLifetime) : base(context, implementationFactory, serviceLifetime)
+    //    {
+    //    }
+    //}
 }

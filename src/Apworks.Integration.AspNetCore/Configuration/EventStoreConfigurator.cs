@@ -30,45 +30,45 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Apworks.Integration.AspNetCore.Configuration
 {
-    /// <summary>
-    /// Represents that the implemented classes are event store configurators.
-    /// </summary>
-    /// <seealso cref="Apworks.Integration.AspNetCore.Configuration.IConfigurator" />
-    public interface IEventStoreConfigurator : IConfigurator
-    { }
+    ///// <summary>
+    ///// Represents that the implemented classes are event store configurators.
+    ///// </summary>
+    ///// <seealso cref="Apworks.Integration.AspNetCore.Configuration.IConfigurator" />
+    //internal interface IEventStoreConfigurator : IConfigurator
+    //{ }
 
-    /// <summary>
-    /// The default implementation of the <see cref="IEventStoreConfigurator"/> interface.
-    /// </summary>
-    /// <typeparam name="TEventStore">The type of the event store.</typeparam>
-    /// <seealso cref="Apworks.Integration.AspNetCore.Configuration.ServiceRegisterConfigurator{Apworks.Events.IEventStore, TEventStore}" />
-    /// <seealso cref="Apworks.Integration.AspNetCore.Configuration.IEventStoreConfigurator" />
-    internal sealed class EventStoreConfigurator<TEventStore> : ServiceRegisterConfigurator<IEventStore, TEventStore>, IEventStoreConfigurator
-        where TEventStore : class, IEventStore
-    {
-        #region Ctor
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EventStoreConfigurator{TEventStore}"/> class.
-        /// </summary>
-        /// <param name="context">The context that can register the specified service implementations against their service contracts
-        /// to the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> instance.</param>
-        /// <param name="implementation">The implementation of the service that is going to be registered.</param>
-        /// <param name="serviceLifetime">The service lifetime.</param>
-        public EventStoreConfigurator(IConfigurator context, TEventStore implementation, ServiceLifetime serviceLifetime) : base(context, implementation, serviceLifetime)
-        {
-        }
+    ///// <summary>
+    ///// The default implementation of the <see cref="IEventStoreConfigurator"/> interface.
+    ///// </summary>
+    ///// <typeparam name="TEventStore">The type of the event store.</typeparam>
+    ///// <seealso cref="Apworks.Integration.AspNetCore.Configuration.ServiceRegisterConfigurator{Apworks.Events.IEventStore, TEventStore}" />
+    ///// <seealso cref="Apworks.Integration.AspNetCore.Configuration.IEventStoreConfigurator" />
+    //internal sealed class EventStoreConfigurator<TEventStore> : ServiceRegisterConfigurator<IEventStore, TEventStore>, IEventStoreConfigurator
+    //    where TEventStore : class, IEventStore
+    //{
+    //    #region Ctor
+    //    /// <summary>
+    //    /// Initializes a new instance of the <see cref="EventStoreConfigurator{TEventStore}"/> class.
+    //    /// </summary>
+    //    /// <param name="context">The context that can register the specified service implementations against their service contracts
+    //    /// to the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> instance.</param>
+    //    /// <param name="implementation">The implementation of the service that is going to be registered.</param>
+    //    /// <param name="serviceLifetime">The service lifetime.</param>
+    //    public EventStoreConfigurator(IConfigurator context, TEventStore implementation, ServiceLifetime serviceLifetime) : base(context, implementation, serviceLifetime)
+    //    {
+    //    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EventStoreConfigurator{TEventStore}"/> class.
-        /// </summary>
-        /// <param name="context">The context that can register the specified service implementations against their service contracts
-        /// to the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> instance.</param>
-        /// <param name="implementationFactory">The implementation factory that creates the implementation of the service that is going
-        /// to be registered.</param>
-        /// <param name="serviceLifetime">The service lifetime.</param>
-        public EventStoreConfigurator(IConfigurator context, Func<IServiceProvider, TEventStore> implementationFactory, ServiceLifetime serviceLifetime) : base(context, implementationFactory, serviceLifetime)
-        {
-        }
-        #endregion
-    }
+    //    /// <summary>
+    //    /// Initializes a new instance of the <see cref="EventStoreConfigurator{TEventStore}"/> class.
+    //    /// </summary>
+    //    /// <param name="context">The context that can register the specified service implementations against their service contracts
+    //    /// to the <see cref="T:Microsoft.Extensions.DependencyInjection.IServiceCollection" /> instance.</param>
+    //    /// <param name="implementationFactory">The implementation factory that creates the implementation of the service that is going
+    //    /// to be registered.</param>
+    //    /// <param name="serviceLifetime">The service lifetime.</param>
+    //    public EventStoreConfigurator(IConfigurator context, Func<IServiceProvider, TEventStore> implementationFactory, ServiceLifetime serviceLifetime) : base(context, implementationFactory, serviceLifetime)
+    //    {
+    //    }
+    //    #endregion
+    //}
 }
