@@ -1,33 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>
-      Microsoft SQL Server implementation of the event store.
-    </Description>
-    <Copyright>Copyright (C) 2009-2017 by daxnet (Sunny Chen).</Copyright>
-    <VersionPrefix>0.999.0</VersionPrefix>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.999.0</Version>
     <Authors>Sunny Chen (daxnet)</Authors>
-    <TargetFrameworks>net461;netstandard1.6</TargetFrameworks>
-    <AssemblyName>Apworks.EventStore.SQLServer</AssemblyName>
-    <AssemblyOriginatorKeyFile>../../tools/Apworks.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-    <PackageId>Apworks.EventStore.SQLServer</PackageId>
-    <PackageTags>apworks; event-store; sql-server;</PackageTags>
-    <PackageLicenseUrl>https://github.com/daxnet/apworks-core/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>An event store implementation with Microsoft SQL Server.</Description>
+    <Copyright>Copyright (C) 2009-2019 by daxnet (Sunny Chen).</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/daxnet/apworks-core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/daxnet/apworks-core</RepositoryUrl>
-    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <AssemblyVersion>0.999.0</AssemblyVersion>
-    <FileVersion>0.999.0</FileVersion>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>apworks,cqrs,ddd,event store</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Data.SqlClient" Version="4.4.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
   </ItemGroup>
 
   <ItemGroup>

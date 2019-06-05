@@ -1,56 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>The messaging infrastructure for Apworks supporting RabbitMQ.</Description>
-    <Copyright>Copyright (C) 2009-2017 by daxnet (Sunny Chen).</Copyright>
-    <VersionPrefix>0.999.0</VersionPrefix>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.999.0</Version>
     <Authors>Sunny Chen (daxnet)</Authors>
-    <TargetFrameworks>net461;netstandard1.6</TargetFrameworks>
-    <AssemblyName>Apworks.Messaging.RabbitMQ</AssemblyName>
-    <AssemblyOriginatorKeyFile>../../tools/Apworks.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-    <PackageId>Apworks.Messaging.RabbitMQ</PackageId>
-    <PackageTags>apworks; messaging; event-bus; rabbitmq</PackageTags>
-    <PackageLicenseUrl>https://github.com/daxnet/apworks-core/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>Messaging implementation for RabbitMQ.</Description>
+    <Copyright>Copyright (C) 2009-2019 by daxnet (Sunny Chen).</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/daxnet/apworks-core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/daxnet/apworks-core</RepositoryUrl>
-    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <AssemblyVersion>0.999.0</AssemblyVersion>
-    <FileVersion>0.999.0</FileVersion>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>apworks,cqrs,ddd,event store</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="RabbitMQ.Client" Version="5.0.1" />
+    <PackageReference Include="RabbitMQ.Client" Version="5.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Apworks\Apworks.csproj" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461' ">
-    <DefineConstants>$(DefineConstants);_NET461_</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <DefineConstants>$(DefineConstants);_NETCORE_</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
-    <DocumentationFile>bin\Release\net461\Apworks.Messaging.RabbitMQ.xml</DocumentationFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard1.6|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.6\Apworks.Messaging.RabbitMQ.xml</DocumentationFile>
-  </PropertyGroup>
-  
 </Project>

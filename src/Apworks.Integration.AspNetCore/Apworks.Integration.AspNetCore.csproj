@@ -1,48 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Apworks Application Development Framework</Description>
-    <Copyright>Copyright (C) 2009-2017 by daxnet (Sunny Chen).</Copyright>
-    <VersionPrefix>0.999.0</VersionPrefix>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.999.0</Version>
     <Authors>Sunny Chen (daxnet)</Authors>
-    <TargetFramework>netstandard1.6</TargetFramework>
-    <AssemblyName>Apworks.Integration.AspNetCore</AssemblyName>
-    <AssemblyOriginatorKeyFile>../../tools/Apworks.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-    <PackageId>Apworks.Integration.AspNetCore</PackageId>
-    <PackageTags>apworks</PackageTags>
-    <PackageLicenseUrl>https://github.com/daxnet/apworks-core/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Description>Provides the components and functionalities that facilitates the integration with ASP.NET Core.</Description>
+    <Copyright>Copyright (C) 2009-2019 by daxnet (Sunny Chen).</Copyright>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/daxnet/apworks-core</PackageProjectUrl>
     <RepositoryUrl>https://github.com/daxnet/apworks-core</RepositoryUrl>
-    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
-    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <AssemblyVersion>0.999.0</AssemblyVersion>
-    <FileVersion>0.999.0</FileVersion>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>apworks,cqrs,ddd,event store</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hal" Version="1.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Apworks.Querying.Parsers.Irony\Apworks.Querying.Parsers.Irony.csproj" />
     <ProjectReference Include="..\Apworks\Apworks.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Hal" Version="1.0.15" />
-    <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-  </ItemGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <DefineConstants>$(DefineConstants);_NETCORE_</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.6\Apworks.Integration.AspNetCore.xml</DocumentationFile>
-  </PropertyGroup>
 
 </Project>

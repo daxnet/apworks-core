@@ -1,44 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>0.999.0</VersionPrefix>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
-    <AssemblyName>Apworks.Tests</AssemblyName>
-    <PackageId>Apworks.Tests</PackageId>
-    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
-    <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
-    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="Moq" Version="4.11.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Apworks.EventStore.AdoNet\Apworks.EventStore.AdoNet.csproj" />
     <ProjectReference Include="..\..\src\Apworks.EventStore.Simple\Apworks.EventStore.Simple.csproj" />
+    <ProjectReference Include="..\..\src\Apworks.Integration.AspNetCore\Apworks.Integration.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Messaging.Simple\Apworks.Messaging.Simple.csproj" />
-    <ProjectReference Include="..\..\src\Apworks.Querying.Parsers.Irony\Apworks.Querying.Parsers.Irony.csproj" />
+    <ProjectReference Include="..\..\src\Apworks.Repositories.MongoDB\Apworks.Repositories.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Repositories.Simple\Apworks.Repositories.Simple.csproj" />
     <ProjectReference Include="..\..\src\Apworks.Serialization.Json\Apworks.Serialization.Json.csproj" />
     <ProjectReference Include="..\..\src\Apworks\Apworks.csproj" />
-    <ProjectReference Include="..\..\src\Apworks.Repositories.MongoDB\Apworks.Repositories.MongoDB.csproj" />
-    <ProjectReference Include="..\..\src\Apworks.Integration.AspNetCore\Apworks.Integration.AspNetCore.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.6.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
-    <PackageReference Include="xunit" Version="2.3.1" />
-    <PackageReference Include="Moq" Version="4.8.2" />
-    <PackageReference Include="Microsoft.DotNet.InternalAbstractions" Version="1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
 
 </Project>

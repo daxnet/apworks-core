@@ -178,7 +178,7 @@ namespace Apworks.Repositories.MongoDB
                 throw new InvalidOperationException("The SortOrder of the items in the sort specification should be either Ascending or Descending.");
             }
 
-            var totalCount = this.collection.Count(specification);
+            var totalCount = this.collection.CountDocuments(specification);
             var skip = (pageNumber - 1) * pageSize;
             var take = pageSize;
             var totalPages = (totalCount + pageSize - 1) / pageSize;
@@ -228,7 +228,7 @@ namespace Apworks.Repositories.MongoDB
                     Builders<TAggregateRoot>.Sort.Descending(sort.Item1));
             }
 
-            var totalCount = await this.collection.CountAsync(specification);
+            var totalCount = await this.collection.CountDocumentsAsync(specification);
             var skip = (pageNumber - 1) * pageSize;
             var take = pageSize;
             var totalPages = (totalCount + pageSize - 1) / pageSize;

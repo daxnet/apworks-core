@@ -47,7 +47,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
     /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [Route("api/[controller]")]
     [SupportsHal]
-    public abstract class DataServiceController<TKey, TAggregateRoot> : Controller
+    public abstract class DataServiceController<TKey, TAggregateRoot> : ControllerBase
         where TAggregateRoot : class, IAggregateRoot<TKey>
         where TKey : IEquatable<TKey>
     {
@@ -57,7 +57,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
         private readonly IQueryConditionParser queryConditionParser;
         private readonly ISortSpecificationParser sortSpecificationParser;
         private readonly IKeyGenerator<TKey, TAggregateRoot> keyGenerator;
-        private bool disposed = false;
+        //private bool disposed = false;
         #endregion
 
         #region Ctor        
@@ -339,7 +339,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
                 throw new EntityNotFoundException($"The entity with the key of '{id}' does not exist.");
             }
 
-            patch.ApplyTo(instance, this.ModelState);
+            patch.ApplyTo(instance);
 
             if (!ModelState.IsValid)
             {
@@ -352,23 +352,23 @@ namespace Apworks.Integration.AspNetCore.DataServices
             return NoContent();
         }
 
-        /// <summary>
-        /// Releases all resources currently used by this <see cref="T:Microsoft.AspNetCore.Mvc.Controller" /> instance.
-        /// </summary>
-        /// <param name="disposing"><c>true</c> if this method is being invoked by the <see cref="M:Microsoft.AspNetCore.Mvc.Controller.Dispose" /> method,
-        /// otherwise <c>false</c>.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (!disposed)
-            {
-                if (disposing)
-                {
-                    this.repositoryContext.Dispose();
-                }
+        ///// <summary>
+        ///// Releases all resources currently used by this <see cref="T:Microsoft.AspNetCore.Mvc.Controller" /> instance.
+        ///// </summary>
+        ///// <param name="disposing"><c>true</c> if this method is being invoked by the <see cref="M:Microsoft.AspNetCore.Mvc.Controller.Dispose" /> method,
+        ///// otherwise <c>false</c>.</param>
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (!disposed)
+        //    {
+        //        if (disposing)
+        //        {
+        //            this.repositoryContext.Dispose();
+        //        }
 
-                disposed = true;
-                base.Dispose(disposing);
-            }
-        }
+        //        disposed = true;
+        //        base.Dispose(disposing);
+        //    }
+        //}
     }
 }

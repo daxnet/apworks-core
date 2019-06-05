@@ -285,10 +285,10 @@ namespace Apworks.Tests.Integration
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Customer>().ForNpgsqlToTable("Customers")
+            modelBuilder.Entity<Customer>().ToTable("Customers")
                 .Property(x => x.Id).ForNpgsqlUseSequenceHiLo();
             modelBuilder.Entity<Customer>().HasKey(x => x.Id);
-            modelBuilder.Entity<Address>().ForNpgsqlToTable("Addresses");
+            modelBuilder.Entity<Address>().ToTable("Addresses");
             modelBuilder.Entity<Customer>().HasMany(x => x.Addresses);
 
             base.OnModelCreating(modelBuilder);

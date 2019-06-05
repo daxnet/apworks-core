@@ -91,7 +91,7 @@ namespace Apworks.Querying.Parsers.Irony
                         case "EW":
                             return Expression.Call(leftStringFunctionExpression, typeof(string).GetMethod("EndsWith", new[] { typeof(string) }), rightStringFunctionExpression);
                         case "CT":
-                            return Expression.Call(leftStringFunctionExpression, typeof(string).GetMethod("Contains"), rightStringFunctionExpression);
+                            return Expression.Call(leftStringFunctionExpression, typeof(string).GetMethod("Contains", new[] { typeof(string) }), rightStringFunctionExpression);
                     }
                     break;
                 case "property":
