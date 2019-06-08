@@ -1,6 +1,8 @@
 # Apworks Core
 Apworks framework supporting .NET Core.
 
+[![Build status](https://dev.azure.com/sunnycoding/Apworks-Core/_apis/build/status/Apworks%20Core%20Build%20Pipeline)](https://dev.azure.com/sunnycoding/Apworks-Core/_build/latest?definitionId=5)
+
 ## Introduction
 Apworks is an application development framework which provides essential components and building blocks for creating, implementing and deploying enterprise applications with either classic layered architecture or event-driven CQRS architecture styles. The original repo of Apworks framework is [here](https://github.com/daxnet/Apworks), which was targeting specifically on .NET Framework 4.5.1 based on some legacy technologies and not being maintained anymore.
 
