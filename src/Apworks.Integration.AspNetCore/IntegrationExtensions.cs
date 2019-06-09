@@ -35,7 +35,7 @@ using System;
 
 namespace Apworks.Integration.AspNetCore
 {
-    /*
+    
     /// <summary>
     /// Provides the extension methods for integrating the Apworks facilities into ASP.NET Core MVC/Web API stack.
     /// </summary>
@@ -57,6 +57,7 @@ namespace Apworks.Integration.AspNetCore
 
         #region IApworksConfigurator Extensions
 
+        /*
         /// <summary>
         /// Adds the repository capability to the Apworks application.
         /// </summary>
@@ -80,6 +81,7 @@ namespace Apworks.Integration.AspNetCore
         {
             return new RepositoryConfigurator<IRepositoryContext>(configurator, repositoryContextFactory, serviceLifetime);
         }
+        */
 
         /// <summary>
         /// Adds the data service support to the Apworks application.
@@ -115,7 +117,7 @@ namespace Apworks.Integration.AspNetCore
         #endregion IApworksConfigurator Extensions
 
         #region IRepositoryConfigurator Extensions
-
+        /*
         public static IKeyGeneratorConfigurator WithKeyGenerator<TKey, TAggregateRoot>(this IRepositoryConfigurator configurator, IKeyGenerator<TKey, TAggregateRoot> keyGenerator, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRoot<TKey>
@@ -141,11 +143,11 @@ namespace Apworks.Integration.AspNetCore
         {
             return new HalSupportConfigurator<THalBuildConfiguration>(configurator, halBuildConfigurationFactory, serviceLifetime);
         }
-
+        */
         #endregion IRepositoryConfigurator Extensions
 
         #region IKeyGeneratorConfigurator Extensions
-
+        /*
         public static IKeyGeneratorConfigurator WithKeyGenerator<TKey, TAggregateRoot>(this IKeyGeneratorConfigurator configurator, IKeyGenerator<TKey, TAggregateRoot> keyGenerator, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
             where TKey : IEquatable<TKey>
             where TAggregateRoot : class, IAggregateRoot<TKey>
@@ -171,7 +173,7 @@ namespace Apworks.Integration.AspNetCore
         {
             return new HalSupportConfigurator<THalBuildConfiguration>(configurator, halBuildConfigurationFactory, serviceLifetime);
         }
-
+        */
         #endregion IKeyGeneratorConfigurator Extensions
 
         #region IApplicationBuilder Extensions
@@ -183,5 +185,4 @@ namespace Apworks.Integration.AspNetCore
 
         #endregion IApplicationBuilder Extensions
     }
-    */
 }

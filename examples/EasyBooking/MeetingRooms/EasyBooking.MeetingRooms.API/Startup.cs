@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Apworks.Integration.AspNetCore;
+using Apworks.Integration.AspNetCore.Configuration;
+using Apworks.Repositories.MongoDB;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +49,7 @@ namespace EasyBooking.MeetingRooms.API
                 }
             });
 
+            ConfigureAppServices(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,7 +66,16 @@ namespace EasyBooking.MeetingRooms.API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "EasyBooking Meeting Room API");
             });
 
+            app.EnrichDataServiceExceptionResponse();
+
             app.UseMvc();
+        }
+
+        private void ConfigureAppServices(IServiceCollection services)
+        {
+            services.AddApworks()
+                .WithDataServiceSupport(new DataServiceConfigurationOptions(serviceProvider => new MongoRepositoryContext(new MongoRepositorySettings("localhost", "EasyBooking-MeetingRooms"))))
+                .Configure();
         }
     }
 }

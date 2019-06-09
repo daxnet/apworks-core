@@ -9,6 +9,7 @@ namespace EasyBooking.MeetingRooms.API.Controllers
     [Route("api/[controller]")]
     public class HomeController : ControllerBase
     {
+        [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult Index()
         {
             return new RedirectResult("~/swagger");

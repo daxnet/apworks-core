@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\src\Apworks.Integration.AspNetCore\Apworks.Integration.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Apworks.Repositories.MongoDB\Apworks.Repositories.MongoDB.csproj" />
     <ProjectReference Include="..\..\..\..\src\Apworks\Apworks.csproj" />
   </ItemGroup>
 

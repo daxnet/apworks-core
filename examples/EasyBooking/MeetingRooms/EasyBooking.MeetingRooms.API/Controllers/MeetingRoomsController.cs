@@ -15,6 +15,11 @@ namespace EasyBooking.MeetingRooms.API.Controllers
         public MeetingRoomsController(IRepositoryContext context)
             : base(context) { }
 
+        public override Task<IActionResult> Get([FromQuery] int size = 15, [FromQuery] int page = 1, [FromQuery] string query = "", [FromQuery] string sort = "")
+        {
+            return base.Get(size, page, query, sort);
+        }
+
         public override Task<IActionResult> Post([FromBody] MeetingRoom aggregateRoot)
         {
             aggregateRoot.DateCreated = DateTime.UtcNow;
