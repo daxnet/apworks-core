@@ -29,21 +29,29 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Integration.AspNetC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Querying.Parsers.Irony", "src\Apworks.Querying.Parsers.Irony\Apworks.Querying.Parsers.Irony.csproj", "{B121FD5A-2EFB-4219-A5CA-A6ABB26D0E99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Messaging.Simple", "src\Apworks.Messaging.Simple\Apworks.Messaging.Simple.csproj", "{11587A22-A525-4CBA-8954-2E3CB2704FF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Messaging.Simple", "src\Apworks.Messaging.Simple\Apworks.Messaging.Simple.csproj", "{11587A22-A525-4CBA-8954-2E3CB2704FF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Messaging.RabbitMQ", "src\Apworks.Messaging.RabbitMQ\Apworks.Messaging.RabbitMQ.csproj", "{86DF1F09-4F33-49AF-B25D-520478FC95BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Messaging.RabbitMQ", "src\Apworks.Messaging.RabbitMQ\Apworks.Messaging.RabbitMQ.csproj", "{86DF1F09-4F33-49AF-B25D-520478FC95BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Serialization.Json", "src\Apworks.Serialization.Json\Apworks.Serialization.Json.csproj", "{27B6A3C2-37F1-42C6-851F-C97B75EE01D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Serialization.Json", "src\Apworks.Serialization.Json\Apworks.Serialization.Json.csproj", "{27B6A3C2-37F1-42C6-851F-C97B75EE01D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Repositories.Simple", "src\Apworks.Repositories.Simple\Apworks.Repositories.Simple.csproj", "{76E03125-C15A-4826-9AFB-C8860AF11AEF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Repositories.Simple", "src\Apworks.Repositories.Simple\Apworks.Repositories.Simple.csproj", "{76E03125-C15A-4826-9AFB-C8860AF11AEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Repositories.MongoDB", "src\Apworks.Repositories.MongoDB\Apworks.Repositories.MongoDB.csproj", "{F8D312DE-B605-4BF1-89BD-DD60291C5760}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Repositories.MongoDB", "src\Apworks.Repositories.MongoDB\Apworks.Repositories.MongoDB.csproj", "{F8D312DE-B605-4BF1-89BD-DD60291C5760}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Repositories.EntityFramework", "src\Apworks.Repositories.EntityFramework\Apworks.Repositories.EntityFramework.csproj", "{8C6B9381-98B3-48F7-8CD2-409F93BD6F25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Repositories.EntityFramework", "src\Apworks.Repositories.EntityFramework\Apworks.Repositories.EntityFramework.csproj", "{8C6B9381-98B3-48F7-8CD2-409F93BD6F25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Tests", "tests\Apworks.Tests\Apworks.Tests.csproj", "{903D54C3-9557-4153-8901-A90CE1E0A73E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Tests", "tests\Apworks.Tests\Apworks.Tests.csproj", "{903D54C3-9557-4153-8901-A90CE1E0A73E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apworks.Tests.Integration", "tests\Apworks.Tests.Integration\Apworks.Tests.Integration.csproj", "{1281EDB6-12B4-4E12-A6C5-E9FD325D0233}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Apworks.Tests.Integration", "tests\Apworks.Tests.Integration\Apworks.Tests.Integration.csproj", "{1281EDB6-12B4-4E12-A6C5-E9FD325D0233}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{1E73DF31-039D-4994-8C8B-9DB95033BB75}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EasyBooking", "EasyBooking", "{16312EBE-D069-4FF0-A89F-3BD7756D05B1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MeetingRooms", "MeetingRooms", "{1D183054-1BDA-4259-8E61-B12399992618}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyBooking.MeetingRooms.API", "examples\EasyBooking\MeetingRooms\EasyBooking.MeetingRooms.API\EasyBooking.MeetingRooms.API.csproj", "{96D9FEF3-7AA0-44D0-888D-54B2F3E76947}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +119,10 @@ Global
 		{1281EDB6-12B4-4E12-A6C5-E9FD325D0233}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1281EDB6-12B4-4E12-A6C5-E9FD325D0233}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1281EDB6-12B4-4E12-A6C5-E9FD325D0233}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96D9FEF3-7AA0-44D0-888D-54B2F3E76947}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96D9FEF3-7AA0-44D0-888D-54B2F3E76947}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96D9FEF3-7AA0-44D0-888D-54B2F3E76947}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96D9FEF3-7AA0-44D0-888D-54B2F3E76947}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -131,6 +143,9 @@ Global
 		{8C6B9381-98B3-48F7-8CD2-409F93BD6F25} = {33C69FA4-CFEA-480D-924A-37F2190DC20D}
 		{903D54C3-9557-4153-8901-A90CE1E0A73E} = {071FB34B-BD54-4C86-B8EF-E679F81BEDE0}
 		{1281EDB6-12B4-4E12-A6C5-E9FD325D0233} = {071FB34B-BD54-4C86-B8EF-E679F81BEDE0}
+		{16312EBE-D069-4FF0-A89F-3BD7756D05B1} = {1E73DF31-039D-4994-8C8B-9DB95033BB75}
+		{1D183054-1BDA-4259-8E61-B12399992618} = {16312EBE-D069-4FF0-A89F-3BD7756D05B1}
+		{96D9FEF3-7AA0-44D0-888D-54B2F3E76947} = {1D183054-1BDA-4259-8E61-B12399992618}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B26F4F2-C673-4523-AAF3-6FBC5A84C2D9}

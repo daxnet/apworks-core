@@ -65,7 +65,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// Initializes a new instance of the <see cref="DataServiceController{TKey, TAggregateRoot}"/> class.
         /// </summary>
         /// <param name="repositoryContext">The repository context that is used for initializing the data service controller.</param>
-        public DataServiceController(IRepositoryContext repositoryContext)
+        protected DataServiceController(IRepositoryContext repositoryContext)
             : this(repositoryContext, new NullKeyGenerator<TKey>(), new IronyQueryConditionParser(), new IronySortSpecificationParser())
         { }
 
@@ -77,7 +77,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// If the persistence mechanism will generate the key automatically, for example, in SQL Server databases, an auto increment
         /// value is used for the key column, the <see cref="NullKeyGenerator{TKey}"/> can be used for this parameter.
         /// </param>
-        public DataServiceController(IRepositoryContext repositoryContext, IKeyGenerator<TKey, TAggregateRoot> keyGenerator)
+        protected DataServiceController(IRepositoryContext repositoryContext, IKeyGenerator<TKey, TAggregateRoot> keyGenerator)
             : this(repositoryContext, keyGenerator, new IronyQueryConditionParser(), new IronySortSpecificationParser())
         { }
 
@@ -88,7 +88,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// <param name="queryConditionParser">The query condition parser which parses a given query string into a lambda expression.</param>
         /// <param name="sortSpecificationParser">The sort specification parser which parses a given sort specification string
         /// into a lambda expression.</param>
-        public DataServiceController(IRepositoryContext repositoryContext, IQueryConditionParser queryConditionParser, ISortSpecificationParser sortSpecificationParser)
+        protected DataServiceController(IRepositoryContext repositoryContext, IQueryConditionParser queryConditionParser, ISortSpecificationParser sortSpecificationParser)
             : this(repositoryContext, new NullKeyGenerator<TKey>(), queryConditionParser, sortSpecificationParser)
         { }
 
@@ -102,7 +102,7 @@ namespace Apworks.Integration.AspNetCore.DataServices
         /// <param name="queryConditionParser">The query condition parser which parses a given query string into a lambda expression.</param>
         /// <param name="sortSpecificationParser">The sort specification parser which parses a given sort specification string
         /// into a lambda expression.</param>
-        public DataServiceController(IRepositoryContext repositoryContext, 
+        protected DataServiceController(IRepositoryContext repositoryContext, 
             IKeyGenerator<TKey, TAggregateRoot> keyGenerator,
             IQueryConditionParser queryConditionParser,
             ISortSpecificationParser sortSpecificationParser)

@@ -35,6 +35,7 @@ using System;
 
 namespace Apworks.Integration.AspNetCore
 {
+    /*
     /// <summary>
     /// Provides the extension methods for integrating the Apworks facilities into ASP.NET Core MVC/Web API stack.
     /// </summary>
@@ -182,4 +183,5 @@ namespace Apworks.Integration.AspNetCore
 
         #endregion IApplicationBuilder Extensions
     }
+    */
 }
